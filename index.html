@@ -3,344 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rental PS3 HEN - Premium Gaming</title>
+    <title>Premium Rental PS3 HEN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --panel-bg: #1f2833;
-            --neon-blue: #00f3ff;
-            --neon-purple: #bc13fe;
-            --text-main: #c5c6c7;
-            --white: #ffffff;
-            --danger: #ff003c;
+            --bg-color: #050505;
+            --surface: #111111;
+            --surface-glass: rgba(20, 20, 20, 0.7);
+            --primary: #00e5ff;
+            --primary-glow: rgba(0, 229, 255, 0.4);
+            --secondary: #b400ff;
+            --secondary-glow: rgba(180, 0, 255, 0.4);
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --danger: #ff2a2a;
             --success: #00ff66;
+            --border-radius: 16px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(180, 0, 255, 0.08), transparent 25%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
         
         /* Header */
-        header { text-align: center; padding: 40px 0; border-bottom: 2px solid var(--neon-blue); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); margin-bottom: 30px; }
-        header h1 { color: var(--white); font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
-        header p { color: var(--neon-blue); font-size: 1.1rem; margin-top: 10px; }
+        header { text-align: center; margin-bottom: 50px; animation: fadeInDown 1s ease; }
+        header h1 { 
+            font-size: 3rem; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--primary-glow);
+        }
+        header p { color: var(--text-muted); font-size: 1.1rem; letter-spacing: 1px; margin-top: 10px; }
 
-        /* Sections */
-        .section-title { color: var(--white); font-size: 1.5rem; border-left: 4px solid var(--neon-purple); padding-left: 10px; margin-bottom: 15px; text-shadow: 0 0 5px var(--neon-purple); }
-        .card { background-color: var(--panel-bg); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+        /* Typography & Headings */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Glass Cards */
+        .glass-panel {
+            background: var(--surface-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        /* Grid Lists */
+        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .item-card {
+            background: #151515;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .item-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .item-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.1); }
+        .item-card:hover::before { opacity: 1; }
         
-        /* Lists */
-        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .item-card { background: linear-gradient(145deg, #1f2833, #151b22); border: 1px solid var(--neon-blue); border-radius: 8px; padding: 15px; transition: transform 0.3s; }
-        .item-card:hover { transform: translateY(-5px); box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
-        .item-card h3 { color: var(--neon-blue); margin-bottom: 5px; }
-        .item-card .price { color: var(--white); font-weight: bold; font-size: 1.2rem; }
-        .item-card .desc { font-size: 0.9rem; margin-top: 10px; color: #a0a0a0; }
+        .item-card h3 { color: var(--text-main); font-weight: 600; margin-bottom: 10px; font-size: 1.2rem; }
+        .item-card .price { color: var(--primary); font-weight: 800; font-size: 1.4rem; margin-bottom: 10px; text-shadow: 0 0 10px var(--primary-glow); }
+        .item-card .desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
 
-        .promo-card { border-color: var(--neon-purple); }
-        .promo-card h3 { color: var(--neon-purple); }
-        .promo-card:hover { box-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
+        .promo-card::before { background: linear-gradient(90deg, var(--secondary), transparent); opacity: 1; }
+        .promo-card h3 { color: var(--secondary); }
 
-        /* Form */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; color: var(--white); }
-        input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; background-color: #12181f; border: 1px solid #334; color: var(--white); border-radius: 5px; outline: none; transition: border 0.3s; }
-        input[type="text"]:focus, input[type="tel"]:focus, select:focus { border-color: var(--neon-blue); box-shadow: 0 0 8px rgba(0, 243, 255, 0.5); }
+        /* Form Elements */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.95rem; color: #ccc; font-weight: 300; }
+        input[type="text"], input[type="tel"], select {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--white);
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background-color: rgba(0, 229, 255, 0.05);
+        }
         
-        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; }
-        .checkbox-group input { margin-top: 5px; cursor: pointer; width: 18px; height: 18px; }
-        .checkbox-group label { font-size: 0.9rem; line-height: 1.4; color: #ccc; }
-        .link-syarat { color: var(--neon-blue); cursor: pointer; text-decoration: underline; }
+        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin: 25px 0; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; }
+        .checkbox-group input { margin-top: 4px; cursor: pointer; width: 20px; height: 20px; accent-color: var(--primary); }
+        .checkbox-group label { margin-bottom: 0; font-size: 0.9rem; color: #bbb; cursor: pointer; }
+        .link-syarat { color: var(--primary); text-decoration: none; font-weight: 600; border-bottom: 1px solid var(--primary); transition: color 0.3s; }
+        .link-syarat:hover { color: var(--white); border-color: var(--white); }
 
-        button.btn-sewa { width: 100%; padding: 15px; background: transparent; border: 2px solid var(--neon-blue); color: var(--neon-blue); font-size: 1.2rem; font-weight: bold; border-radius: 5px; cursor: pointer; text-transform: uppercase; transition: all 0.3s; text-shadow: 0 0 5px var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset; }
-        button.btn-sewa:hover:not(:disabled) { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px var(--neon-blue); }
-        button.btn-sewa:disabled { border-color: #555; color: #555; cursor: not-allowed; text-shadow: none; box-shadow: none; }
+        /* Buttons */
+        .btn-sewa {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #0088ff, var(--primary));
+            border: none;
+            color: #000;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px var(--primary-glow);
+        }
+        .btn-sewa:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 229, 255, 0.6); }
+        .btn-sewa:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; transform: none; }
 
-        /* Modal */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { background-color: var(--panel-bg); margin: 10% auto; padding: 20px; border: 1px solid var(--neon-purple); border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 30px rgba(188, 19, 254, 0.3); }
-        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close:hover { color: var(--white); }
-        .modal h2 { color: var(--neon-purple); margin-bottom: 15px; text-align: center; }
-        .modal ol { padding-left: 20px; color: #ddd; }
-        .modal li { margin-bottom: 10px; }
+        /* Modals & Toasts */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(8px); justify-content: center; align-items: center; }
+        .modal-content { background-color: var(--surface); padding: 30px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--border-radius); width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; animation: zoomIn 0.3s ease; }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: #888; font-size: 24px; cursor: pointer; transition: color 0.3s; }
+        .close-btn:hover { color: var(--danger); }
+        
+        .modal h2 { color: var(--primary); margin-bottom: 20px; font-weight: 600; text-align: center; }
+        .modal ol { padding-left: 20px; color: #ccc; font-weight: 300; }
+        .modal li { margin-bottom: 12px; line-height: 1.6; }
+        .modal strong { color: var(--danger); font-weight: 600; }
 
-        /* Loader */
-        #loader { display: none; text-align: center; color: var(--neon-blue); margin: 20px 0; }
+        .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--surface); color: white; padding: 15px 30px; border-radius: 30px; border: 1px solid var(--primary); box-shadow: 0 5px 20px rgba(0,0,0,0.5); font-size: 0.95rem; z-index: 2000; transition: bottom 0.4s ease; display: flex; align-items: center; gap: 10px; }
+        .toast.show { bottom: 30px; }
+
+        #loader { display: none; text-align: center; color: var(--primary); margin: 20px 0; font-weight: 600; animation: pulse 1s infinite; }
+
+        /* Animations */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+        @media (max-width: 600px) { header h1 { font-size: 2.2rem; } .glass-panel { padding: 20px; } }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Rental PS3 HEN</h1>
-        <p>Experience Premium Console Gaming</p>
+        <h1>PS3 Premium Hub</h1>
+        <p>Elevate Your Console Gaming Experience</p>
     </header>
 
     <div class="container">
-        
         <!-- Promo Section -->
-        <div id="promoSection" style="display:none;">
-            <h2 class="section-title">Promo Aktif</h2>
-            <div class="grid-list" id="promoList" style="margin-bottom: 30px;">
-                <!-- Diisi via JS -->
-            </div>
+        <div id="promoSection" class="glass-panel" style="display:none; animation-delay: 0.1s;">
+            <h2 class="section-title">Promo Eksklusif</h2>
+            <div class="grid-list" id="promoList"></div>
         </div>
 
         <!-- Price Section -->
-        <h2 class="section-title">Pilihan Paket Sewa</h2>
-        <div class="grid-list" id="packageList" style="margin-bottom: 30px;">
-            <!-- Diisi via JS -->
+        <div class="glass-panel" style="animation-delay: 0.2s;">
+            <h2 class="section-title">Pilihan Paket Sewa</h2>
+            <div class="grid-list" id="packageList">
+                <p style="color:#888;">Memuat data paket...</p>
+            </div>
         </div>
 
         <!-- Form Section -->
-        <div class="card">
-            <h2 class="section-title">Form Pemesanan</h2>
+        <div class="glass-panel" style="animation-delay: 0.3s;">
+            <h2 class="section-title">Setup Penyewaan</h2>
             <form id="bookingForm">
                 <div class="form-group">
-                    <label for="nama">Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Masukkan nama Anda" required>
+                    <label for="nama">Nama Lengkap Player</label>
+                    <input type="text" id="nama" placeholder="Masukkan nama Anda" required autocomplete="off">
                 </div>
                 <div class="form-group">
-                    <label for="nohp">Nomor HP / WhatsApp Aktif</label>
-                    <input type="tel" id="nohp" placeholder="Contoh: 08123456789" required>
-                    <small id="hpError" style="color:var(--danger); display:none;">Nomor HP harus diawali 08 atau 62 dan valid.</small>
+                    <label for="nohp">Nomor WhatsApp Aktif</label>
+                    <input type="tel" id="nohp" placeholder="Contoh: 08123456789" required autocomplete="off">
+                    <small id="hpError" style="color:var(--danger); display:none; margin-top:5px;">Nomor HP tidak valid. Gunakan format 08/628.</small>
                 </div>
                 <div class="form-group">
-                    <label for="paket">Pilih Paket</label>
+                    <label for="paket">Paket Permainan</label>
                     <select id="paket" required>
-                        <option value="">-- Pilih Paket --</option>
+                        <option value="">-- Pilih Paket Terlebih Dahulu --</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="pembayaran">Metode Pembayaran</label>
+                    <label for="pembayaran">Metode Transaksi</label>
                     <select id="pembayaran" required>
-                        <option value="">-- Pilih Pembayaran --</option>
-                        <option value="Cash">Cash (Bayar di Tempat)</option>
-                        <option value="Transfer BRI">Transfer BRI</option>
+                        <option value="">-- Tentukan Cara Bayar --</option>
+                        <option value="Cash">Cash / Bayar di Tempat</option>
+                        <option value="Transfer BRI">Transfer Bank BRI</option>
                     </select>
                 </div>
 
                 <div class="checkbox-group">
                     <input type="checkbox" id="syaratCheck">
-                    <label for="syaratCheck">Saya telah membaca dan menyetujui <span class="link-syarat" id="btnSyarat">Syarat dan Aturan Penggunaan PS3 HEN</span>.</label>
+                    <label for="syaratCheck">Saya dengan sadar telah membaca dan menyetujui seluruh <span class="link-syarat" id="btnSyarat">Syarat & Ketentuan Rental</span>.</label>
                 </div>
 
-                <div id="loader">Memproses Data...</div>
-                <button type="submit" class="btn-sewa" id="btnSubmit" disabled>Sewa Sekarang</button>
+                <div id="loader">Mempersiapkan Akses...</div>
+                <button type="submit" class="btn-sewa" id="btnSubmit" disabled>Mulai Sewa Sekarang</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal Syarat & Ketentuan -->
+    <!-- Modal Syarat -->
     <div id="syaratModal" class="modal">
         <div class="modal-content">
-            <span class="close" id="closeSyarat">&times;</span>
-            <h2>Syarat & Aturan PS3 HEN</h2>
+            <span class="close-btn" id="closeSyarat">&times;</span>
+            <h2>Aturan Main PS3 HEN</h2>
             <ol>
-                <li>Penyewa wajib mengisi data diri dengan benar dan valid.</li>
-                <li><strong>DILARANG KERAS</strong> melakukan update sistem (System Update) pada PS3.</li>
-                <li><strong>DILARANG</strong> menghapus game, file, aplikasi, atau mengubah settingan PS3 HEN.</li>
-                <li><strong>DILARANG</strong> login akun PSN (PlayStation Network) sembarangan.</li>
-                <li><strong>DILARANG</strong> membongkar, merusak segel, atau memodifikasi unit PS3 dan kelengkapannya.</li>
-                <li>Jika terjadi kerusakan unit, stik, atau kehilangan akibat kelalaian penyewa, <strong>WAJIB GANTI RUGI</strong> sesuai harga perbaikan/barang.</li>
-                <li>Keterlambatan pengembalian dari waktu yang ditentukan akan dikenakan denda sesuai tarif jam tambahan.</li>
-                <li>Unit wajib dikembalikan dalam kondisi lengkap seperti semula (Konsol, Stik, Kabel HDMI, Kabel Power, Kabel Cas Stik).</li>
-                <li>Save data (progress game) pribadi menjadi tanggung jawab penyewa, sewaktu-waktu dapat terhapus.</li>
-                <li>PS3 hanya untuk penggunaan normal dan pribadi, <strong>BUKAN</strong> untuk disewakan ulang ke pihak lain.</li>
+                <li>Penyewa wajib mengisi data diri yang sebenar-benarnya.</li>
+                <li><strong>DILARANG KERAS</strong> melakukan update sistem (System Update) via internet/flashdisk.</li>
+                <li><strong>DILARANG</strong> menghapus game, aplikasi (Multiman, dll), atau mengubah setting root.</li>
+                <li><strong>DILARANG</strong> login akun PSN sembarangan untuk menghindari banned.</li>
+                <li><strong>DILARANG</strong> membongkar, merusak segel baut, atau memodifikasi fisik console.</li>
+                <li>Segala kerusakan fisik / sistem akibat kelalaian (jatuh, kena air, dsb) <strong>WAJIB DIGANTI RUGI</strong> sesuai nilai komponen.</li>
+                <li>Keterlambatan waktu sewa (overtime) dikenakan biaya tambahan per jam.</li>
+                <li>Kelengkapan wajib utuh saat kembali (Mesin, Stick, Kabel HDMI, Power, USB Charger).</li>
+                <li>Data save game pribadi bukan tanggung jawab admin jika tertimpa/terhapus.</li>
+                <li>Dilarang keras menyewakan ulang (sub-rental) unit ke pihak ketiga.</li>
             </ol>
-            <div style="text-align: center; margin-top: 20px;">
-                <button id="btnSetujuModal" style="padding: 10px 20px; background: var(--neon-purple); border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Saya Mengerti & Setuju</button>
+            <div style="text-align: center; margin-top: 30px;">
+                <button id="btnSetujuModal" style="padding: 12px 30px; background: var(--primary); border: none; color: #000; border-radius: 8px; cursor: pointer; font-weight: 800; text-transform: uppercase;">Saya Paham & Setuju</button>
             </div>
         </div>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="toast">Notifikasi</div>
+
     <!-- Firebase SDK (Modular v9 via module) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Konfigurasi Firebase dari User
         const firebaseConfig = {
             apiKey: "AIzaSyDV5S1jEFxw_tGWHBVqGe_erZSsOKRK2gU",
             authDomain: "rental-ps3-hen.firebaseapp.com",
-            databaseURL: "https://rental-ps3-hen-default-rtdb.firebaseio.com", // Penting untuk Realtime DB
+            databaseURL: "https://rental-ps3-hen-default-rtdb.firebaseio.com",
             projectId: "rental-ps3-hen",
             storageBucket: "rental-ps3-hen.firebasestorage.app",
             messagingSenderId: "209728877379",
             appId: "1:209728877379:web:3fcd356cc427c5172af5f6"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
-        let availablePackages = {};
+        // --- UI Utils ---
+        const showToast = (msg, isError = false) => {
+            const toast = document.getElementById('toast');
+            toast.style.borderColor = isError ? 'var(--danger)' : 'var(--primary)';
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        };
 
-        // DOM Elements
+        // --- DOM Elements ---
+        let availablePackages = {};
         const form = document.getElementById('bookingForm');
         const paketSelect = document.getElementById('paket');
         const btnSubmit = document.getElementById('btnSubmit');
         const syaratCheck = document.getElementById('syaratCheck');
         const modal = document.getElementById('syaratModal');
-        const btnSyarat = document.getElementById('btnSyarat');
-        const closeSyarat = document.getElementById('closeSyarat');
-        const btnSetujuModal = document.getElementById('btnSetujuModal');
-        const nohpInput = document.getElementById('nohp');
         const hpError = document.getElementById('hpError');
-        const loader = document.getElementById('loader');
         const adminPhone = "6287745756269";
 
-        // Handle Modal
-        btnSyarat.onclick = () => modal.style.display = "block";
-        closeSyarat.onclick = () => modal.style.display = "none";
-        btnSetujuModal.onclick = () => {
+        // --- Modal Events ---
+        document.getElementById('btnSyarat').onclick = () => modal.style.display = "flex";
+        document.getElementById('closeSyarat').onclick = () => modal.style.display = "none";
+        document.getElementById('btnSetujuModal').onclick = () => {
             modal.style.display = "none";
             syaratCheck.checked = true;
-            checkFormValidity();
+            validateForm();
         };
-        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+        window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
 
-        // Form Validation & Button State
-        function checkFormValidity() {
-            const isHpValid = /^(08|628)\d{8,12}$/.test(nohpInput.value.replace(/\D/g, ''));
-            if(nohpInput.value && !isHpValid) {
-                hpError.style.display = 'block';
-            } else {
-                hpError.style.display = 'none';
-            }
+        // --- Form Validation ---
+        const validateForm = () => {
+            const hpVal = document.getElementById('nohp').value.replace(/\D/g, '');
+            const isHpValid = /^(08|628)\d{8,12}$/.test(hpVal);
             
-            const isFormFilled = document.getElementById('nama').value && nohpInput.value && paketSelect.value && document.getElementById('pembayaran').value;
+            if(document.getElementById('nohp').value && !isHpValid) hpError.style.display = 'block';
+            else hpError.style.display = 'none';
             
-            if (isFormFilled && isHpValid && syaratCheck.checked) {
-                btnSubmit.disabled = false;
-            } else {
-                btnSubmit.disabled = true;
-            }
-        }
+            const isFilled = document.getElementById('nama').value && hpVal && paketSelect.value && document.getElementById('pembayaran').value;
+            btnSubmit.disabled = !(isFilled && isHpValid && syaratCheck.checked);
+        };
         
-        form.addEventListener('input', checkFormValidity);
-        syaratCheck.addEventListener('change', checkFormValidity);
+        form.addEventListener('input', validateForm);
+        syaratCheck.addEventListener('change', validateForm);
 
-        // Fetch Data: Packages
+        // --- Fetch Data ---
         onValue(ref(db, 'packages'), (snapshot) => {
             const data = snapshot.val();
-            const packageList = document.getElementById('packageList');
-            packageList.innerHTML = '';
-            paketSelect.innerHTML = '<option value="">-- Pilih Paket --</option>';
+            const list = document.getElementById('packageList');
+            list.innerHTML = ''; paketSelect.innerHTML = '<option value="">-- Pilih Paket Terlebih Dahulu --</option>';
             availablePackages = {};
 
             if (data) {
                 for (let key in data) {
                     if (data[key].is_active) {
                         availablePackages[key] = data[key];
-                        // Tampil di daftar harga
-                        packageList.innerHTML += `
+                        list.innerHTML += `
                             <div class="item-card">
                                 <h3>${data[key].name}</h3>
                                 <div class="price">Rp ${parseInt(data[key].price).toLocaleString('id-ID')}</div>
-                                <div class="desc">Durasi: ${data[key].duration_hours} Jam<br>${data[key].description}</div>
+                                <div class="desc">⏳ Durasi: ${data[key].duration_hours} Jam<br>${data[key].description}</div>
                             </div>
                         `;
-                        // Tampil di select box
-                        paketSelect.innerHTML += `<option value="${key}">${data[key].name} - Rp ${parseInt(data[key].price).toLocaleString('id-ID')}</option>`;
+                        paketSelect.innerHTML += `<option value="${key}">${data[key].name} (Rp ${parseInt(data[key].price).toLocaleString('id-ID')})</option>`;
                     }
                 }
-            } else {
-                packageList.innerHTML = '<p>Belum ada paket tersedia.</p>';
-            }
+            } else { list.innerHTML = '<p style="color:#888;">Belum ada paket tersedia.</p>'; }
         });
 
-        // Fetch Data: Promos
         onValue(ref(db, 'promos'), (snapshot) => {
             const data = snapshot.val();
-            const promoSection = document.getElementById('promoSection');
-            const promoList = document.getElementById('promoList');
-            promoList.innerHTML = '';
-            
+            const section = document.getElementById('promoSection');
+            const list = document.getElementById('promoList');
+            list.innerHTML = '';
             let hasPromo = false;
+            
             if (data) {
                 for (let key in data) {
                     if (data[key].is_active) {
                         hasPromo = true;
-                        promoList.innerHTML += `
+                        list.innerHTML += `
                             <div class="item-card promo-card">
-                                <h3>🎁 ${data[key].title}</h3>
-                                <div class="desc" style="color:var(--white)">${data[key].discount_info}</div>
+                                <h3>✨ ${data[key].title}</h3>
+                                <div class="price" style="font-size:1.1rem; color:var(--text-main); text-shadow:none;">${data[key].discount_info}</div>
                                 <div class="desc">${data[key].description}</div>
                             </div>
                         `;
                     }
                 }
             }
-            promoSection.style.display = hasPromo ? 'block' : 'none';
+            section.style.display = hasPromo ? 'block' : 'none';
         });
 
-        // Submit Booking
+        // --- Submit ---
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             btnSubmit.style.display = 'none';
-            loader.style.display = 'block';
+            document.getElementById('loader').style.display = 'block';
 
-            const nama = document.getElementById('nama').value;
-            let nohp = nohpInput.value.replace(/\D/g, ''); // Bersihkan format
-            if(nohp.startsWith('0')) nohp = '62' + nohp.substring(1); // Format ke 62
+            const nama = document.getElementById('nama').value.trim();
+            let nohp = document.getElementById('nohp').value.replace(/\D/g, '');
+            if(nohp.startsWith('0')) nohp = '62' + nohp.substring(1);
             
-            const paketId = paketSelect.value;
-            const pembayaran = document.getElementById('pembayaran').value;
-            const selectedPackage = availablePackages[paketId];
+            const pkgId = paketSelect.value;
+            const metode = document.getElementById('pembayaran').value;
+            const pkg = availablePackages[pkgId];
             
-            // Generate Booking ID (Format: PS3-timestamp)
-            const dateNow = new Date();
-            const bookingId = "PS3-" + dateNow.getTime().toString().substring(5);
+            const bookingId = "PS3-" + Date.now().toString().substring(5);
             
-            const bookingData = {
+            const payload = {
                 booking_id: bookingId,
                 nama: nama,
                 nohp: nohp,
-                paket_id: paketId,
-                paket_nama: selectedPackage.name,
-                durasi_jam: parseFloat(selectedPackage.duration_hours),
-                harga: parseFloat(selectedPackage.price),
-                metode_pembayaran: pembayaran,
-                tanggal_booking: dateNow.toISOString(),
-                status_pembayaran: "Belum Bayar", // Belum bayar, Sudah bayar
-                status_konfirmasi: "Belum", // Belum, Sudah
-                status_countdown: "idle", // idle, running, paused, finished
-                sisa_waktu: parseFloat(selectedPackage.duration_hours) * 60 * 60 * 1000, // dalam milidetik
+                paket_id: pkgId,
+                paket_nama: pkg.name,
+                durasi_jam: parseFloat(pkg.duration_hours),
+                harga: parseFloat(pkg.price),
+                metode_pembayaran: metode,
+                tanggal_booking: new Date().toISOString(),
+                status_pembayaran: "Belum Bayar",
+                status_konfirmasi: "Belum",
+                status_countdown: "idle",
+                sisa_waktu: parseFloat(pkg.duration_hours) * 3600000,
                 waktu_selesai: 0,
                 catatan_admin: "",
                 is_history: false
             };
 
             try {
-                // Simpan ke Firebase
-                await set(ref(db, 'bookings/' + bookingId), bookingData);
+                await set(ref(db, 'bookings/' + bookingId), payload);
                 
-                // Format Pesan WhatsApp
-                const waMessage = `Halo Admin Rental PS3 HEN, saya ingin menyewa dengan detail berikut:
+                const waText = `Halo Admin PS3 Premium, saya ingin merental console:\n\n` +
+                    `*ID Booking:* ${bookingId}\n` +
+                    `*Nama:* ${nama}\n` +
+                    `*No. HP:* ${nohp}\n` +
+                    `*Paket:* ${pkg.name} (${pkg.duration_hours} Jam)\n` +
+                    `*Total:* Rp ${parseInt(pkg.price).toLocaleString('id-ID')}\n` +
+                    `*Metode:* ${metode}\n\n` +
+                    `Mohon segera dikonfirmasi. Terima kasih!`;
                 
-*No Booking:* ${bookingId}
-*Nama:* ${nama}
-*No HP:* ${nohp}
-*Paket:* ${selectedPackage.name} (${selectedPackage.duration_hours} Jam)
-*Harga:* Rp ${parseInt(selectedPackage.price).toLocaleString('id-ID')}
-*Pembayaran:* ${pembayaran}
-
-Mohon konfirmasi pesanan saya. Terima kasih.`;
-
-                const waUrl = `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(waMessage)}`;
-                
-                // Redirect ke WhatsApp
-                window.location.href = waUrl;
-                
-                // Reset Form
-                form.reset();
-                syaratCheck.checked = false;
-                checkFormValidity();
-            } catch (error) {
-                alert("Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.");
-                console.error(error);
-            } finally {
+                showToast("Berhasil! Mengalihkan ke WhatsApp...");
+                setTimeout(() => { window.location.href = `https://wa.me/${adminPhone}?text=${encodeURIComponent(waText)}`; }, 1500);
+            } catch (err) {
+                showToast("Terjadi kesalahan jaringan.", true);
                 btnSubmit.style.display = 'block';
-                loader.style.display = 'none';
+                document.getElementById('loader').style.display = 'none';
             }
         });
     </script>
