@@ -295,6 +295,42 @@
         </div>
     </div>
 
+    <script>
+        // Fungsi Toast (Notifikasi)
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div'); toast.className = 'toast';
+            if(type === 'error') toast.style.borderLeftColor = 'var(--c-unpaid)';
+            if(type === 'warning') toast.style.borderLeftColor = 'var(--c-paused)';
+            toast.innerHTML = `<div>${message}</div>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.animation = 'fadeOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // Fungsi Login 100% Instan (Tidak bergantung pada Firebase Loading)
+        window.login = function() {
+            const inputPass = document.getElementById('adminPass').value;
+            // Password admin adalah "admin123"
+            if(inputPass === 'admin123') {
+                localStorage.setItem('admin_logged', 'true'); 
+                document.getElementById('loginOverlay').style.display = 'none'; 
+                window.showToast("Akses Diberikan");
+            } else { 
+                window.showToast("Sandi Ditolak! Pastikan huruf kecil semua.", "error"); 
+            }
+        }
+
+        window.logout = function() { 
+            localStorage.removeItem('admin_logged'); 
+            location.reload(); 
+        }
+        
+        // Pengecekan sesi saat halaman pertama kali dibuka
+        if(localStorage.getItem('admin_logged') === 'true') {
+            document.getElementById('loginOverlay').style.display = 'none';
+        }
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -319,24 +355,6 @@
         let bookingsData = {};
         let currentFilter = 'all';
         let currentTvFont = "'Orbitron', sans-serif";
-
-        window.showToast = function(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div'); toast.className = 'toast';
-            if(type === 'error') toast.style.borderLeftColor = 'var(--c-unpaid)';
-            if(type === 'warning') toast.style.borderLeftColor = 'var(--c-paused)';
-            toast.innerHTML = `<div>${message}</div>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.animation = 'fadeOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
-        }
-
-        window.login = function() {
-            if(document.getElementById('adminPass').value === 'admin123') {
-                localStorage.setItem('admin_logged', 'true'); document.getElementById('loginOverlay').style.display = 'none'; showToast("Akses Diberikan");
-            } else { showToast("Sandi Ditolak!", "error"); }
-        }
-        window.logout = function() { localStorage.removeItem('admin_logged'); location.reload(); }
-        if(localStorage.getItem('admin_logged') === 'true') document.getElementById('loginOverlay').style.display = 'none';
 
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -367,14 +385,13 @@
                 currentTvFont = font;
                 fontSelect.value = font;
                 fontPreview.style.fontFamily = font;
-                // Update existing timers on admin board
                 document.querySelectorAll('.timer-display-admin').forEach(el => el.style.fontFamily = font);
             }
         });
 
         window.saveTvFont = async function() {
             await set(ref(db, 'settings/tv_font'), fontSelect.value);
-            showToast("Gaya Font TV Berhasil Diubah!");
+            window.showToast("Gaya Font TV Berhasil Diubah!");
         }
 
         // --- BOOKING LOGIC ---
@@ -452,17 +469,17 @@
 
         window.act = async function(id, action) {
             let b = bookingsData[id]; let updates = {}; let now = getTrueTime();
-            if(action === 'bayar') { updates['status_pembayaran'] = 'Sudah Bayar'; showToast('Lunas!'); }
-            if(action === 'konfirmasi') { updates['status_konfirmasi'] = 'Sudah'; showToast('Terkonfirmasi!'); }
+            if(action === 'bayar') { updates['status_pembayaran'] = 'Sudah Bayar'; window.showToast('Lunas!'); }
+            if(action === 'konfirmasi') { updates['status_konfirmasi'] = 'Sudah'; window.showToast('Terkonfirmasi!'); }
             if(action === 'start') {
-                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return showToast("Pastikan Lunas & Konfirmasi!", "error");
+                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return window.showToast("Pastikan Lunas & Konfirmasi!", "error");
                 let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
-                if(rem <= 0) return showToast("Sisa nol. Tambah manual.", "error");
-                updates['status_countdown'] = 'running'; updates['waktu_selesai'] = now + rem; showToast('Mulai Bermain!');
+                if(rem <= 0) return window.showToast("Sisa nol. Tambah manual.", "error");
+                updates['status_countdown'] = 'running'; updates['waktu_selesai'] = now + rem; window.showToast('Mulai Bermain!');
             }
-            if(action === 'pause') { updates['status_countdown'] = 'paused'; updates['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); showToast('Permainan Dijeda', "warning"); }
-            if(action === 'reset') { updates['status_countdown'] = 'idle'; updates['sisa_waktu'] = b.durasi_jam * 3600000; updates['waktu_selesai'] = 0; showToast('Reset Berhasil'); }
-            if(action === 'finish') { updates['is_history'] = true; updates['status_countdown'] = 'finished'; showToast('Beres & Diarsipkan'); }
+            if(action === 'pause') { updates['status_countdown'] = 'paused'; updates['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); window.showToast('Permainan Dijeda', "warning"); }
+            if(action === 'reset') { updates['status_countdown'] = 'idle'; updates['sisa_waktu'] = b.durasi_jam * 3600000; updates['waktu_selesai'] = 0; window.showToast('Reset Berhasil'); }
+            if(action === 'finish') { updates['is_history'] = true; updates['status_countdown'] = 'finished'; window.showToast('Beres & Diarsipkan'); }
             if(action === 'delete') {
                 const toast = document.createElement('div'); toast.className = 'toast'; toast.style.borderLeftColor = 'var(--c-unpaid)';
                 toast.innerHTML = `<div>Yakin Hapus ${b.nama}?</div><div style="display:flex; gap:8px;"><button style="background:var(--c-unpaid); border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;" onclick="confirmDelete('${id}'); this.parentElement.parentElement.remove()">HAPUS</button><button style="background:#475569; border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">KEMBALI</button></div>`;
@@ -470,15 +487,15 @@
             }
             if(Object.keys(updates).length > 0) await update(ref(db, `bookings/${id}`), updates);
         }
-        window.confirmDelete = async function(id) { await remove(ref(db, `bookings/${id}`)); showToast('Musnah Permanen', 'success'); }
+        window.confirmDelete = async function(id) { await remove(ref(db, `bookings/${id}`)); window.showToast('Musnah Permanen', 'success'); }
         window.copyLink = function(id) {
             let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
-            navigator.clipboard.writeText(url).then(() => showToast("URL TV Tersalin"));
+            navigator.clipboard.writeText(url).then(() => window.showToast("URL TV Tersalin"));
         }
 
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
         window.openNoteModal = function(id) { document.getElementById('noteBookingId').value = id; document.getElementById('adminNoteText').value = bookingsData[id].catatan_admin || ""; document.getElementById('noteModal').style.display = 'flex'; }
-        window.saveNote = async function() { await update(ref(db, `bookings/${document.getElementById('noteBookingId').value}`), { catatan_admin: document.getElementById('adminNoteText').value }); closeModal('noteModal'); showToast("Pesan Naik Ke TV"); }
+        window.saveNote = async function() { await update(ref(db, `bookings/${document.getElementById('noteBookingId').value}`), { catatan_admin: document.getElementById('adminNoteText').value }); window.closeModal('noteModal'); window.showToast("Pesan Naik Ke TV"); }
 
         window.openManualTimeModal = function(id) {
             document.getElementById('manualTimeId').value = id;
@@ -493,7 +510,7 @@
             let up = {};
             if(b.status_countdown === 'running') { up['waktu_selesai'] = now + nSisa; up['sisa_waktu'] = nSisa; } 
             else { up['sisa_waktu'] = nSisa; if(b.status_countdown === 'finished') up['status_countdown'] = 'paused'; }
-            await update(ref(db, `bookings/${id}`), up); closeModal('manualTimeModal'); showToast("Waktu Selesai Disesuaikan");
+            await update(ref(db, `bookings/${id}`), up); window.closeModal('manualTimeModal'); window.showToast("Waktu Selesai Disesuaikan");
         }
 
         // Pakets
@@ -504,13 +521,13 @@
         window.savePackage = async function() {
             let id = document.getElementById('pkgId').value;
             let data = { name: document.getElementById('pkgName').value, duration_hours: parseFloat(document.getElementById('pkgDuration').value), price: parseFloat(document.getElementById('pkgPrice').value), description: document.getElementById('pkgDesc').value, is_active: document.getElementById('pkgStatus').value === 'true' };
-            if(!data.name || !data.duration_hours || !data.price) return showToast("Isi yang lengkap!", "error");
-            if(id) { await update(ref(db, `packages/${id}`), data); showToast("Selesai Edit"); } else { await push(ref(db, 'packages'), data); showToast("Masuk Database"); }
-            resetPackageForm();
+            if(!data.name || !data.duration_hours || !data.price) return window.showToast("Isi yang lengkap!", "error");
+            if(id) { await update(ref(db, `packages/${id}`), data); window.showToast("Selesai Edit"); } else { await push(ref(db, 'packages'), data); window.showToast("Masuk Database"); }
+            window.resetPackageForm();
         }
         window.editPackage = function(id, n, d, p, ds, a) { document.getElementById('pkgId').value = id; document.getElementById('pkgName').value = n; document.getElementById('pkgDuration').value = d; document.getElementById('pkgPrice').value = p; document.getElementById('pkgDesc').value = ds; document.getElementById('pkgStatus').value = a ? 'true' : 'false'; window.scrollTo(0,0); }
         window.resetPackageForm = function() { document.getElementById('pkgId').value = ''; document.getElementById('pkgName').value = ''; document.getElementById('pkgDuration').value = ''; document.getElementById('pkgPrice').value = ''; document.getElementById('pkgDesc').value = ''; }
-        window.deletePackage = async function(id) { if(confirm("Tendang paket ini?")) { await remove(ref(db, `packages/${id}`)); showToast("Lenyap"); } }
+        window.deletePackage = async function(id) { if(confirm("Tendang paket ini?")) { await remove(ref(db, `packages/${id}`)); window.showToast("Lenyap"); } }
 
         // Promos
         onValue(ref(db, 'promos'), (snapshot) => {
@@ -520,13 +537,13 @@
         window.savePromo = async function() {
             let id = document.getElementById('promoId').value;
             let data = { title: document.getElementById('promoTitle').value, discount_info: document.getElementById('promoDiscount').value, description: document.getElementById('promoDesc').value, is_active: document.getElementById('promoStatus').value === 'true' };
-            if(!data.title) return showToast("Butuh judul!", "error");
-            if(id) { await update(ref(db, `promos/${id}`), data); showToast("Selesai Edit"); } else { await push(ref(db, 'promos'), data); showToast("Masuk Database"); }
-            resetPromoForm();
+            if(!data.title) return window.showToast("Butuh judul!", "error");
+            if(id) { await update(ref(db, `promos/${id}`), data); window.showToast("Selesai Edit"); } else { await push(ref(db, 'promos'), data); window.showToast("Masuk Database"); }
+            window.resetPromoForm();
         }
         window.editPromo = function(id, t, di, ds, a) { document.getElementById('promoId').value = id; document.getElementById('promoTitle').value = t; document.getElementById('promoDiscount').value = di; document.getElementById('promoDesc').value = ds; document.getElementById('promoStatus').value = a ? 'true' : 'false'; window.scrollTo(0,0); }
         window.resetPromoForm = function() { document.getElementById('promoId').value = ''; document.getElementById('promoTitle').value = ''; document.getElementById('promoDiscount').value = ''; document.getElementById('promoDesc').value = ''; }
-        window.deletePromo = async function(id) { if(confirm("Tendang promo ini?")) { await remove(ref(db, `promos/${id}`)); showToast("Lenyap"); } }
+        window.deletePromo = async function(id) { if(confirm("Tendang promo ini?")) { await remove(ref(db, `promos/${id}`)); window.showToast("Lenyap"); } }
 
     </script>
 </body>
