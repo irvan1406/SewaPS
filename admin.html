@@ -3,135 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Area - PS3</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
+    <title>PS3 Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0A0D14;
-            --bg-panel: #11151D;
-            --bg-card: #161B26;
-            --border: #212836;
-            --primary: #3B82F6;
-            --primary-hover: #2563EB;
+            --bg-dark: #0F172A; /* Slate 900 */
+            --bg-panel: #1E293B; /* Slate 800 */
+            --border: #334155; /* Slate 700 */
+            --primary: #3B82F6; /* Blue 500 */
             --text-main: #F8FAFC;
             --text-dim: #94A3B8;
             
-            --c-unpaid: #EF4444;
-            --c-paid: #10B981;
-            --c-running: #06B6D4;
-            --c-paused: #F59E0B;
+            --c-red: #EF4444;
+            --c-green: #10B981;
+            --c-blue: #0EA5E9;
+            --c-yellow: #F59E0B;
         }
         
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        
         /* Toast */
-        #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 12px; }
-        .toast { background: var(--bg-panel); border-left: 4px solid var(--primary); padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; min-width: 280px; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; border: 1px solid var(--border); }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: #0F172A; border-left: 4px solid var(--primary); padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-weight: 500; border: 1px solid var(--border); animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* Login */
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 380px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .login-box h2 { margin-bottom: 30px; font-weight: 700; font-size: 1.8rem; text-align: center; }
-        .login-box input { width: 100%; margin-bottom: 20px; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.2s; }
-        .login-box input:focus { border-color: var(--primary); }
-        .login-box button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; font-weight: 600; font-size: 1.1rem; cursor: pointer; border-radius: 12px; transition: 0.2s; }
-        .login-box button:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        /* Login Screen */
+        #loginOverlay { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center; }
+        .login-box h2 { margin-bottom: 25px; font-weight: 700; color: #FFF; }
+        .login-box input { width: 100%; padding: 14px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 20px; outline: none; }
+        .login-box button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .login-box button:hover { opacity: 0.9; }
 
-        /* Sidebar */
-        .sidebar { width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 100; }
-        .brand { padding: 30px 24px; font-size: 1.6rem; font-weight: 800; border-bottom: 1px solid var(--border); }
+        /* Sidebar Layout */
+        .sidebar { width: 260px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; }
+        .brand { padding: 24px; font-size: 1.4rem; font-weight: 800; border-bottom: 1px solid var(--border); color: #FFF; }
         .brand span { color: var(--primary); }
-        .nav-menu { padding: 24px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 14px 20px; text-align: left; font-size: 1rem; font-weight: 500; border-radius: 10px; cursor: pointer; transition: 0.2s; }
-        .nav-btn:hover { background: rgba(255,255,255,0.03); color: white; }
-        .nav-btn.active { background: rgba(59, 130, 246, 0.1); color: var(--primary); font-weight: 600; }
-        .logout-btn { padding: 24px 12px; border-top: 1px solid var(--border); }
-        .logout-btn button { width: 100%; padding: 14px; background: rgba(239, 68, 68, 0.1); color: var(--c-unpaid); border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .logout-btn button:hover { background: var(--c-unpaid); color: white; }
+        .nav-menu { padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 12px 16px; text-align: left; font-size: 0.95rem; font-weight: 500; border-radius: 8px; cursor: pointer; }
+        .nav-btn:hover { background: var(--border); color: white; }
+        .nav-btn.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 600; }
+        .logout-btn { padding: 20px; border-top: 1px solid var(--border); }
+        .logout-btn button { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--c-red); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        /* Main Content */
-        .main-content { flex: 1; margin-left: 280px; padding: 40px; }
-        .section { display: none; animation: fadeIn 0.3s ease; }
+        /* Main Area */
+        .main-content { flex: 1; margin-left: 260px; padding: 40px; }
+        .section { display: none; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .header-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 24px; color: #FFF; }
 
-        .header-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -0.5px; }
+        /* Filters */
+        .filter-bar { display: flex; gap: 8px; margin-bottom: 24px; }
+        .filter-btn { padding: 8px 16px; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-dim); font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; }
+        .filter-btn.active { background: var(--text-main); color: var(--bg-dark); border-color: var(--text-main); font-weight: 600; }
 
-        .filter-bar { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
-        .filter-btn { padding: 10px 20px; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-dim); font-weight: 500; border-radius: 20px; cursor: pointer; transition: 0.2s; }
-        .filter-btn:hover { color: white; border-color: #475569; }
-        .filter-btn.active { background: var(--text-main); color: #000; border-color: var(--text-main); font-weight: 600; }
+        /* List Layout untuk Booking (LEBIH RAPI DARI CARD) */
+        .list-container { display: flex; flex-direction: column; gap: 16px; }
+        .list-item { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; border-left: 4px solid var(--border); }
+        .list-item.st-unpaid { border-left-color: var(--c-red); }
+        .list-item.st-paid { border-left-color: var(--c-green); }
+        .list-item.st-running { border-left-color: var(--c-blue); background: rgba(14, 165, 233, 0.05); }
+        .list-item.st-paused { border-left-color: var(--c-yellow); }
+        .list-item.st-finished { opacity: 0.6; }
+        
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .item-info h3 { font-size: 1.2rem; color: #FFF; margin-bottom: 4px; }
+        .item-info p { font-size: 0.85rem; color: var(--text-dim); display: flex; gap: 12px; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); }
+        
+        .timer-display-admin { font-size: 2.2rem; font-weight: 700; color: #FFF; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+        
+        .item-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 16px; border-top: 1px solid var(--border); }
+        .btn-action { padding: 8px 14px; font-size: 0.85rem; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; color: #FFF; }
+        .btn-action:hover { filter: brightness(1.1); }
+        .b-green { background: var(--c-green); color: #000; }
+        .b-red { background: var(--c-red); }
+        .b-blue { background: var(--c-blue); color: #000; }
+        .b-yellow { background: var(--c-yellow); color: #000; }
+        .b-dark { background: #334155; }
+        .b-outline { background: transparent; border: 1px solid var(--border); }
 
-        /* Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
-        .card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: 0.3s; }
-        .card:hover { transform: translateY(-4px); border-color: #334155; }
+        /* Form Inputs */
+        .crud-box { background: var(--bg-panel); padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; }
+        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 12px; outline: none; }
         
-        .card-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); }
-        .card-title { font-weight: 700; font-size: 1.15rem; }
-        .badge { font-size: 0.75rem; padding: 6px 12px; border-radius: 20px; background: rgba(255,255,255,0.08); font-weight: 600; }
-        
-        .card-body { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
-        .detail-row { display: flex; justify-content: space-between; font-size: 0.95rem; }
-        .detail-label { color: var(--text-dim); }
-        .detail-val { font-weight: 500; text-align: right; }
-        
-        /* Font Preview Timer */
-        .timer-display-admin { font-size: 2.5rem; text-align: center; margin: 20px 0 10px; color: white; letter-spacing: 1px; transition: font-family 0.3s; }
-        
-        .card-actions { padding: 20px 24px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .action-btn { padding: 10px; font-size: 0.9rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: white; transition: 0.2s; text-align: center; }
-        .action-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-        .action-btn.full { grid-column: span 2; }
-        
-        .btn-green { background: var(--c-paid); color: #000; }
-        .btn-red { background: var(--c-unpaid); }
-        .btn-blue { background: var(--c-running); color: #000; }
-        .btn-yellow { background: var(--c-paused); color: #000; }
-        .btn-dark { background: #2A3241; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
-        .btn-outline:hover { color: white; border-color: #64748B; }
+        table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        th, td { padding: 16px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-size: 0.85rem; font-weight: 600; }
 
-        /* Settings Card */
-        .settings-card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); padding: 30px; max-width: 600px; }
-        .settings-card label { display: block; margin-bottom: 10px; color: var(--text-dim); font-weight: 500; }
-        .settings-card select { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; outline: none; font-size: 1.1rem; margin-bottom: 20px; }
-
-        /* Form CRUD */
-        .crud-box { background: var(--bg-card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 30px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;}
-        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; outline: none; font-size: 1rem; }
-        .crud-box input:focus, .crud-box textarea:focus { border-color: var(--primary); }
-        
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 18px 24px; border-bottom: 1px solid var(--border); }
-        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-
-        /* Modals */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--bg-card); width: 100%; max-width: 480px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .modal-header { padding: 24px 30px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.25rem; }
-        .modal-body { padding: 30px; }
-        .modal-footer { padding: 24px 30px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2); }
-        
-        .time-inputs { display: flex; gap: 15px; margin: 20px 0; }
-        .time-inputs div { flex: 1; text-align: center; }
-        .time-inputs label { font-size: 0.8rem; color: var(--text-dim); display: block; margin-bottom: 8px; font-weight: 600;}
-        .time-inputs input { width: 100%; text-align: center; font-size: 1.8rem; font-family: 'JetBrains Mono', monospace; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; }
-        .time-inputs input:focus { border-color: var(--primary); outline:none; }
-        select.mode-select { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; font-weight: 500; outline:none; font-size: 1rem;}
+        /* Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--bg-panel); width: 100%; max-width: 400px; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.1rem; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: var(--bg-dark); }
+        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 12px; outline: none; }
 
         @media (max-width: 900px) {
             .sidebar { transform: translateX(-100%); transition: 0.3s; }
-            .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 20px; }
         }
     </style>
@@ -139,201 +109,114 @@
 <body>
 
     <div id="toastContainer"></div>
-
     <div id="loginOverlay">
         <div class="login-box">
-            <h2>PS3 ADMIN</h2>
-            <input type="password" id="adminPass" placeholder="Password Admin" onkeypress="if(event.key==='Enter') login()">
-            <button onclick="login()">Masuk Sistem</button>
-        </div>
-    </div>
-
-    <div class="sidebar">
-        <div class="brand">Admin<span>Panel</span></div>
-        <div class="nav-menu">
-            <button class="nav-btn active" data-target="dashboard">⚡ Live Dashboard</button>
-            <button class="nav-btn" data-target="packages">📦 Paket Harga</button>
-            <button class="nav-btn" data-target="promos">🎁 Kelola Promo</button>
-            <button class="nav-btn" data-target="history">📁 Riwayat Sewa</button>
-            <button class="nav-btn" data-target="settings">⚙️ Pengaturan TV</button>
-        </div>
-        <div class="logout-btn"><button onclick="logout()">Logout Keluar</button></div>
-    </div>
-
-    <div class="main-content">
-        
-        <div id="dashboard" class="section active">
-            <h1 class="header-title">Live Bookings</h1>
-            <div class="filter-bar">
-                <button class="filter-btn active" data-filter="all">Semua</button>
-                <button class="filter-btn" data-filter="unpaid">Belum Lunas</button>
-                <button class="filter-btn" data-filter="paid">Lunas (Menunggu)</button>
-                <button class="filter-btn" data-filter="running">Berjalan</button>
-                <button class="filter-btn" data-filter="finished">Waktu Habis</button>
-            </div>
-            <div class="grid" id="bookingGrid"></div>
-        </div>
-
-        <div id="history" class="section">
-            <h1 class="header-title">Riwayat Selesai</h1>
-            <div class="grid" id="historyGrid"></div>
-        </div>
-
-        <div id="packages" class="section">
-            <h1 class="header-title">Paket Harga</h1>
-            <div class="crud-box">
-                <input type="hidden" id="pkgId">
-                <div class="form-grid">
-                    <input type="text" id="pkgName" placeholder="Nama Paket" required>
-                    <input type="number" id="pkgDuration" placeholder="Durasi (Jam)" step="0.5" required>
-                    <input type="number" id="pkgPrice" placeholder="Harga (Rp)" required>
-                    <select id="pkgStatus">
-                        <option value="true">Status: Aktif</option>
-                        <option value="false">Status: Nonaktif</option>
-                    </select>
-                </div>
-                <textarea id="pkgDesc" placeholder="Keterangan / Fasilitas paket" rows="2" style="width:100%; margin-top:10px;"></textarea>
-                <div style="display:flex; gap:12px; margin-top:20px;">
-                    <button class="action-btn btn-blue" style="padding: 14px 30px;" onclick="savePackage()">Simpan Paket</button>
-                    <button class="action-btn btn-outline" style="padding: 14px 30px;" onclick="resetPackageForm()">Batal</button>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table>
-                    <thead><tr><th>Nama Paket</th><th>Durasi</th><th>Harga</th><th>Status</th><th style="text-align:right">Aksi</th></tr></thead>
-                    <tbody id="tablePackages"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="promos" class="section">
-            <h1 class="header-title">Manajemen Promo</h1>
-            <div class="crud-box">
-                <input type="hidden" id="promoId">
-                <div class="form-grid">
-                    <input type="text" id="promoTitle" placeholder="Judul Promo" required>
-                    <input type="text" id="promoDiscount" placeholder="Sorotan (cth: Diskon 10Rb)">
-                </div>
-                <textarea id="promoDesc" placeholder="Syarat Promo" rows="2" style="width:100%; margin-top:10px;"></textarea>
-                <select id="promoStatus" style="width:100%; margin-top:20px;">
-                    <option value="true">Status: Aktif</option>
-                    <option value="false">Status: Nonaktif</option>
-                </select>
-                <div style="display:flex; gap:12px; margin-top:20px;">
-                    <button class="action-btn btn-blue" style="padding: 14px 30px;" onclick="savePromo()">Simpan Promo</button>
-                    <button class="action-btn btn-outline" style="padding: 14px 30px;" onclick="resetPromoForm()">Batal</button>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table>
-                    <thead><tr><th>Judul Promo</th><th>Sorotan</th><th>Status</th><th style="text-align:right">Aksi</th></tr></thead>
-                    <tbody id="tablePromos"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="settings" class="section">
-            <h1 class="header-title">Pengaturan Layar TV</h1>
-            <div class="settings-card">
-                <label>Pilih Gaya Angka (Font) Countdown TV</label>
-                <select id="tvFontSelect" style="font-family: inherit;">
-                    <option value="'Orbitron', sans-serif" style="font-family: 'Orbitron', sans-serif">Orbitron (Modern Sci-Fi)</option>
-                    <option value="'JetBrains Mono', monospace" style="font-family: 'JetBrains Mono', monospace">JetBrains Mono (Hacker/Terminal)</option>
-                    <option value="'Share Tech Mono', monospace" style="font-family: 'Share Tech Mono', monospace">Share Tech Mono (Digital Jam)</option>
-                    <option value="'Teko', sans-serif" style="font-family: 'Teko', sans-serif">Teko (Tegas & Rapat)</option>
-                    <option value="'Outfit', sans-serif" style="font-family: 'Outfit', sans-serif">Outfit (Halus & Elegan)</option>
-                </select>
-                
-                <div style="padding: 20px; background: #0A0D14; border-radius: 12px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border);">
-                    <div style="color:var(--text-dim); font-size:0.85rem; margin-bottom:10px;">PREVIEW FONT</div>
-                    <div id="fontPreview" style="font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 15px rgba(0,229,255,0.4);">12:34:56</div>
-                </div>
-
-                <button class="action-btn btn-blue" style="padding: 14px 30px;" onclick="saveTvFont()">Simpan Pengaturan Font</button>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="noteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Pesan TV Khusus</div>
-            <div class="modal-body">
-                <input type="hidden" id="noteBookingId">
-                <textarea id="adminNoteText" rows="4" style="width:100%; padding:20px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:12px; outline:none; resize:none; font-size:1rem;" placeholder="Pesan peringatan / sapaan untuk tampil di layar..."></textarea>
-            </div>
-            <div class="modal-footer">
-                <button class="action-btn btn-outline" onclick="closeModal('noteModal')">Batal</button>
-                <button class="action-btn btn-blue" onclick="saveNote()">Tampilkan Pesan</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="manualTimeModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">Atur Ulang Waktu</div>
-            <div class="modal-body">
-                <input type="hidden" id="manualTimeId">
-                <p style="color:var(--text-dim); font-size:0.95rem; margin-bottom:20px; line-height:1.5;">Pilih mode perubahan dan ketikkan jumlah waktu yang diinginkan. Mesin akan menyesuaikan otomatis.</p>
-                
-                <select id="manualTimeMode" class="mode-select">
-                    <option value="add">TAMBAH (+) Waktu Dari Sisa Sekarang</option>
-                    <option value="sub">KURANGI (-) Waktu Dari Sisa Sekarang</option>
-                    <option value="set">SET KAKU (Timpa Sisa Waktu Jadi Baru)</option>
-                </select>
-
-                <div class="time-inputs">
-                    <div><label>JAM</label><input type="number" id="manHour" min="0" value="0" onclick="this.select()"></div>
-                    <div><label>MENIT</label><input type="number" id="manMinute" min="0" max="59" value="0" onclick="this.select()"></div>
-                    <div><label>DETIK</label><input type="number" id="manSecond" min="0" max="59" value="0" onclick="this.select()"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="action-btn btn-outline" onclick="closeModal('manualTimeModal')">Batal</button>
-                <button class="action-btn btn-blue" onclick="saveManualTime()">Jalankan Perubahan</button>
-            </div>
+            <h2>Admin Login</h2>
+            <input type="password" id="adminPass" placeholder="Masukkan Password (admin123)">
+            <button onclick="prosesLogin()">Masuk</button>
         </div>
     </div>
 
     <script>
-        // Fungsi Toast (Notifikasi)
-        window.showToast = function(message, type = 'success') {
+        function showToast(msg, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div'); toast.className = 'toast';
-            if(type === 'error') toast.style.borderLeftColor = 'var(--c-unpaid)';
-            if(type === 'warning') toast.style.borderLeftColor = 'var(--c-paused)';
-            toast.innerHTML = `<div>${message}</div>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.animation = 'fadeOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
+            if(type === 'error') toast.style.borderLeftColor = 'var(--c-red)';
+            toast.innerHTML = `<div>${msg}</div>`; container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
-
-        // Fungsi Login 100% Instan (Tidak bergantung pada Firebase Loading)
-        window.login = function() {
-            const inputPass = document.getElementById('adminPass').value;
-            // Password admin adalah "admin123"
-            if(inputPass === 'admin123') {
-                localStorage.setItem('admin_logged', 'true'); 
-                document.getElementById('loginOverlay').style.display = 'none'; 
-                window.showToast("Akses Diberikan");
-            } else { 
-                window.showToast("Sandi Ditolak! Pastikan huruf kecil semua.", "error"); 
-            }
+        function prosesLogin() {
+            if(document.getElementById('adminPass').value === 'admin123') {
+                localStorage.setItem('adm_log', 'true'); document.getElementById('loginOverlay').style.display = 'none'; showToast('Berhasil masuk');
+            } else { showToast('Password salah!', 'error'); }
         }
-
-        window.logout = function() { 
-            localStorage.removeItem('admin_logged'); 
-            location.reload(); 
-        }
-        
-        // Pengecekan sesi saat halaman pertama kali dibuka
-        if(localStorage.getItem('admin_logged') === 'true') {
-            document.getElementById('loginOverlay').style.display = 'none';
-        }
+        function prosesLogout() { localStorage.removeItem('adm_log'); location.reload(); }
+        if(localStorage.getItem('adm_log') === 'true') document.getElementById('loginOverlay').style.display = 'none';
     </script>
+
+    <div class="sidebar">
+        <div class="brand">PS3 <span>PANEL</span></div>
+        <div class="nav-menu">
+            <button class="nav-btn active" data-target="dashboard">⚡ Monitor Live</button>
+            <button class="nav-btn" data-target="packages">📦 Paket Harga</button>
+            <button class="nav-btn" data-target="promos">🎁 Promo</button>
+            <button class="nav-btn" data-target="history">📁 Riwayat</button>
+            <button class="nav-btn" data-target="settings">⚙️ Setting TV</button>
+        </div>
+        <div class="logout-btn"><button onclick="prosesLogout()">Keluar</button></div>
+    </div>
+
+    <div class="main-content">
+        <div id="dashboard" class="section active">
+            <h1 class="header-title">Monitor Penyewaan</h1>
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="unpaid">Belum Lunas</button>
+                <button class="filter-btn" data-filter="paid">Lunas (Wait)</button>
+                <button class="filter-btn" data-filter="running">Berjalan</button>
+            </div>
+            <div class="list-container" id="bookingGrid"></div>
+        </div>
+
+        <div id="history" class="section">
+            <h1 class="header-title">Riwayat Selesai</h1>
+            <div class="list-container" id="historyGrid"></div>
+        </div>
+
+        <div id="settings" class="section">
+            <h1 class="header-title">Gaya Font Layar TV</h1>
+            <div class="crud-box" style="max-width: 500px;">
+                <label style="color:var(--text-dim); display:block; margin-bottom:10px;">Pilih Jenis Font Tampilan Angka TV</label>
+                <select id="tvFontSelect">
+                    <option value="'Orbitron', sans-serif">Orbitron (Modern Sci-Fi)</option>
+                    <option value="'JetBrains Mono', monospace">JetBrains Mono (Hacker)</option>
+                    <option value="'Share Tech Mono', monospace">Share Tech Mono (Digital Jam)</option>
+                    <option value="'Teko', sans-serif">Teko (Tegas & Rapat)</option>
+                </select>
+                <button class="btn-action b-blue" id="btnSaveFont" style="width:100%; padding:12px;">Terapkan ke Layar TV</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalWaktu" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Atur Waktu Manual</div>
+            <div class="modal-body">
+                <input type="hidden" id="mWaktuId">
+                <select id="mWaktuMode">
+                    <option value="add">Tambah (+) Menit Ke Sisa Waktu</option>
+                    <option value="sub">Kurangi (-) Menit Dari Sisa Waktu</option>
+                    <option value="set">Timpa Sisa Waktu (Reset Paksa)</option>
+                </select>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <input type="number" id="mJam" placeholder="Jam" value="0">
+                    <input type="number" id="mMenit" placeholder="Menit" value="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-action b-outline" onclick="document.getElementById('modalWaktu').style.display='none'">Batal</button>
+                <button class="btn-action b-blue" id="btnSaveWaktu">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPesan" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Pesan TV</div>
+            <div class="modal-body">
+                <input type="hidden" id="mPesanId">
+                <textarea id="mPesanTeks" rows="4" placeholder="Tuliskan peringatan atau pesan untuk penyewa..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-action b-outline" onclick="document.getElementById('modalPesan').style.display='none'">Batal</button>
+                <button class="btn-action b-blue" id="btnSavePesan">Tampilkan di TV</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDV5S1jEFxw_tGWHBVqGe_erZSsOKRK2gU",
@@ -346,7 +229,6 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        window.dbRef = { update, remove, set, push, ref, db };
 
         let serverOffset = 0;
         onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
@@ -354,8 +236,9 @@
 
         let bookingsData = {};
         let currentFilter = 'all';
-        let currentTvFont = "'Orbitron', sans-serif";
+        let currentFont = "'Orbitron', sans-serif";
 
+        // Navigasi
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -363,187 +246,144 @@
                 e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active');
             });
         });
-
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active'); currentFilter = e.target.dataset.filter; renderBookings();
+                e.target.classList.add('active'); currentFilter = e.target.dataset.filter; renderList();
             });
         });
 
-        // --- PENGATURAN FONT LOGIC ---
-        const fontSelect = document.getElementById('tvFontSelect');
-        const fontPreview = document.getElementById('fontPreview');
-        
-        fontSelect.addEventListener('change', (e) => {
-            fontPreview.style.fontFamily = e.target.value;
-        });
+        // Setting Font
+        onValue(ref(db, 'settings/tv_font'), (snap) => { if(snap.val()) { currentFont = snap.val(); document.getElementById('tvFontSelect').value = currentFont; } });
+        document.getElementById('btnSaveFont').onclick = () => { set(ref(db, 'settings/tv_font'), document.getElementById('tvFontSelect').value); showToast('Font TV Diperbarui'); };
 
-        onValue(ref(db, 'settings/tv_font'), (snapshot) => {
-            const font = snapshot.val();
-            if(font) {
-                currentTvFont = font;
-                fontSelect.value = font;
-                fontPreview.style.fontFamily = font;
-                document.querySelectorAll('.timer-display-admin').forEach(el => el.style.fontFamily = font);
-            }
-        });
+        // Data Rendering
+        onValue(ref(db, 'bookings'), (snap) => { bookingsData = snap.val() || {}; renderList(); });
 
-        window.saveTvFont = async function() {
-            await set(ref(db, 'settings/tv_font'), fontSelect.value);
-            window.showToast("Gaya Font TV Berhasil Diubah!");
-        }
-
-        // --- BOOKING LOGIC ---
-        onValue(ref(db, 'bookings'), (snapshot) => { bookingsData = snapshot.val() || {}; renderBookings(); });
-
-        function formatTimeRemaining(ms) {
+        function formatTime(ms) {
             if(ms <= 0) return "00:00:00";
-            let totalSeconds = Math.floor(ms / 1000);
-            let h = Math.floor(totalSeconds / 3600); let m = Math.floor((totalSeconds % 3600) / 60); let s = totalSeconds % 60;
-            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            let s = Math.floor(ms / 1000);
+            return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
         }
-        function calculateRemaining(b) { return (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu; }
 
         setInterval(() => {
             document.querySelectorAll('.timer-display-admin').forEach(el => {
-                let id = el.dataset.id; let b = bookingsData[id];
+                let b = bookingsData[el.dataset.id];
                 if(b && b.status_countdown === 'running') {
                     let rem = b.waktu_selesai - getTrueTime();
-                    if(rem <= 0) { el.innerText = "00:00:00"; el.style.color = 'var(--c-unpaid)'; } 
-                    else { el.innerText = formatTimeRemaining(rem); el.style.color = rem <= 600000 ? 'var(--c-paused)' : 'white'; }
+                    el.innerText = rem <= 0 ? "00:00:00" : formatTime(rem);
+                    el.style.color = rem <= 600000 && rem > 0 ? 'var(--c-yellow)' : (rem <= 0 ? 'var(--c-red)' : '#FFF');
                 }
             });
         }, 1000);
 
-        function renderBookings() {
-            const grid = document.getElementById('bookingGrid'); const historyGrid = document.getElementById('historyGrid');
-            grid.innerHTML = ''; historyGrid.innerHTML = '';
+        function renderList() {
+            const grid = document.getElementById('bookingGrid'); const history = document.getElementById('historyGrid');
+            grid.innerHTML = ''; history.innerHTML = '';
             let sortedIds = Object.keys(bookingsData).sort((a,b) => parseInt(b.split('-')[1] || 0) - parseInt(a.split('-')[1] || 0));
 
             sortedIds.forEach(id => {
-                let b = bookingsData[id]; let remTime = calculateRemaining(b); let timeStr = formatTimeRemaining(remTime);
-                let cardClass = 'st-unpaid'; let statusText = 'Belum Bayar'; let statusColor = 'var(--c-unpaid)';
+                let b = bookingsData[id]; let rem = (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu;
+                let cClass = 'st-unpaid'; let sText = 'Belum Lunas';
                 
-                if(b.status_pembayaran === 'Sudah Bayar') { cardClass = 'st-paid'; statusText = 'Menunggu Mulai'; statusColor = 'var(--c-paid)'; if(b.status_konfirmasi === 'Sudah') statusText = 'Siap Play'; }
-                if(b.status_countdown === 'running') { cardClass = 'st-running'; statusText = 'Sedang Main'; statusColor = 'var(--c-running)'; }
-                if(b.status_countdown === 'paused') { cardClass = 'st-paused'; statusText = 'Di-jeda Sementara'; statusColor = 'var(--c-paused)'; }
-                if(b.status_countdown === 'finished' || remTime <= 0 && b.status_countdown === 'running') { cardClass = 'st-finished'; statusText = 'Waktu Telah Habis'; statusColor = 'var(--c-unpaid)'; }
+                if(b.status_pembayaran === 'Sudah Bayar') { cClass = 'st-paid'; sText = b.status_konfirmasi === 'Sudah' ? 'Siap Main' : 'Lunas (Menunggu)'; }
+                if(b.status_countdown === 'running') { cClass = 'st-running'; sText = 'Sedang Main'; }
+                if(b.status_countdown === 'paused') { cClass = 'st-paused'; sText = 'Di-jeda'; }
+                if(b.status_countdown === 'finished' || (rem <= 0 && b.status_countdown === 'running')) { cClass = 'st-finished'; sText = 'Waktu Habis'; }
 
-                let cardHTML = `
-                    <div class="card ${cardClass}">
-                        <div class="card-header"><div class="card-title">${b.nama}</div><div class="badge">${b.paket_nama}</div></div>
-                        <div class="card-body">
-                            <div class="detail-row"><span class="detail-label">ID Nota</span><span class="detail-val" style="font-family:monospace; color:#FFF">${id}</span></div>
-                            <div class="detail-row"><span class="detail-label">Metode</span><span class="detail-val">${b.metode_pembayaran}</span></div>
-                            <div class="detail-row"><span class="detail-label">Sistem</span><span class="detail-val" style="color:${statusColor}">${statusText}</span></div>
-                            <div class="timer-display-admin" data-id="${id}" style="font-family:${currentTvFont}">${timeStr}</div>
+                let html = `
+                <div class="list-item ${cClass}">
+                    <div class="item-header">
+                        <div class="item-info">
+                            <h3>${b.nama} <span class="badge">${b.paket_nama}</span></h3>
+                            <p><span>ID: ${id}</span> <span>${b.metode_pembayaran}</span> <span style="color: var(--primary)">[ ${sText} ]</span></p>
                         </div>
-                        <div class="card-actions">
-                            ${b.is_history ? `<button class="action-btn btn-red full" onclick="act('${id}', 'delete')">Hapus Bukti Riwayat</button>` : `
-                                ${b.status_pembayaran === 'Belum Bayar' ? `<button class="action-btn btn-green full" onclick="act('${id}', 'bayar')">✅ Terima Pembayaran</button>` : (b.status_konfirmasi === 'Belum' ? `<button class="action-btn btn-blue full" onclick="act('${id}', 'konfirmasi')">👍 Konfirmasi Unit Siap</button>` : '')}
-                                ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="action-btn btn-green" onclick="act('${id}', 'start')">▶ PLAY</button>` : ''}
-                                ${b.status_countdown === 'running' ? `<button class="action-btn btn-yellow" onclick="act('${id}', 'pause')">⏸ JEDA</button>` : ''}
-                                <button class="action-btn btn-dark" onclick="openManualTimeModal('${id}')">⏱ Sesuaikan</button>
-                                <button class="action-btn btn-dark" onclick="openNoteModal('${id}')">💬 Tulis Pesan</button>
-                                <button class="action-btn btn-outline" onclick="copyLink('${id}')">🔗 Salin TV</button>
-                                <button class="action-btn btn-outline" onclick="act('${id}', 'reset')">↺ Ulang</button>
-                                <button class="action-btn btn-outline full" style="border-color:#334155" onclick="act('${id}', 'finish')">🏁 Pindah Riwayat Selesai</button>
-                                <button class="action-btn btn-red full" onclick="act('${id}', 'delete')">🗑 Buang Data Pemesan</button>
-                            `}
-                        </div>
-                    </div>`;
+                        <div class="timer-display-admin" data-id="${id}" style="font-family: ${currentFont}">${formatTime(rem)}</div>
+                    </div>
+                    <div class="item-actions">
+                        ${b.is_history ? `
+                            <button class="btn-action b-red" data-action="delete" data-id="${id}">Hapus Riwayat</button>
+                        ` : `
+                            ${b.status_pembayaran === 'Belum Bayar' ? `<button class="btn-action b-green" data-action="bayar" data-id="${id}">Terima Pembayaran</button>` : (b.status_konfirmasi === 'Belum' ? `<button class="btn-action b-blue" data-action="konfirmasi" data-id="${id}">Konfirmasi Unit</button>` : '')}
+                            ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="btn-action b-green" data-action="start" data-id="${id}">▶ PLAY</button>` : ''}
+                            ${b.status_countdown === 'running' ? `<button class="btn-action b-yellow" data-action="pause" data-id="${id}">⏸ PAUSE</button>` : ''}
+                            <button class="btn-action b-dark" data-action="waktu" data-id="${id}">⏱ Waktu</button>
+                            <button class="btn-action b-dark" data-action="pesan" data-id="${id}">💬 Pesan</button>
+                            <button class="btn-action b-outline" data-action="copylink" data-id="${id}">🔗 Link TV</button>
+                            <button class="btn-action b-outline" data-action="reset" data-id="${id}">↺ Reset</button>
+                            <button class="btn-action b-outline" data-action="finish" data-id="${id}">🏁 Selesai</button>
+                            <button class="btn-action b-red" data-action="delete" data-id="${id}">Hapus</button>
+                        `}
+                    </div>
+                </div>`;
 
-                if (b.is_history) historyGrid.innerHTML += cardHTML;
+                if(b.is_history) history.innerHTML += html;
                 else {
-                    let show = false;
-                    if(currentFilter === 'all') show = true;
-                    if(currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') show = true;
-                    if(currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') show = true;
-                    if(currentFilter === 'running' && b.status_countdown === 'running') show = true;
-                    if(currentFilter === 'finished' && (b.status_countdown === 'finished' || remTime <= 0)) show = true;
-                    if(show) grid.innerHTML += cardHTML;
+                    let show = (currentFilter === 'all') || 
+                               (currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') ||
+                               (currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') ||
+                               (currentFilter === 'running' && b.status_countdown === 'running');
+                    if(show) grid.innerHTML += html;
                 }
             });
         }
 
-        window.act = async function(id, action) {
-            let b = bookingsData[id]; let updates = {}; let now = getTrueTime();
-            if(action === 'bayar') { updates['status_pembayaran'] = 'Sudah Bayar'; window.showToast('Lunas!'); }
-            if(action === 'konfirmasi') { updates['status_konfirmasi'] = 'Sudah'; window.showToast('Terkonfirmasi!'); }
+        // EVENT DELEGATION: FIX MASALAH TOMBOL TIDAK BISA DIKLIK
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('.btn-action');
+            if(!btn) return;
+            
+            const id = btn.getAttribute('data-id');
+            const action = btn.getAttribute('data-action');
+            if(!id || !action) return;
+
+            let b = bookingsData[id]; let up = {}; let now = getTrueTime();
+
+            if(action === 'bayar') { up['status_pembayaran'] = 'Sudah Bayar'; showToast('Status Lunas'); }
+            if(action === 'konfirmasi') { up['status_konfirmasi'] = 'Sudah'; showToast('Terkonfirmasi'); }
             if(action === 'start') {
-                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return window.showToast("Pastikan Lunas & Konfirmasi!", "error");
+                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return showToast('Belum lunas/dikonfirmasi!', 'error');
                 let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
-                if(rem <= 0) return window.showToast("Sisa nol. Tambah manual.", "error");
-                updates['status_countdown'] = 'running'; updates['waktu_selesai'] = now + rem; window.showToast('Mulai Bermain!');
+                if(rem <= 0) return showToast('Waktu 0, tambah manual.', 'error');
+                up['status_countdown'] = 'running'; up['waktu_selesai'] = now + rem; showToast('Mulai Bermain!');
             }
-            if(action === 'pause') { updates['status_countdown'] = 'paused'; updates['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); window.showToast('Permainan Dijeda', "warning"); }
-            if(action === 'reset') { updates['status_countdown'] = 'idle'; updates['sisa_waktu'] = b.durasi_jam * 3600000; updates['waktu_selesai'] = 0; window.showToast('Reset Berhasil'); }
-            if(action === 'finish') { updates['is_history'] = true; updates['status_countdown'] = 'finished'; window.showToast('Beres & Diarsipkan'); }
-            if(action === 'delete') {
-                const toast = document.createElement('div'); toast.className = 'toast'; toast.style.borderLeftColor = 'var(--c-unpaid)';
-                toast.innerHTML = `<div>Yakin Hapus ${b.nama}?</div><div style="display:flex; gap:8px;"><button style="background:var(--c-unpaid); border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;" onclick="confirmDelete('${id}'); this.parentElement.parentElement.remove()">HAPUS</button><button style="background:#475569; border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">KEMBALI</button></div>`;
-                document.getElementById('toastContainer').appendChild(toast); return;
+            if(action === 'pause') { up['status_countdown'] = 'paused'; up['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); showToast('Di-jeda'); }
+            if(action === 'reset') { up['status_countdown'] = 'idle'; up['sisa_waktu'] = b.durasi_jam * 3600000; up['waktu_selesai'] = 0; showToast('Direset'); }
+            if(action === 'finish') { up['is_history'] = true; up['status_countdown'] = 'finished'; showToast('Diarsipkan'); }
+            if(action === 'delete') { if(confirm(`Yakin hapus data ini?`)) { await remove(ref(db, `bookings/${id}`)); showToast('Terhapus'); return; } }
+            if(action === 'copylink') {
+                let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
+                navigator.clipboard.writeText(url); showToast('Link TV Tercopy'); return;
             }
-            if(Object.keys(updates).length > 0) await update(ref(db, `bookings/${id}`), updates);
-        }
-        window.confirmDelete = async function(id) { await remove(ref(db, `bookings/${id}`)); window.showToast('Musnah Permanen', 'success'); }
-        window.copyLink = function(id) {
-            let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
-            navigator.clipboard.writeText(url).then(() => window.showToast("URL TV Tersalin"));
-        }
+            if(action === 'waktu') {
+                document.getElementById('mWaktuId').value = id; document.getElementById('mJam').value = 0; document.getElementById('mMenit').value = 0;
+                document.getElementById('modalWaktu').style.display = 'flex'; return;
+            }
+            if(action === 'pesan') {
+                document.getElementById('mPesanId').value = id; document.getElementById('mPesanTeks').value = b.catatan_admin || "";
+                document.getElementById('modalPesan').style.display = 'flex'; return;
+            }
 
-        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
-        window.openNoteModal = function(id) { document.getElementById('noteBookingId').value = id; document.getElementById('adminNoteText').value = bookingsData[id].catatan_admin || ""; document.getElementById('noteModal').style.display = 'flex'; }
-        window.saveNote = async function() { await update(ref(db, `bookings/${document.getElementById('noteBookingId').value}`), { catatan_admin: document.getElementById('adminNoteText').value }); window.closeModal('noteModal'); window.showToast("Pesan Naik Ke TV"); }
+            if(Object.keys(up).length > 0) await update(ref(db, `bookings/${id}`), up);
+        });
 
-        window.openManualTimeModal = function(id) {
-            document.getElementById('manualTimeId').value = id;
-            document.getElementById('manHour').value = "0"; document.getElementById('manMinute').value = "0"; document.getElementById('manSecond').value = "0";
-            document.getElementById('manualTimeMode').value = "add"; document.getElementById('manualTimeModal').style.display = 'flex';
-        }
-        window.saveManualTime = async function() {
-            let id = document.getElementById('manualTimeId').value; let b = bookingsData[id]; let mode = document.getElementById('manualTimeMode').value;
-            let ms = ((parseInt(document.getElementById('manHour').value) || 0) * 3600 + (parseInt(document.getElementById('manMinute').value) || 0) * 60 + (parseInt(document.getElementById('manSecond').value) || 0)) * 1000;
+        // Proses Modal Waktu & Pesan
+        document.getElementById('btnSaveWaktu').onclick = async () => {
+            let id = document.getElementById('mWaktuId').value; let b = bookingsData[id];
+            let ms = ((parseInt(document.getElementById('mJam').value)||0)*3600 + (parseInt(document.getElementById('mMenit').value)||0)*60) * 1000;
             let now = getTrueTime(); let cur = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
+            let mode = document.getElementById('mWaktuMode').value;
             let nSisa = mode === 'set' ? ms : (mode === 'add' ? cur + ms : Math.max(0, cur - ms));
             let up = {};
             if(b.status_countdown === 'running') { up['waktu_selesai'] = now + nSisa; up['sisa_waktu'] = nSisa; } 
             else { up['sisa_waktu'] = nSisa; if(b.status_countdown === 'finished') up['status_countdown'] = 'paused'; }
-            await update(ref(db, `bookings/${id}`), up); window.closeModal('manualTimeModal'); window.showToast("Waktu Selesai Disesuaikan");
-        }
+            await update(ref(db, `bookings/${id}`), up); document.getElementById('modalWaktu').style.display = 'none'; showToast("Waktu Disesuaikan");
+        };
 
-        // Pakets
-        onValue(ref(db, 'packages'), (snapshot) => {
-            const data = snapshot.val() || {}; const tbody = document.getElementById('tablePackages'); tbody.innerHTML = '';
-            for(let key in data) { let d = data[key]; tbody.innerHTML += `<tr><td style="font-weight:600">${d.name}</td><td>${d.duration_hours} Jam</td><td>Rp ${parseInt(d.price).toLocaleString()}</td><td><span class="badge" style="background:${d.is_active ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'; color:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'ON' : 'OFF'}</span></td><td style="text-align:right"><button class="action-btn btn-outline" style="padding:6px 12px" onclick="editPackage('${key}', '${d.name}', ${d.duration_hours}, ${d.price}, '${d.description}', ${d.is_active})">Edit</button> <button class="action-btn btn-red" style="padding:6px 12px" onclick="deletePackage('${key}')">X</button></td></tr>`; }
-        });
-        window.savePackage = async function() {
-            let id = document.getElementById('pkgId').value;
-            let data = { name: document.getElementById('pkgName').value, duration_hours: parseFloat(document.getElementById('pkgDuration').value), price: parseFloat(document.getElementById('pkgPrice').value), description: document.getElementById('pkgDesc').value, is_active: document.getElementById('pkgStatus').value === 'true' };
-            if(!data.name || !data.duration_hours || !data.price) return window.showToast("Isi yang lengkap!", "error");
-            if(id) { await update(ref(db, `packages/${id}`), data); window.showToast("Selesai Edit"); } else { await push(ref(db, 'packages'), data); window.showToast("Masuk Database"); }
-            window.resetPackageForm();
-        }
-        window.editPackage = function(id, n, d, p, ds, a) { document.getElementById('pkgId').value = id; document.getElementById('pkgName').value = n; document.getElementById('pkgDuration').value = d; document.getElementById('pkgPrice').value = p; document.getElementById('pkgDesc').value = ds; document.getElementById('pkgStatus').value = a ? 'true' : 'false'; window.scrollTo(0,0); }
-        window.resetPackageForm = function() { document.getElementById('pkgId').value = ''; document.getElementById('pkgName').value = ''; document.getElementById('pkgDuration').value = ''; document.getElementById('pkgPrice').value = ''; document.getElementById('pkgDesc').value = ''; }
-        window.deletePackage = async function(id) { if(confirm("Tendang paket ini?")) { await remove(ref(db, `packages/${id}`)); window.showToast("Lenyap"); } }
-
-        // Promos
-        onValue(ref(db, 'promos'), (snapshot) => {
-            const data = snapshot.val() || {}; const tbody = document.getElementById('tablePromos'); tbody.innerHTML = '';
-            for(let key in data) { let d = data[key]; tbody.innerHTML += `<tr><td style="font-weight:600">${d.title}</td><td>${d.discount_info}</td><td><span class="badge" style="background:${d.is_active ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'; color:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'ON' : 'OFF'}</span></td><td style="text-align:right"><button class="action-btn btn-outline" style="padding:6px 12px" onclick="editPromo('${key}', '${d.title}', '${d.discount_info}', '${d.description}', ${d.is_active})">Edit</button> <button class="action-btn btn-red" style="padding:6px 12px" onclick="deletePromo('${key}')">X</button></td></tr>`; }
-        });
-        window.savePromo = async function() {
-            let id = document.getElementById('promoId').value;
-            let data = { title: document.getElementById('promoTitle').value, discount_info: document.getElementById('promoDiscount').value, description: document.getElementById('promoDesc').value, is_active: document.getElementById('promoStatus').value === 'true' };
-            if(!data.title) return window.showToast("Butuh judul!", "error");
-            if(id) { await update(ref(db, `promos/${id}`), data); window.showToast("Selesai Edit"); } else { await push(ref(db, 'promos'), data); window.showToast("Masuk Database"); }
-            window.resetPromoForm();
-        }
-        window.editPromo = function(id, t, di, ds, a) { document.getElementById('promoId').value = id; document.getElementById('promoTitle').value = t; document.getElementById('promoDiscount').value = di; document.getElementById('promoDesc').value = ds; document.getElementById('promoStatus').value = a ? 'true' : 'false'; window.scrollTo(0,0); }
-        window.resetPromoForm = function() { document.getElementById('promoId').value = ''; document.getElementById('promoTitle').value = ''; document.getElementById('promoDiscount').value = ''; document.getElementById('promoDesc').value = ''; }
-        window.deletePromo = async function(id) { if(confirm("Tendang promo ini?")) { await remove(ref(db, `promos/${id}`)); window.showToast("Lenyap"); } }
+        document.getElementById('btnSavePesan').onclick = async () => {
+            await update(ref(db, `bookings/${document.getElementById('mPesanId').value}`), { catatan_admin: document.getElementById('mPesanTeks').value });
+            document.getElementById('modalPesan').style.display = 'none'; showToast("Pesan Naik ke TV");
+        };
 
     </script>
 </body>
