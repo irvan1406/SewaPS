@@ -3,26 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live TV Monitor - PS3 HEN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@700&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
+    <title>Live Monitor PS3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@700&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #030408;
-            --text: #FFFFFF;
-            --primary: #00E5FF;
-            --warning: #FFB800;
-            --danger: #FF2A55;
-            --success: #00FF88;
-        }
-        
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
-            background-color: var(--bg); 
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 70%),
-                radial-gradient(circle at 50% 100%, rgba(157, 0, 255, 0.03) 0%, transparent 60%);
-            color: var(--text); 
+            background-color: #000000; /* Hitam Pekat untuk TV LED/OLED */
+            color: #FFFFFF; 
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
@@ -31,90 +19,83 @@
             overflow: hidden; 
             font-family: 'Outfit', sans-serif;
         }
-        
-        .tv-container { text-align: center; width: 100%; max-width: 1200px; padding: 40px; z-index: 2; }
-        
-        /* Informasi Profil Elegan */
-        .tv-header-info { 
-            background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.05);
-            padding: 24px 50px; border-radius: 24px; margin-bottom: 50px; display: inline-block;
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-        .tv-header-info h2 { 
-            color: var(--primary); text-transform: uppercase; letter-spacing: 5px; font-weight: 800;
-            font-size: 2.4rem; margin-bottom: 8px; text-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
-        }
-        .tv-header-info p { font-size: 1.2rem; color: #8A94A6; font-weight: 400; letter-spacing: 1.5px; }
 
-        /* Timer Utama - FONT DINAMIS DARI FIREBASE */
-        .timer-box { position: relative; margin: 20px 0; }
+        .container { text-align: center; width: 100%; max-width: 1400px; padding: 40px; }
         
+        .header-info { margin-bottom: 5vh; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .header-info h2 { 
+            color: #06B6D4; text-transform: uppercase; letter-spacing: 6px; font-weight: 900;
+            font-size: 2.8rem; text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+        }
+        .header-info p { 
+            font-size: 1.5rem; color: #94A3B8; font-family: 'JetBrains Mono', monospace; 
+            background: rgba(255,255,255,0.05); padding: 8px 24px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Timer Utama - Tampil Super Besar */
         .tv-timer { 
-            font-family: 'Orbitron', sans-serif; /* Default */
-            font-size: 13vw; 
+            font-family: 'Orbitron', sans-serif; /* Default, akan ditimpa JS */
+            font-size: 18vw; /* Raksasa menyesuaikan layar */
             font-weight: 700; line-height: 1; color: #FFFFFF; 
-            text-shadow: 0 0 30px rgba(0, 229, 255, 0.3), 0 0 70px rgba(0, 229, 255, 0.5); 
-            transition: color 0.4s ease, text-shadow 0.4s ease, font-family 0.5s ease; 
+            text-shadow: 0 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(6, 182, 212, 0.4); 
+            transition: color 0.3s, text-shadow 0.3s, font-family 0.5s; 
+            font-variant-numeric: tabular-nums;
         }
-        .tv-timer.warning { color: var(--warning); text-shadow: 0 0 40px rgba(255, 184, 0, 0.4), 0 0 80px rgba(255, 184, 0, 0.2); animation: pulse-warn 2s infinite; }
-        .tv-timer.danger { color: var(--danger); text-shadow: 0 0 40px rgba(255, 42, 85, 0.5), 0 0 90px rgba(255, 42, 85, 0.3); animation: shake 0.5s infinite; }
         
-        .tv-status-text { 
-            font-size: 2.2rem; margin-top: 24px; letter-spacing: 10px; text-transform: uppercase; 
-            font-weight: 700; color: var(--primary); text-shadow: 0 0 20px rgba(0, 229, 255, 0.3); transition: 0.3s;
+        /* Status Warn / Danger */
+        .tv-timer.warning { color: #F59E0B; text-shadow: 0 0 50px rgba(245, 158, 11, 0.5); animation: pulse-warn 1.5s infinite alternate; }
+        .tv-timer.danger { color: #EF4444; text-shadow: 0 0 60px rgba(239, 68, 68, 0.6); animation: shake 0.3s infinite; }
+        
+        .status-text { 
+            font-size: 2.5rem; margin-top: 3vh; letter-spacing: 12px; text-transform: uppercase; 
+            font-weight: 800; color: #06B6D4; text-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
         }
 
-        /* Pesan Custom TV */
-        .tv-admin-note { 
-            margin-top: 60px; background: rgba(255, 42, 85, 0.05); border: 1px solid rgba(255, 42, 85, 0.2);
-            border-left: 8px solid var(--danger); padding: 24px 40px; text-align: left; display: none; 
-            border-radius: 12px; max-width: 800px; margin-left: auto; margin-right: auto;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Pesan Admin / Toast Raksasa */
+        .admin-note { 
+            margin-top: 6vh; background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3);
+            border-left: 10px solid #EF4444; padding: 25px 40px; text-align: left; display: none; 
+            border-radius: 16px; max-width: 900px; margin-left: auto; margin-right: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
         }
-        .tv-admin-note h4 { color: var(--danger); margin-bottom: 12px; font-weight: 800; letter-spacing: 2px; font-size:1.2rem; }
-        .tv-admin-note p { font-size: 1.3rem; line-height: 1.6; color: #F8FAFC; }
+        .admin-note h4 { color: #EF4444; margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; font-size: 1.4rem; }
+        .admin-note p { font-size: 1.6rem; line-height: 1.5; color: #FFFFFF; }
 
-        /* Audio Unlocker */
+        /* Tombol Pemicu Audio (Browser Rule) */
         #audioOverlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 4, 8, 0.98); 
-            z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(20px);
+            position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; 
+            align-items: center; justify-content: center; flex-direction: column;
         }
         .btn-tv-start { 
-            padding: 24px 60px; font-size: 1.6rem; background: var(--primary); 
-            color: #000; border: none; border-radius: 16px; font-weight: 800; cursor: pointer; text-transform: uppercase; 
-            letter-spacing: 3px; box-shadow: 0 10px 40px rgba(0, 229, 255, 0.5); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 25px 60px; font-size: 1.8rem; background: #06B6D4; color: #000; 
+            border: none; border-radius: 20px; font-weight: 900; cursor: pointer; 
+            text-transform: uppercase; letter-spacing: 4px; box-shadow: 0 0 40px rgba(6, 182, 212, 0.5); 
         }
-        .btn-tv-start:hover { transform: scale(1.05) translateY(-5px); background: #00F0FF; }
 
-        @keyframes pulse-warn { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.01); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 10% { transform: translate(-1px, -1px); } 20% { transform: translate(-2px, 0px); } 30% { transform: translate(2px, 1px); } 40% { transform: translate(1px, -1px); } 50% { transform: translate(-1px, 1px); } 60% { transform: translate(-2px, 1px); } 70% { transform: translate(2px, 1px); } 80% { transform: translate(-1px, -1px); } 90% { transform: translate(1px, 1px); } 100% { transform: translate(1px, -1px); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
-        @media (max-width: 800px) { .tv-timer { font-size: 16vw; } .tv-header-info { padding: 20px 30px; } .tv-header-info h2 { font-size: 1.8rem; } .tv-status-text { font-size: 1.4rem; letter-spacing: 5px; } }
+        @keyframes pulse-warn { from { transform: scale(1); } to { transform: scale(1.02); } }
+        @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
     </style>
 </head>
 <body>
 
     <div id="audioOverlay">
-        <h2 style="color:white; margin-bottom:40px; font-weight:800; text-align:center; letter-spacing:4px; font-size: 2.5rem; text-shadow: 0 0 20px var(--primary);">SISTEM MONITOR TV</h2>
-        <button class="btn-tv-start" onclick="initAudio()">Tampilkan Sinkronisasi</button>
+        <h2 style="color:#FFF; margin-bottom:40px; font-weight:900; font-size:3rem; letter-spacing:5px;">LAYAR MONITOR PS3</h2>
+        <button class="btn-tv-start" onclick="initAudio()">AKTIFKAN LAYAR TV</button>
     </div>
 
-    <div class="tv-container">
-        <div class="tv-header-info" id="infoBox" style="display:none;">
+    <div class="container">
+        <div class="header-info" id="infoBox" style="display:none;">
             <h2 id="userName">SINKRONISASI DATA...</h2>
-            <p><span id="bookingIdText" style="font-family:'Orbitron'">-</span> &nbsp;|&nbsp; <span id="packageName">-</span></p>
+            <p><span id="bookingIdText">ID: -</span> &nbsp;|&nbsp; <span id="packageName">-</span></p>
         </div>
 
         <div class="timer-box">
             <div class="tv-timer" id="timerDisplay">00:00:00</div>
-            <div class="tv-status-text" id="statusDisplay">MENGHUBUNGKAN...</div>
+            <div class="status-text" id="statusDisplay">MENGHUBUNGKAN...</div>
         </div>
 
-        <div class="tv-admin-note" id="adminNoteBox">
-            <h4>PESAN DARI ADMIN SYSTEM:</h4>
+        <div class="admin-note" id="adminNoteBox">
+            <h4>PESAN SISTEM:</h4>
             <p id="adminNoteText"></p>
         </div>
     </div>
@@ -135,20 +116,17 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Server Time Sync
+        // Server Time
         let serverOffset = 0;
         onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
         function getTrueTime() { return Date.now() + serverOffset; }
 
-        // --- FETCH PENGATURAN FONT DARI ADMIN SECARA LIVE ---
+        // Live Font Setup from Admin
         onValue(ref(db, 'settings/tv_font'), (snapshot) => {
             const font = snapshot.val();
-            if(font) {
-                document.getElementById('timerDisplay').style.fontFamily = font;
-            }
+            if(font) document.getElementById('timerDisplay').style.fontFamily = font;
         });
 
-        // Get ID
         const urlParams = new URLSearchParams(window.location.search);
         const bookingId = urlParams.get('id');
 
@@ -157,7 +135,7 @@
         window.initAudio = function() {
             document.getElementById('audioOverlay').style.display = 'none';
             window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            let osc = audioCtx.createOscillator(); osc.frequency.value = 1; osc.connect(audioCtx.destination); osc.start(0); osc.stop(0.01);
+            let osc = audioCtx.createOscillator(); osc.connect(audioCtx.destination); osc.start(0); osc.stop(0.01);
         }
 
         function playBeep(type) {
@@ -167,7 +145,7 @@
             
             if(type === 'warning') {
                 osc.type = 'square'; osc.frequency.setValueAtTime(800, window.audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.08, window.audioCtx.currentTime); osc.start();
+                gain.gain.setValueAtTime(0.05, window.audioCtx.currentTime); osc.start();
                 gain.gain.exponentialRampToValueAtTime(0.00001, window.audioCtx.currentTime + 0.5); osc.stop(window.audioCtx.currentTime + 0.5);
             } else if(type === 'alarm') {
                 osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, window.audioCtx.currentTime);
@@ -177,32 +155,28 @@
             }
         }
 
-        // Timer Logic
         let bookingData = null; let warningPlayed = false; let alarmTriggered = false; let alarmInterval = null;
 
         if(!bookingId) {
-            document.getElementById('statusDisplay').innerText = "SYSTEM ERROR: ID KOSONG"; document.getElementById('statusDisplay').style.color = "var(--danger)";
+            document.getElementById('statusDisplay').innerText = "ID TIDAK VALID"; document.getElementById('statusDisplay').style.color = "#EF4444";
         } else {
-            document.getElementById('infoBox').style.display = 'inline-block';
-            document.getElementById('bookingIdText').innerText = bookingId;
+            document.getElementById('infoBox').style.display = 'flex';
+            document.getElementById('bookingIdText').innerText = "ID: " + bookingId;
             
             onValue(ref(db, `bookings/${bookingId}`), (snapshot) => {
                 bookingData = snapshot.val();
                 if(!bookingData) {
-                    document.getElementById('statusDisplay').innerText = "DATA TIDAK DITEMUKAN"; document.getElementById('statusDisplay').style.color = "var(--danger)"; return;
+                    document.getElementById('statusDisplay').innerText = "DATA TIDAK DITEMUKAN"; document.getElementById('statusDisplay').style.color = "#EF4444"; return;
                 }
                 
                 document.getElementById('userName').innerText = bookingData.nama;
                 document.getElementById('packageName').innerText = bookingData.paket_nama;
                 
-                // Animasi Note Smooth
-                const noteBox = document.getElementById('adminNoteBox');
                 if(bookingData.catatan_admin && bookingData.catatan_admin.trim() !== "") {
-                    if(noteBox.style.display !== 'block') { noteBox.style.display = 'block'; }
-                    document.getElementById('adminNoteText').innerText = bookingData.catatan_admin;
-                } else { noteBox.style.display = 'none'; }
+                    document.getElementById('adminNoteBox').style.display = 'block'; document.getElementById('adminNoteText').innerText = bookingData.catatan_admin;
+                } else { document.getElementById('adminNoteBox').style.display = 'none'; }
                 
-                let remCheck = calculateRemaining(bookingData);
+                let remCheck = (bookingData.status_countdown === 'running') ? bookingData.waktu_selesai - getTrueTime() : bookingData.sisa_waktu;
                 if(remCheck > 600000) warningPlayed = false;
                 if(remCheck > 0) { alarmTriggered = false; clearInterval(alarmInterval); }
                 
@@ -210,35 +184,33 @@
             });
         }
 
-        function calculateRemaining(b) { return (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu; }
-
         function updateUI() {
             if(!bookingData) return;
             const timerEl = document.getElementById('timerDisplay'); const statusEl = document.getElementById('statusDisplay');
-            let remTime = calculateRemaining(bookingData);
+            let remTime = (bookingData.status_countdown === 'running') ? bookingData.waktu_selesai - getTrueTime() : bookingData.sisa_waktu;
             
             if (bookingData.status_countdown === 'idle') {
-                statusEl.innerText = "SIAP DIMULAI"; statusEl.style.color = "var(--primary)"; statusEl.style.textShadow = "0 0 20px rgba(0, 229, 255, 0.3)";
-                timerEl.className = "tv-timer"; timerEl.style.textShadow = "0 0 30px rgba(0, 229, 255, 0.3), 0 0 70px rgba(0, 229, 255, 0.5)";
+                statusEl.innerText = "SIAP DIMULAI"; statusEl.style.color = "#06B6D4"; 
+                timerEl.className = "tv-timer"; 
             } else if (bookingData.status_countdown === 'paused') {
-                statusEl.innerText = "PERMAINAN DIJEDA"; statusEl.style.color = "var(--warning)"; statusEl.style.textShadow = "0 0 20px rgba(255, 184, 0, 0.3)";
-                timerEl.className = "tv-timer"; timerEl.style.color = "var(--warning)"; timerEl.style.textShadow = "0 0 40px rgba(255, 184, 0, 0.4)";
+                statusEl.innerText = "PERMAINAN DIJEDA"; statusEl.style.color = "#F59E0B"; 
+                timerEl.className = "tv-timer"; timerEl.style.color = "#F59E0B";
             } else if (bookingData.status_countdown === 'running') {
-                statusEl.innerText = "SEDANG BERMAIN"; statusEl.style.color = "var(--success)"; statusEl.style.textShadow = "0 0 20px rgba(0, 255, 136, 0.3)";
-                timerEl.className = "tv-timer"; timerEl.style.color = "#FFFFFF"; timerEl.style.textShadow = "0 0 30px rgba(0, 255, 136, 0.3), 0 0 70px rgba(0, 255, 136, 0.4)";
+                statusEl.innerText = "SEDANG BERMAIN"; statusEl.style.color = "#10B981"; 
+                timerEl.className = "tv-timer"; timerEl.style.color = "#FFFFFF"; 
                 
                 if(remTime <= 600000 && remTime > 0 && !warningPlayed) { playBeep('warning'); warningPlayed = true; }
                 if(remTime <= 600000 && remTime > 0) {
-                    statusEl.innerText = "SISA WAKTU < 10 MENIT!"; statusEl.style.color = "var(--warning)"; statusEl.style.textShadow = "0 0 20px rgba(255, 184, 0, 0.5)";
+                    statusEl.innerText = "SISA WAKTU < 10 MENIT!"; statusEl.style.color = "#F59E0B"; 
                     timerEl.className = "tv-timer warning";
                 }
             } else if (bookingData.status_countdown === 'finished') {
-                statusEl.innerText = "WAKTU TELAH HABIS!"; statusEl.style.color = "var(--danger)"; statusEl.style.textShadow = "0 0 20px rgba(255, 42, 85, 0.5)";
+                statusEl.innerText = "WAKTU TELAH HABIS!"; statusEl.style.color = "#EF4444"; 
                 timerEl.className = "tv-timer danger"; remTime = 0;
             }
 
             if(remTime <= 0 && bookingData.status_countdown === 'running') {
-                statusEl.innerText = "WAKTU HABIS! HUBUNGI ADMIN"; statusEl.style.color = "var(--danger)"; statusEl.style.textShadow = "0 0 20px rgba(255, 42, 85, 0.5)";
+                statusEl.innerText = "WAKTU HABIS! HUBUNGI ADMIN"; statusEl.style.color = "#EF4444"; 
                 timerEl.className = "tv-timer danger"; remTime = 0;
                 if(!alarmTriggered) { alarmTriggered = true; alarmInterval = setInterval(() => playBeep('alarm'), 1500); }
             }
