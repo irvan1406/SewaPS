@@ -4,276 +4,299 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PS3 Admin Command Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --panel: #1e293b;
-            --panel-hover: #334155;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --text-light: #f8fafc;
-            --text-dim: #94a3b8;
-            --border: #334155;
-            --radius: 12px;
+            --bg-dark: #0B0E14;
+            --bg-panel: #151A22;
+            --border-color: #2A3241;
+            --primary: #3B82F6;
+            --primary-hover: #2563EB;
+            --secondary: #8B5CF6;
+            --text-main: #F3F4F6;
+            --text-dim: #9CA3AF;
+            
+            --c-unpaid: #EF4444;
+            --c-paid: #10B981;
+            --c-running: #3B82F6;
+            --c-paused: #F59E0B;
+            --c-finished: #6B7280;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-light); padding-top: 70px; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
-
-        /* Navbar */
-        nav { position: fixed; top: 0; width: 100%; background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; border-bottom: 1px solid var(--border); z-index: 100; }
-        .brand { font-size: 1.2rem; font-weight: 700; color: var(--primary); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-        .nav-links { display: flex; gap: 10px; }
-        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s; }
-        .nav-btn:hover { background: var(--panel-hover); color: var(--text-light); }
-        .nav-btn.active { background: var(--primary); color: white; }
-        .btn-logout { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
-        .btn-logout:hover { background: var(--danger); color: white; }
-
-        /* Layout & Sections */
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        .section { display: none; animation: fadeIn 0.4s ease; }
-        .section.active { display: block; }
-        .section-header { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: var(--text-light); }
-
-        /* Filters */
-        .filter-group { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; background: var(--panel); padding: 10px; border-radius: var(--radius); border: 1px solid var(--border); }
-        .filter-tab { padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; border: none; background: transparent; color: var(--text-dim); }
-        .filter-tab.active { background: var(--border); color: var(--text-light); }
-
-        /* Grid & Cards */
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
         
-        .booking-card { background: var(--panel); border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); position: relative; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: transform 0.2s; }
-        .booking-card:hover { border-color: #475569; }
-        
-        .card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-        .b-name { font-weight: 600; font-size: 1.1rem; color: white; }
-        .b-pkg { font-size: 0.8rem; background: var(--bg-dark); padding: 4px 10px; border-radius: 20px; color: var(--text-dim); margin-top: 5px; display: inline-block; border: 1px solid var(--border); }
-        
-        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-        .status-badge::before { content:''; width: 8px; height: 8px; border-radius: 50%; }
-        
-        /* Status Colors */
-        .st-unpaid .status-badge { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-        .st-unpaid .status-badge::before { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
-        .st-paid .status-badge { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .st-paid .status-badge::before { background: var(--success); }
-        .st-running { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
-        .st-running .status-badge { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
-        .st-running .status-badge::before { background: var(--primary); box-shadow: 0 0 8px var(--primary); animation: blink 1s infinite; }
-        .st-paused .status-badge { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .st-paused .status-badge::before { background: var(--warning); }
-        .st-finished .status-badge { background: rgba(148, 163, 184, 0.1); color: var(--text-dim); }
-        .st-finished .status-badge::before { background: var(--text-dim); }
-
-        .b-details { font-size: 0.85rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .b-row { display: flex; justify-content: space-between; }
-        .b-row span:last-child { font-weight: 500; color: #e2e8f0; }
-
-        .timer-huge { font-family: 'Courier New', monospace; font-size: 2.2rem; font-weight: 700; text-align: center; margin: 15px 0; letter-spacing: 2px; color: var(--text-light); }
-        .timer-warning { color: var(--warning); }
-        .timer-danger { color: var(--danger); }
-
-        .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: auto; }
-        .btn-grid.full { grid-template-columns: 1fr; }
-        .btn-action { padding: 8px 0; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; color: white; display: flex; justify-content: center; align-items: center; gap: 5px; }
-        .btn-action:hover { opacity: 0.8; }
-        .bg-blue { background: var(--primary); }
-        .bg-green { background: var(--success); }
-        .bg-yellow { background: var(--warning); color: #000; }
-        .bg-red { background: var(--danger); }
-        .bg-gray { background: var(--panel-hover); }
+        /* Toast Notification */
+        #toastContainer { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--bg-panel); border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; display: flex; align-items: center; justify-content: space-between; min-width: 250px; animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
         /* Login Screen */
-        .auth-wrapper { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .auth-box { background: var(--panel); padding: 40px; border-radius: var(--radius); border: 1px solid var(--border); width: 100%; max-width: 360px; text-align: center; }
-        .auth-box input { width: 100%; padding: 12px; margin: 20px 0; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; color: white; outline: none; }
-        .auth-box button { width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; }
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); text-align: center; width: 100%; max-width: 350px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .login-box h2 { color: var(--primary); margin-bottom: 25px; font-weight: 700; font-size: 1.8rem; }
+        .login-box input { width: 100%; margin-bottom: 20px; padding: 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px; font-size: 1rem; outline: none; transition: border 0.3s; }
+        .login-box input:focus { border-color: var(--primary); }
+        .login-box button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-weight: 700; font-size: 1.1rem; cursor: pointer; border-radius: 8px; transition: background 0.3s; }
+        .login-box button:hover { background: var(--primary-hover); }
 
-        /* CRUD Forms & Tables */
-        .admin-form { background: var(--panel); padding: 25px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end; }
-        .input-group { display: flex; flex-direction: column; gap: 5px; }
-        .input-group label { font-size: 0.8rem; color: var(--text-dim); }
-        .admin-form input, .admin-form select, .admin-form textarea { padding: 10px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 6px; outline: none; }
-        .admin-form textarea { grid-column: 1 / -1; min-height: 80px; resize: vertical; }
-        .table-wrap { overflow-x: auto; background: var(--panel); border-radius: var(--radius); border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background: rgba(0,0,0,0.2); padding: 15px; font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; }
-        td { padding: 15px; border-top: 1px solid var(--border); font-size: 0.9rem; }
-        
-        /* Modals Reusable */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 25px; width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); animation: zoomIn 0.2s; }
-        .modal-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 15px; color: white; }
-        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-        .input-box { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 6px; margin-bottom: 10px; outline:none;}
-        
-        /* Time Adjust Grid */
-        .time-inputs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .time-inputs > div { flex: 1; text-align: center; }
-        .time-inputs label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px; }
-        .time-inputs input { width: 100%; text-align: center; font-size: 1.2rem; padding: 10px; }
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 100; }
+        .brand { padding: 25px 20px; font-size: 1.5rem; font-weight: 800; color: white; border-bottom: 1px solid var(--border-color); letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .brand span { color: var(--primary); }
+        .nav-menu { padding: 20px 0; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 15px 25px; text-align: left; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; }
+        .nav-btn:hover { background: rgba(255,255,255,0.03); color: white; }
+        .nav-btn.active { background: rgba(59, 130, 246, 0.1); color: var(--primary); border-left-color: var(--primary); }
+        .logout-btn { padding: 20px; border-top: 1px solid var(--border-color); }
+        .logout-btn button { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--c-unpaid); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .logout-btn button:hover { background: var(--c-unpaid); color: white; }
 
-        /* Toast */
-        .toast { position: fixed; top: 20px; right: -300px; background: var(--panel); border-left: 4px solid var(--primary); padding: 15px 25px; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: right 0.3s; z-index: 3000; display: flex; align-items: center; gap: 10px; }
-        .toast.show { right: 20px; }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        /* Main Content */
+        .main-content { flex: 1; margin-left: 260px; padding: 30px 40px; }
+        .section { display: none; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .header-title { font-size: 2rem; font-weight: 700; margin-bottom: 25px; color: white; }
+
+        /* Filters */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; background: var(--bg-panel); padding: 10px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .filter-btn { padding: 10px 20px; background: transparent; border: none; color: var(--text-dim); font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .filter-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+        .filter-btn.active { background: var(--primary); color: white; }
+
+        /* Grid Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+        .card { background: var(--bg-panel); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--border-color); }
+        
+        .card.st-unpaid::before { background: var(--c-unpaid); }
+        .card.st-paid::before { background: var(--c-paid); }
+        .card.st-running { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
+        .card.st-running::before { background: var(--c-running); }
+        .card.st-paused::before { background: var(--c-paused); }
+        .card.st-finished { opacity: 0.7; }
+        .card.st-finished::before { background: var(--c-finished); }
+
+        .card-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); }
+        .card-title { font-weight: 700; font-size: 1.1rem; color: white; }
+        .badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.1); color: var(--text-main); font-weight: 600; }
+        
+        .card-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .detail-row { display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .detail-label { color: var(--text-dim); }
+        .detail-val { font-weight: 600; color: var(--text-main); text-align: right; }
+        
+        .timer-display { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 700; text-align: center; margin: 15px 0 5px; color: white; letter-spacing: 2px; }
+        
+        .card-actions { padding: 15px 20px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        
+        /* Buttons */
+        .btn { padding: 8px 12px; font-size: 0.85rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; color: white; transition: transform 0.1s, opacity 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        
+        .btn-green { background: var(--c-paid); }
+        .btn-red { background: var(--c-unpaid); }
+        .btn-blue { background: var(--c-running); }
+        .btn-yellow { background: var(--c-paused); color: #000; }
+        .btn-dark { background: #374151; } 
+        .btn-dark:hover { background: #4B5563; }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+
+        /* Form CRUD */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .crud-box { background: var(--bg-panel); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px; }
+        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px; outline: none; margin-bottom: 10px; font-family: 'Outfit', sans-serif;}
+        .crud-box input:focus, .crud-box textarea:focus { border-color: var(--primary); }
+        
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--bg-panel); border-radius: 12px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
+        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        td { font-size: 0.95rem; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* Modals */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--bg-panel); width: 100%; max-width: 450px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; animation: fadeIn 0.2s ease; }
+        .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 1.2rem; }
+        .modal-body { padding: 25px; }
+        .modal-footer { padding: 20px 25px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; background: rgba(0,0,0,0.2); }
+        
+        /* Modal Atur Waktu Manual Specifics */
+        .time-inputs { display: flex; gap: 10px; margin: 15px 0; }
+        .time-inputs div { flex: 1; text-align: center; }
+        .time-inputs label { font-size: 0.8rem; color: var(--text-dim); display: block; margin-bottom: 5px;}
+        .time-inputs input { width: 100%; text-align: center; font-size: 1.5rem; font-family: 'JetBrains Mono'; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: white; border-radius: 8px; }
+        .time-inputs input:focus { border-color: var(--primary); outline:none; }
+        select.mode-select { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: white; border-radius: 8px; margin-bottom: 10px; font-weight: 600; outline:none;}
+        
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); transition: 0.3s; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Auth -->
-    <div id="authScreen" class="auth-wrapper">
-        <div class="auth-box">
-            <div style="font-size: 2rem; margin-bottom: 10px;">🔐</div>
-            <h2 style="color:var(--text-light)">Admin Security</h2>
-            <input type="password" id="passInput" placeholder="Enter Password" autocomplete="off">
-            <button onclick="handleLogin()">Access Dashboard</button>
+    <div id="toastContainer"></div>
+
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>Admin Area</h2>
+            <input type="password" id="adminPass" placeholder="Password (admin123)" onkeypress="if(event.key==='Enter') login()">
+            <button onclick="login()">Masuk Dashboard</button>
         </div>
     </div>
 
-    <!-- Navigation -->
-    <nav>
-        <div class="brand">🎮 PS3 CONTROL</div>
-        <div class="nav-links">
-            <button class="nav-btn active" data-target="dash">Live Board</button>
-            <button class="nav-btn" data-target="pkg">Packages</button>
-            <button class="nav-btn" data-target="prm">Promos</button>
-            <button class="nav-btn" data-target="hist">History</button>
-            <button class="nav-btn btn-logout" onclick="handleLogout()">Logout</button>
+    <div class="sidebar">
+        <div class="brand">PS3<span>ADMIN</span></div>
+        <div class="nav-menu">
+            <button class="nav-btn active" data-target="dashboard">⚡ Live Dashboard</button>
+            <button class="nav-btn" data-target="packages">📦 Paket Harga</button>
+            <button class="nav-btn" data-target="promos">🎁 Kelola Promo</button>
+            <button class="nav-btn" data-target="history">📁 Riwayat Selesai</button>
         </div>
-    </nav>
+        <div class="logout-btn">
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
 
-    <div class="container">
+    <div class="main-content">
         
-        <!-- Live Dashboard -->
-        <div id="dash" class="section active">
-            <h2 class="section-header">Live Active Bookings</h2>
-            <div class="filter-group">
-                <button class="filter-tab active" data-f="all">All Status</button>
-                <button class="filter-tab" data-f="unpaid">Belum Bayar</button>
-                <button class="filter-tab" data-f="paid">Standby / Paid</button>
-                <button class="filter-tab" data-f="running">Running</button>
-                <button class="filter-tab" data-f="finished">Finished</button>
+        <div id="dashboard" class="section active">
+            <h1 class="header-title">Live Bookings</h1>
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="unpaid">Belum Bayar</button>
+                <button class="filter-btn" data-filter="paid">Sudah Bayar</button>
+                <button class="filter-btn" data-filter="running">Berjalan</button>
+                <button class="filter-btn" data-filter="finished">Waktu Habis</button>
             </div>
-            <div class="grid-container" id="liveGrid"></div>
+            <div class="grid" id="bookingGrid"></div>
         </div>
 
-        <!-- History -->
-        <div id="hist" class="section">
-            <h2 class="section-header">Rental History</h2>
-            <div class="grid-container" id="historyGrid"></div>
+        <div id="history" class="section">
+            <h1 class="header-title">Riwayat Selesai</h1>
+            <div class="grid" id="historyGrid"></div>
         </div>
 
-        <!-- Packages Management -->
-        <div id="pkg" class="section">
-            <h2 class="section-header">Paket & Harga</h2>
-            <div class="admin-form">
-                <input type="hidden" id="fPkgId">
-                <div class="input-group"><label>Nama Paket</label><input type="text" id="fPkgName"></div>
-                <div class="input-group"><label>Durasi (Jam)</label><input type="number" id="fPkgDur" step="0.5"></div>
-                <div class="input-group"><label>Harga (Rp)</label><input type="number" id="fPkgPrice"></div>
-                <div class="input-group"><label>Status</label>
-                    <select id="fPkgActive"><option value="true">Aktif</option><option value="false">Nonaktif</option></select>
+        <div id="packages" class="section">
+            <h1 class="header-title">Manajemen Paket Harga</h1>
+            <div class="crud-box">
+                <input type="hidden" id="pkgId">
+                <div class="form-grid">
+                    <input type="text" id="pkgName" placeholder="Nama Paket (cth: Paket Malam)" required>
+                    <input type="number" id="pkgDuration" placeholder="Durasi (Jam)" step="0.5" required>
+                    <input type="number" id="pkgPrice" placeholder="Harga (Rp)" required>
+                    <select id="pkgStatus">
+                        <option value="true">Status: Aktif</option>
+                        <option value="false">Status: Nonaktif</option>
+                    </select>
                 </div>
-                <div class="input-group" style="grid-column: 1 / -1;"><label>Keterangan</label><textarea id="fPkgDesc"></textarea></div>
-                <button class="btn-action bg-blue" style="grid-column: 1 / -1; padding: 12px;" onclick="savePkg()">Simpan Data Paket</button>
+                <textarea id="pkgDesc" placeholder="Keterangan singkat paket" rows="2"></textarea>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button class="btn btn-blue" style="padding: 12px 25px;" onclick="savePackage()">Simpan Paket</button>
+                    <button class="btn btn-outline" style="padding: 12px 25px;" onclick="resetPackageForm()">Batal/Reset</button>
+                </div>
             </div>
-            <div class="table-wrap">
+            <div class="table-responsive">
                 <table>
-                    <thead><tr><th>Paket</th><th>Durasi</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead>
-                    <tbody id="tblPkg"></tbody>
+                    <thead><tr><th>Nama Paket</th><th>Durasi</th><th>Harga</th><th>Status</th><th style="text-align:right">Aksi</th></tr></thead>
+                    <tbody id="tablePackages"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Promos Management -->
-        <div id="prm" class="section">
-            <h2 class="section-header">Promo Aktif</h2>
-            <div class="admin-form">
-                <input type="hidden" id="fPrmId">
-                <div class="input-group"><label>Judul Promo</label><input type="text" id="fPrmTitle"></div>
-                <div class="input-group"><label>Label Diskon</label><input type="text" id="fPrmDisc" placeholder="Cth: Cashback 50%"></div>
-                <div class="input-group"><label>Status</label>
-                    <select id="fPrmActive"><option value="true">Aktif</option><option value="false">Nonaktif</option></select>
+        <div id="promos" class="section">
+            <h1 class="header-title">Manajemen Promo</h1>
+            <div class="crud-box">
+                <input type="hidden" id="promoId">
+                <div class="form-grid">
+                    <input type="text" id="promoTitle" placeholder="Judul Promo" required>
+                    <input type="text" id="promoDiscount" placeholder="Keterangan Sorotan (cth: Diskon Rp10.000)">
                 </div>
-                <div class="input-group" style="grid-column: 1 / -1;"><label>Syarat / Keterangan</label><textarea id="fPrmDesc"></textarea></div>
-                <button class="btn-action bg-blue" style="grid-column: 1 / -1; padding: 12px;" onclick="savePrm()">Simpan Promo</button>
+                <textarea id="promoDesc" placeholder="Deskripsi/Syarat Lengkap Promo" rows="2"></textarea>
+                <select id="promoStatus" style="margin-top:10px;">
+                    <option value="true">Status: Aktif</option>
+                    <option value="false">Status: Nonaktif</option>
+                </select>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="btn btn-blue" style="padding: 12px 25px;" onclick="savePromo()">Simpan Promo</button>
+                    <button class="btn btn-outline" style="padding: 12px 25px;" onclick="resetPromoForm()">Batal/Reset</button>
+                </div>
             </div>
-            <div class="table-wrap">
+            <div class="table-responsive">
                 <table>
-                    <thead><tr><th>Promo</th><th>Label Diskon</th><th>Status</th><th>Aksi</th></tr></thead>
-                    <tbody id="tblPrm"></tbody>
+                    <thead><tr><th>Judul Promo</th><th>Sorotan</th><th>Status</th><th style="text-align:right">Aksi</th></tr></thead>
+                    <tbody id="tablePromos"></tbody>
                 </table>
             </div>
         </div>
 
     </div>
 
-    <!-- Modals -->
-
-    <!-- Modal: Confirmation (Replaces window.confirm) -->
-    <div id="confirmModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-title" id="confTitle">Konfirmasi</div>
-            <p style="color:var(--text-dim); margin-bottom: 20px;" id="confMsg">Anda yakin ingin melanjutkan?</p>
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Pesan Untuk Layar TV</div>
+            <div class="modal-body">
+                <input type="hidden" id="noteBookingId">
+                <textarea id="adminNoteText" rows="4" style="width:100%; padding:15px; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); color:white; border-radius:8px; outline:none; resize:none;" placeholder="Tulis catatan yang akan tampil di TV penyewa..."></textarea>
+            </div>
             <div class="modal-footer">
-                <button class="btn-action bg-gray" style="padding:8px 20px" onclick="closeModals()">Batal</button>
-                <button class="btn-action bg-red" style="padding:8px 20px" id="confBtn">Ya, Lanjutkan</button>
+                <button class="btn btn-outline" onclick="closeModal('noteModal')">Batal</button>
+                <button class="btn btn-blue" onclick="saveNote()">Simpan Pesan</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Admin Note -->
-    <div id="noteModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-title">Catatan Layar Penyewa</div>
-            <input type="hidden" id="nBookId">
-            <textarea class="input-box" id="nText" rows="4" placeholder="Ketik pesan yang akan tampil di layar TV penyewa..."></textarea>
+    <div id="manualTimeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Atur Waktu Manual</div>
+            <div class="modal-body">
+                <input type="hidden" id="manualTimeId">
+                <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:15px;">Pilih aksi dan masukkan jumlah waktu yang diinginkan.</p>
+                
+                <select id="manualTimeMode" class="mode-select">
+                    <option value="set">SET (Ubah Menjadi Waktu Baru)</option>
+                    <option value="add">TAMBAH (+) Waktu Saat Ini</option>
+                    <option value="sub">KURANGI (-) Waktu Saat Ini</option>
+                </select>
+
+                <div class="time-inputs">
+                    <div>
+                        <label>JAM</label>
+                        <input type="number" id="manHour" min="0" value="0" onclick="this.select()">
+                    </div>
+                    <div>
+                        <label>MENIT</label>
+                        <input type="number" id="manMinute" min="0" max="59" value="0" onclick="this.select()">
+                    </div>
+                    <div>
+                        <label>DETIK</label>
+                        <input type="number" id="manSecond" min="0" max="59" value="0" onclick="this.select()">
+                    </div>
+                </div>
+            </div>
             <div class="modal-footer">
-                <button class="btn-action bg-gray" style="padding:8px 20px" onclick="closeModals()">Batal</button>
-                <button class="btn-action bg-blue" style="padding:8px 20px" onclick="submitNote()">Tampilkan</button>
+                <button class="btn btn-outline" onclick="closeModal('manualTimeModal')">Batal</button>
+                <button class="btn btn-blue" onclick="saveManualTime()">Terapkan Waktu</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Manual Time Adjust -->
-    <div id="timeModal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-title">Atur Waktu Manual</div>
-            <input type="hidden" id="tBookId">
-            <div class="time-inputs">
-                <div><label>Jam</label><input type="number" id="tHours" class="input-box" value="0" min="0"></div>
-                <div><label>Menit</label><input type="number" id="tMins" class="input-box" value="30" min="0"></div>
-            </div>
-            <div class="modal-footer" style="justify-content: space-between;">
-                <button class="btn-action bg-red" style="padding:10px 20px; width:48%" onclick="submitTimeAdjust('sub')">(-) Kurangi</button>
-                <button class="btn-action bg-green" style="padding:10px 20px; width:48%" onclick="submitTimeAdjust('add')">(+) Tambah</button>
-            </div>
-            <div class="modal-footer" style="margin-top:10px;">
-                <button class="btn-action bg-gray" style="width:100%; padding:10px;" onclick="closeModals()">Batal</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Global Toast -->
-    <div id="toast" class="toast">Action Success</div>
-
-    <!-- Firebase SDK (Modular v9) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -290,257 +313,505 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- Auth Setup ---
-        window.handleLogin = () => {
-            if(document.getElementById('passInput').value === 'admin123') {
-                localStorage.setItem('ps3_adm_token', 'true');
-                document.getElementById('authScreen').style.display = 'none';
-                showToast("Login Berhasil", "green");
-            } else { showToast("Password Salah!", "red"); }
-        };
-        window.handleLogout = () => { localStorage.removeItem('ps3_adm_token'); location.reload(); };
-        if(localStorage.getItem('ps3_adm_token') === 'true') document.getElementById('authScreen').style.display = 'none';
+        // Global DB Reference for inline HTML calls
+        window.dbRef = { update, remove, set, push, ref, db };
 
-        // --- Core Utils ---
-        window.closeModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-        window.showToast = (msg, color = 'var(--primary)') => {
-            const t = document.getElementById('toast');
-            t.style.borderLeftColor = color; t.innerText = msg;
-            t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000);
-        };
-        
-        let confirmAction = null;
-        window.askConfirm = (title, msg, callback) => {
-            document.getElementById('confTitle').innerText = title;
-            document.getElementById('confMsg').innerText = msg;
-            confirmAction = callback;
-            document.getElementById('confirmModal').style.display = 'flex';
-        };
-        document.getElementById('confBtn').onclick = () => { if(confirmAction) confirmAction(); window.closeModals(); };
+        // Server Time Sync Logic (CRUCIAL FOR FIXING SYNC BUG)
+        let serverOffset = 0;
+        onValue(ref(db, '.info/serverTimeOffset'), (snap) => {
+            serverOffset = snap.val() || 0;
+        });
+        function getTrueTime() {
+            return Date.now() + serverOffset;
+        }
 
-        // --- Navigation & Filters ---
+        let bookingsData = {};
         let currentFilter = 'all';
-        document.querySelectorAll('.nav-btn:not(.btn-logout)').forEach(btn => {
-            btn.onclick = (e) => {
+        let uiInterval;
+
+        // Custom Toast System
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if(type === 'error') toast.style.borderLeftColor = 'var(--c-unpaid)';
+            if(type === 'warning') toast.style.borderLeftColor = 'var(--c-paused)';
+            
+            toast.innerHTML = `<div>${message}</div>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- AUTH ---
+        window.login = function() {
+            if(document.getElementById('adminPass').value === 'admin123') {
+                localStorage.setItem('admin_logged', 'true');
+                document.getElementById('loginOverlay').style.display = 'none';
+                showToast("Berhasil Login", "success");
+            } else {
+                showToast("Password Salah!", "error");
+            }
+        }
+        window.logout = function() {
+            localStorage.removeItem('admin_logged');
+            location.reload();
+        }
+        if(localStorage.getItem('admin_logged') === 'true') {
+            document.getElementById('loginOverlay').style.display = 'none';
+        }
+
+        // --- NAVIGATION ---
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 e.target.classList.add('active');
                 document.getElementById(e.target.dataset.target).classList.add('active');
-            }
+            });
         });
-        document.querySelectorAll('.filter-tab').forEach(btn => {
-            btn.onclick = (e) => {
-                document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active'); currentFilter = e.target.dataset.f;
+
+        // --- FILTER ---
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
                 renderBookings();
-            }
+            });
         });
 
-        // --- TIME SYNC LOGIC (CRITICAL BUG FIX) ---
-        // Menjamin waktu sisa presisi meskipun jam laptop admin/penyewa ngawur.
-        let serverTimeOffset = 0;
-        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverTimeOffset = snap.val() || 0; });
-        const getNow = () => Date.now() + serverTimeOffset;
+        // --- BOOKING LOGIC & RENDER ---
+        onValue(ref(db, 'bookings'), (snapshot) => {
+            bookingsData = snapshot.val() || {};
+            renderBookings();
+        });
 
-        // --- Render Data ---
-        let bookingsData = {};
-        onValue(ref(db, 'bookings'), (snap) => { bookingsData = snap.val() || {}; renderBookings(); });
-
-        const fmtTime = (ms) => {
+        function formatTimeRemaining(ms) {
             if(ms <= 0) return "00:00:00";
-            let s = Math.floor(ms / 1000);
-            let h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-            return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
-        };
+            let totalSeconds = Math.floor(ms / 1000);
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let seconds = totalSeconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
 
-        const calcRem = (b) => (b.status_countdown === 'running') ? (b.waktu_selesai - getNow()) : b.sisa_waktu;
+        // Hitung waktu berdasarkan Server Time
+        function calculateRemaining(b) {
+            if (b.status_countdown === 'running') {
+                return b.waktu_selesai - getTrueTime();
+            } else {
+                return b.sisa_waktu; // paused or idle
+            }
+        }
 
-        setInterval(() => {
-            document.querySelectorAll('.timer-huge').forEach(el => {
-                let b = bookingsData[el.dataset.id];
+        // Update UI timer per second
+        clearInterval(uiInterval);
+        uiInterval = setInterval(() => {
+            document.querySelectorAll('.timer-display').forEach(el => {
+                let id = el.dataset.id;
+                let b = bookingsData[id];
                 if(b && b.status_countdown === 'running') {
-                    let rem = b.waktu_selesai - getNow();
-                    if(rem <= 0) { el.innerText = "00:00:00"; el.className = "timer-huge timer-danger"; }
-                    else {
-                        el.innerText = fmtTime(rem);
-                        el.className = "timer-huge " + (rem <= 600000 ? "timer-warning" : "");
+                    let rem = b.waktu_selesai - getTrueTime();
+                    if(rem <= 0) {
+                        el.innerText = "00:00:00";
+                        el.style.color = 'var(--c-unpaid)';
+                    } else {
+                        el.innerText = formatTimeRemaining(rem);
+                        if(rem <= 600000) el.style.color = 'var(--c-paused)'; // <10 mins warning
+                        else el.style.color = 'white';
                     }
                 }
             });
         }, 1000);
 
         function renderBookings() {
-            const live = document.getElementById('liveGrid'); const hist = document.getElementById('historyGrid');
-            live.innerHTML = ''; hist.innerHTML = '';
+            const grid = document.getElementById('bookingGrid');
+            const historyGrid = document.getElementById('historyGrid');
+            grid.innerHTML = '';
+            historyGrid.innerHTML = '';
 
-            Object.keys(bookingsData).forEach(id => {
+            // Sort data: newest first based on timestamp in ID
+            let sortedIds = Object.keys(bookingsData).sort((a,b) => {
+                let tA = parseInt(a.split('-')[1] || 0);
+                let tB = parseInt(b.split('-')[1] || 0);
+                return tB - tA;
+            });
+
+            sortedIds.forEach(id => {
                 let b = bookingsData[id];
-                let rem = calcRem(b);
-                let tClass = "timer-huge" + (rem <= 0 ? " timer-danger" : (rem <= 600000 && b.status_countdown === 'running' ? " timer-warning" : ""));
+                let remTime = calculateRemaining(b);
+                let timeStr = formatTimeRemaining(remTime);
                 
-                let cClass = 'st-unpaid', sText = 'BELUM BAYAR';
-                if(b.status_pembayaran === 'Sudah Bayar') { cClass = 'st-paid'; sText = b.status_konfirmasi === 'Sudah' ? 'STANDBY' : 'MENUNGGU KONFIRM'; }
-                if(b.status_countdown === 'running') { cClass = 'st-running'; sText = 'PLAYING'; }
-                if(b.status_countdown === 'paused') { cClass = 'st-paused'; sText = 'PAUSED'; }
-                if(b.status_countdown === 'finished') { cClass = 'st-finished'; sText = 'TIME UP'; }
+                // State Styling
+                let cardClass = 'st-unpaid';
+                let statusText = 'Belum Bayar';
+                let statusColor = 'var(--c-unpaid)';
+                
+                if(b.status_pembayaran === 'Sudah Bayar') {
+                    cardClass = 'st-paid'; statusText = 'Lunas (Menunggu)'; statusColor = 'var(--c-paid)';
+                    if(b.status_konfirmasi === 'Sudah') { statusText = 'Siap Dimulai'; }
+                }
+                if(b.status_countdown === 'running') { 
+                    cardClass = 'st-running'; statusText = 'Berjalan'; statusColor = 'var(--c-running)'; 
+                }
+                if(b.status_countdown === 'paused') { 
+                    cardClass = 'st-paused'; statusText = 'Di-jeda'; statusColor = 'var(--c-paused)'; 
+                }
+                if(b.status_countdown === 'finished' || remTime <= 0 && b.status_countdown === 'running') { 
+                    cardClass = 'st-finished'; statusText = 'Waktu Habis'; statusColor = 'var(--c-unpaid)'; 
+                }
 
-                let card = `
-                    <div class="booking-card ${cClass}">
-                        <div class="card-head">
-                            <div><div class="b-name">${b.nama}</div><div class="b-pkg">${b.paket_nama}</div></div>
-                            <div class="status-badge">${sText}</div>
+                let cardHTML = `
+                    <div class="card ${cardClass}">
+                        <div class="card-header">
+                            <div class="card-title">${b.nama}</div>
+                            <div class="badge">${b.paket_nama}</div>
                         </div>
-                        <div class="b-details">
-                            <div class="b-row"><span>Booking ID:</span> <span>${id}</span></div>
-                            <div class="b-row"><span>WhatsApp:</span> <span>${b.nohp}</span></div>
-                            <div class="b-row"><span>Metode:</span> <span>${b.metode_pembayaran}</span></div>
+                        <div class="card-body">
+                            <div class="detail-row">
+                                <span class="detail-label">Booking ID</span>
+                                <span class="detail-val" style="font-family:monospace; font-size:0.85rem">${id}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Metode</span>
+                                <span class="detail-val">${b.metode_pembayaran}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-val" style="color:${statusColor}">${statusText}</span>
+                            </div>
+                            
+                            <div class="timer-display" data-id="${id}">${timeStr}</div>
                         </div>
-                        <div class="timer-huge" data-id="${id}">${fmtTime(rem)}</div>
                         
-                        ${b.is_history ? `
-                            <div class="btn-grid full"><button class="btn-action bg-red" onclick="delBook('${id}')">Hapus Permanen</button></div>
-                        ` : `
-                            <div class="btn-grid" style="margin-bottom:8px">
+                        <div class="card-actions">
+                            ${b.is_history ? `
+                                <button class="btn btn-red" onclick="act('${id}', 'delete')">Hapus Permanen</button>
+                            ` : `
                                 ${b.status_pembayaran === 'Belum Bayar' 
-                                    ? `<button class="btn-action bg-green" onclick="act('${id}','pay')">✓ Lunas</button>` 
+                                    ? `<button class="btn btn-green" style="width:100%" onclick="act('${id}', 'bayar')">✅ Tandai Lunas</button>` 
                                     : (b.status_konfirmasi === 'Belum' 
-                                        ? `<button class="btn-action bg-blue" onclick="act('${id}','conf')">Konfirmasi</button>` : '')}
+                                        ? `<button class="btn btn-blue" style="width:100%" onclick="act('${id}', 'konfirmasi')">👍 Konfirmasi Sewa</button>`
+                                        : '')}
                                 
-                                ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="btn-action bg-blue" onclick="act('${id}','start')">▶ START</button>` : ''}
-                                ${b.status_countdown === 'running' ? `<button class="btn-action bg-yellow" onclick="act('${id}','pause')">⏸ PAUSE</button>` : ''}
-                            </div>
-                            <div class="btn-grid">
-                                <button class="btn-action bg-gray" onclick="openTimeAdjust('${id}')">± Waktu</button>
-                                <button class="btn-action bg-gray" onclick="openNoteModal('${id}')">💬 Catatan</button>
-                                <button class="btn-action bg-gray" onclick="copyL('${id}')">📋 Link</button>
-                                <button class="btn-action bg-gray" onclick="act('${id}','reset')">↺ Reset</button>
-                                <button class="btn-action bg-gray" onclick="act('${id}','finish')">📦 Selesai</button>
-                                <button class="btn-action bg-red" onclick="delBook('${id}')">🗑 Hapus</button>
-                            </div>
-                        `}
-                    </div>`;
+                                ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="btn btn-green" onclick="act('${id}', 'start')">▶ Start</button>` : ''}
+                                ${b.status_countdown === 'running' ? `<button class="btn btn-yellow" onclick="act('${id}', 'pause')">⏸ Pause</button>` : ''}
+                                
+                                <button class="btn btn-dark" onclick="openManualTimeModal('${id}')">⏱ Atur Waktu</button>
+                                <button class="btn btn-dark" onclick="act('${id}', 'reset')">↺ Reset</button>
+                                
+                                <button class="btn btn-dark" onclick="openNoteModal('${id}')">💬 Pesan TV</button>
+                                <button class="btn btn-outline" onclick="copyLink('${id}')">🔗 Salin Link</button>
+                                <button class="btn btn-outline" onclick="act('${id}', 'finish')">🏁 Selesai</button>
+                                <button class="btn btn-red" onclick="act('${id}', 'delete')">🗑</button>
+                            `}
+                        </div>
+                    </div>
+                `;
 
-                if(b.is_history) { hist.innerHTML += card; }
-                else {
-                    let show = (currentFilter === 'all') || 
-                               (currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') ||
-                               (currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') ||
-                               (currentFilter === 'running' && b.status_countdown === 'running') ||
-                               (currentFilter === 'finished' && b.status_countdown === 'finished');
-                    if(show) live.innerHTML += card;
+                if (b.is_history) {
+                    historyGrid.innerHTML += cardHTML;
+                } else {
+                    let show = false;
+                    if(currentFilter === 'all') show = true;
+                    if(currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') show = true;
+                    if(currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') show = true;
+                    if(currentFilter === 'running' && b.status_countdown === 'running') show = true;
+                    if(currentFilter === 'finished' && (b.status_countdown === 'finished' || remTime <= 0)) show = true;
+                    
+                    if(show) grid.innerHTML += cardHTML;
                 }
             });
         }
 
-        // --- Actions Logic ---
-        window.act = async (id, cmd) => {
-            let b = bookingsData[id]; let u = {};
-            if(cmd === 'pay') { u.status_pembayaran = 'Sudah Bayar'; showToast("Pembayaran Diterima"); }
-            if(cmd === 'conf') { u.status_konfirmasi = 'Sudah'; showToast("Sewa Dikonfirmasi"); }
-            if(cmd === 'start') {
-                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return showToast("Selesaikan pembayaran & konfirmasi dulu!","red");
-                let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
-                if(rem <= 0) return showToast("Waktu habis! Tambah waktu dulu.", "red");
-                u.status_countdown = 'running'; u.waktu_selesai = getNow() + rem; showToast("Timer Dimulai", "var(--success)");
-            }
-            if(cmd === 'pause') {
-                u.status_countdown = 'paused'; u.sisa_waktu = Math.max(0, b.waktu_selesai - getNow()); showToast("Timer Dijeda", "var(--warning)");
-            }
-            if(cmd === 'reset') {
-                u.status_countdown = 'idle'; u.sisa_waktu = b.durasi_jam * 3600000; u.waktu_selesai = 0; showToast("Timer Direset");
-            }
-            if(cmd === 'finish') {
-                window.askConfirm("Selesaikan Sewa?", "Data akan dipindah ke Riwayat Selesai.", async () => {
-                    await update(ref(db, `bookings/${id}`), { is_history: true, status_countdown: 'finished' });
-                    showToast("Pindah ke Riwayat");
-                }); return;
-            }
-            if(Object.keys(u).length > 0) await update(ref(db, `bookings/${id}`), u);
-        };
-
-        window.delBook = (id) => {
-            window.askConfirm("Hapus Permanen?", "Data booking ini akan hilang selamanya.", async () => {
-                await remove(ref(db, `bookings/${id}`)); showToast("Data Terhapus", "var(--danger)");
-            });
-        };
-
-        window.copyL = (id) => {
-            let link = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
-            navigator.clipboard.writeText(link).then(() => showToast("Link Layar Tercopy!"));
-        };
-
-        // --- Custom Time Adjust Logic ---
-        window.openTimeAdjust = (id) => {
-            document.getElementById('tBookId').value = id;
-            document.getElementById('tHours').value = '0';
-            document.getElementById('tMins').value = '30';
-            document.getElementById('timeModal').style.display = 'flex';
-        };
-        window.submitTimeAdjust = async (type) => {
-            let id = document.getElementById('tBookId').value;
-            let h = parseInt(document.getElementById('tHours').value) || 0;
-            let m = parseInt(document.getElementById('tMins').value) || 0;
-            let ms = (h * 3600 + m * 60) * 1000;
-            if(ms === 0) return;
-
+        // --- ACTIONS ---
+        window.act = async function(id, action) {
             let b = bookingsData[id];
-            let u = {};
-            if(b.status_countdown === 'running') {
-                u.waktu_selesai = type === 'add' ? (b.waktu_selesai + ms) : (b.waktu_selesai - ms);
-            } else {
-                u.sisa_waktu = type === 'add' ? (b.sisa_waktu + ms) : Math.max(0, b.sisa_waktu - ms);
-                if(b.status_countdown === 'finished' && type === 'add') u.status_countdown = 'paused';
+            let updates = {};
+            let now = getTrueTime();
+            
+            if(action === 'bayar') {
+                updates['status_pembayaran'] = 'Sudah Bayar';
+                showToast('Pembayaran Diterima');
             }
-            await update(ref(db, `bookings/${id}`), u);
-            window.closeModals();
-            showToast(`Waktu berhasil di${type === 'add'?'tambah':'kurangi'}`);
-        };
+            if(action === 'konfirmasi') {
+                updates['status_konfirmasi'] = 'Sudah';
+                showToast('Pesanan Dikonfirmasi');
+            }
+            
+            if(action === 'start') {
+                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') {
+                    return showToast("Lunas & Konfirmasi dulu!", "error");
+                }
+                let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
+                if(rem <= 0) return showToast("Waktu 0. Tambah waktu dulu.", "error");
+                updates['status_countdown'] = 'running';
+                updates['waktu_selesai'] = now + rem;
+                showToast('Waktu Berjalan');
+            }
+            
+            if(action === 'pause') {
+                updates['status_countdown'] = 'paused';
+                updates['sisa_waktu'] = Math.max(0, b.waktu_selesai - now);
+                showToast('Waktu Di-jeda', "warning");
+            }
+            
+            if(action === 'reset') {
+                updates['status_countdown'] = 'idle';
+                updates['sisa_waktu'] = b.durasi_jam * 3600000;
+                updates['waktu_selesai'] = 0;
+                showToast('Waktu Direset Ulang');
+            }
 
-        // --- Admin Notes ---
-        window.openNoteModal = (id) => {
-            document.getElementById('nBookId').value = id;
-            document.getElementById('nText').value = bookingsData[id].catatan_admin || '';
+            if(action === 'finish') {
+                updates['is_history'] = true;
+                updates['status_countdown'] = 'finished';
+                showToast('Dipindah ke Riwayat');
+            }
+
+            if(action === 'delete') {
+                // Toast as confirm
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.style.borderLeftColor = 'var(--c-unpaid)';
+                toast.innerHTML = `
+                    <div>Hapus data ${b.nama}?</div>
+                    <div style="display:flex; gap:5px;">
+                        <button style="background:var(--c-unpaid); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="confirmDelete('${id}'); this.parentElement.parentElement.remove()">Ya</button>
+                        <button style="background:#555; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Batal</button>
+                    </div>
+                `;
+                document.getElementById('toastContainer').appendChild(toast);
+                return; // halt logic
+            }
+
+            if(Object.keys(updates).length > 0) {
+                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), updates);
+            }
+        }
+
+        window.confirmDelete = async function(id) {
+            await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `bookings/${id}`));
+            showToast('Data Dihapus Permanen', 'success');
+        }
+
+        window.copyLink = function(id) {
+            // URL otomatis diarahkan ke countdown.html di direktori yang sama
+            let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
+            navigator.clipboard.writeText(url).then(() => showToast("Link TV Berhasil Disalin"));
+        }
+
+        // --- MODAL UTILS ---
+        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
+        
+        // --- NOTES MODAL ---
+        window.openNoteModal = function(id) {
+            document.getElementById('noteBookingId').value = id;
+            document.getElementById('adminNoteText').value = bookingsData[id].catatan_admin || "";
             document.getElementById('noteModal').style.display = 'flex';
-        };
-        window.submitNote = async () => {
-            let id = document.getElementById('nBookId').value;
-            await update(ref(db, `bookings/${id}`), { catatan_admin: document.getElementById('nText').value });
-            window.closeModals(); showToast("Catatan Tampil di Layar");
-        };
+        }
+        window.saveNote = async function() {
+            let id = document.getElementById('noteBookingId').value;
+            let note = document.getElementById('adminNoteText').value;
+            await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), { catatan_admin: note });
+            window.closeModal('noteModal');
+            showToast("Pesan TV Diperbarui");
+        }
 
-        // --- CRUD Master Data ---
-        const resetFP = () => { ['Id','Name','Dur','Price','Desc'].forEach(k => document.getElementById('fPkg'+k).value=''); };
-        window.savePkg = async () => {
-            let id = document.getElementById('fPkgId').value, n = document.getElementById('fPkgName').value;
-            if(!n) return showToast("Nama paket wajib isi!", "red");
-            let d = { name: n, duration_hours: parseFloat(document.getElementById('fPkgDur').value)||0, price: parseFloat(document.getElementById('fPkgPrice').value)||0, description: document.getElementById('fPkgDesc').value, is_active: document.getElementById('fPkgActive').value==='true' };
-            if(id) await update(ref(db, `packages/${id}`), d); else await push(ref(db, 'packages'), d);
-            resetFP(); showToast("Paket Tersimpan");
-        };
-        window.editP = (id,o) => { document.getElementById('fPkgId').value = id; document.getElementById('fPkgName').value = o.name; document.getElementById('fPkgDur').value = o.duration_hours; document.getElementById('fPkgPrice').value = o.price; document.getElementById('fPkgDesc').value = o.description; document.getElementById('fPkgActive').value = o.is_active?'true':'false'; };
-        window.delP = (id) => window.askConfirm("Hapus Paket?", "", async () => { await remove(ref(db,`packages/${id}`)); showToast("Terhapus"); });
-        onValue(ref(db,'packages'), s => {
-            let d = s.val()||{}, h='';
-            for(let k in d) h += `<tr><td>${d[k].name}</td><td>${d[k].duration_hours}h</td><td>Rp ${d[k].price}</td><td>${d[k].is_active?'✅':'❌'}</td><td><button class="btn-action bg-blue" onclick='editP("${k}",${JSON.stringify(d[k])})' style="padding:4px 10px; display:inline">Edit</button> <button class="btn-action bg-red" onclick='delP("${k}")' style="padding:4px 10px; display:inline">Del</button></td></tr>`;
-            document.getElementById('tblPkg').innerHTML = h;
+        // --- MANUAL TIME MODAL (FITUR BARU) ---
+        window.openManualTimeModal = function(id) {
+            document.getElementById('manualTimeId').value = id;
+            document.getElementById('manHour').value = "0";
+            document.getElementById('manMinute').value = "0";
+            document.getElementById('manSecond').value = "0";
+            document.getElementById('manualTimeMode').value = "set";
+            document.getElementById('manualTimeModal').style.display = 'flex';
+        }
+
+        window.saveManualTime = async function() {
+            let id = document.getElementById('manualTimeId').value;
+            let b = bookingsData[id];
+            let mode = document.getElementById('manualTimeMode').value;
+            
+            let h = parseInt(document.getElementById('manHour').value) || 0;
+            let m = parseInt(document.getElementById('manMinute').value) || 0;
+            let s = parseInt(document.getElementById('manSecond').value) || 0;
+            
+            let inputMs = (h * 3600 + m * 60 + s) * 1000;
+            let now = getTrueTime();
+            
+            // Dapatkan sisa waktu faktual saat ini
+            let currentSisa = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
+            let newSisa = 0;
+
+            if(mode === 'set') newSisa = inputMs;
+            if(mode === 'add') newSisa = currentSisa + inputMs;
+            if(mode === 'sub') newSisa = Math.max(0, currentSisa - inputMs);
+
+            let updates = {};
+            if(b.status_countdown === 'running') {
+                // Jika sedang jalan, sesuaikan titik akhirnya
+                updates['waktu_selesai'] = now + newSisa;
+                updates['sisa_waktu'] = newSisa; // update juga sebagai fallback
+            } else {
+                // Jika tidak jalan, cukup update sisa_waktunya
+                updates['sisa_waktu'] = newSisa;
+                // Ubah status ke paused jika sebelumnya finish agar bisa distart lagi
+                if(b.status_countdown === 'finished') updates['status_countdown'] = 'paused';
+            }
+
+            await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), updates);
+            window.closeModal('manualTimeModal');
+            showToast("Waktu Berhasil Diatur!");
+        }
+
+
+        // --- CRUD PACKAGES ---
+        onValue(ref(db, 'packages'), (snapshot) => {
+            const data = snapshot.val() || {};
+            const tbody = document.getElementById('tablePackages');
+            tbody.innerHTML = '';
+            for(let key in data) {
+                let d = data[key];
+                tbody.innerHTML += `<tr>
+                    <td style="font-weight:600">${d.name}</td>
+                    <td>${d.duration_hours} Jam</td>
+                    <td>Rp ${parseInt(d.price).toLocaleString()}</td>
+                    <td><span class="badge" style="background:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
+                    <td style="text-align:right">
+                        <button class="btn btn-outline" style="padding:5px" onclick="editPackage('${key}', '${d.name}', ${d.duration_hours}, ${d.price}, '${d.description}', ${d.is_active})">✏️</button>
+                        <button class="btn btn-red" style="padding:5px" onclick="deletePackage('${key}')">🗑</button>
+                    </td>
+                </tr>`;
+            }
         });
 
-        // Promos identical logic...
-        const resetFPr = () => { ['Id','Title','Disc','Desc'].forEach(k => document.getElementById('fPrm'+k).value=''); };
-        window.savePrm = async () => {
-            let id = document.getElementById('fPrmId').value, t = document.getElementById('fPrmTitle').value;
-            if(!t) return showToast("Judul wajib isi!", "red");
-            let d = { title: t, discount_info: document.getElementById('fPrmDisc').value, description: document.getElementById('fPrmDesc').value, is_active: document.getElementById('fPrmActive').value==='true' };
-            if(id) await update(ref(db, `promos/${id}`), d); else await push(ref(db, 'promos'), d);
-            resetFPr(); showToast("Promo Tersimpan");
-        };
-        window.editPr = (id,o) => { document.getElementById('fPrmId').value = id; document.getElementById('fPrmTitle').value = o.title; document.getElementById('fPrmDisc').value = o.discount_info; document.getElementById('fPrmDesc').value = o.description; document.getElementById('fPrmActive').value = o.is_active?'true':'false'; };
-        window.delPr = (id) => window.askConfirm("Hapus Promo?", "", async () => { await remove(ref(db,`promos/${id}`)); showToast("Terhapus"); });
-        onValue(ref(db,'promos'), s => {
-            let d = s.val()||{}, h='';
-            for(let k in d) h += `<tr><td>${d[k].title}</td><td>${d[k].discount_info}</td><td>${d[k].is_active?'✅':'❌'}</td><td><button class="btn-action bg-blue" onclick='editPr("${k}",${JSON.stringify(d[k])})' style="padding:4px 10px; display:inline">Edit</button> <button class="btn-action bg-red" onclick='delPr("${k}")' style="padding:4px 10px; display:inline">Del</button></td></tr>`;
-            document.getElementById('tblPrm').innerHTML = h;
+        window.savePackage = async function() {
+            let id = document.getElementById('pkgId').value;
+            let data = {
+                name: document.getElementById('pkgName').value,
+                duration_hours: parseFloat(document.getElementById('pkgDuration').value),
+                price: parseFloat(document.getElementById('pkgPrice').value),
+                description: document.getElementById('pkgDesc').value,
+                is_active: document.getElementById('pkgStatus').value === 'true'
+            };
+            if(!data.name || !data.duration_hours || !data.price) return showToast("Lengkapi form paket!", "error");
+            
+            if(id) {
+                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `packages/${id}`), data);
+                showToast("Paket Diperbarui");
+            } else {
+                await window.dbRef.push(window.dbRef.ref(window.dbRef.db, 'packages'), data);
+                showToast("Paket Baru Ditambahkan");
+            }
+            window.resetPackageForm();
+        }
+        window.editPackage = function(id, name, dur, price, desc, act) {
+            document.getElementById('pkgId').value = id;
+            document.getElementById('pkgName').value = name;
+            document.getElementById('pkgDuration').value = dur;
+            document.getElementById('pkgPrice').value = price;
+            document.getElementById('pkgDesc').value = desc;
+            document.getElementById('pkgStatus').value = act ? 'true' : 'false';
+            window.scrollTo(0, 0);
+        }
+        window.resetPackageForm = function() {
+            document.getElementById('pkgId').value = '';
+            document.getElementById('pkgName').value = '';
+            document.getElementById('pkgDuration').value = '';
+            document.getElementById('pkgPrice').value = '';
+            document.getElementById('pkgDesc').value = '';
+        }
+        window.deletePackage = async function(id) {
+            // Toast Delete Logic
+            const toast = document.createElement('div');
+            toast.className = 'toast'; toast.style.borderLeftColor = 'var(--c-unpaid)';
+            toast.innerHTML = `
+                <div>Hapus Paket ini?</div>
+                <div style="display:flex; gap:5px;">
+                    <button style="background:var(--c-unpaid); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="confirmDeletePkg('${id}'); this.parentElement.parentElement.remove()">Ya</button>
+                    <button style="background:#555; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Batal</button>
+                </div>
+            `;
+            document.getElementById('toastContainer').appendChild(toast);
+        }
+        window.confirmDeletePkg = async function(id) {
+            await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `packages/${id}`));
+            showToast("Paket Dihapus");
+        }
+
+        // --- CRUD PROMOS ---
+        onValue(ref(db, 'promos'), (snapshot) => {
+            const data = snapshot.val() || {};
+            const tbody = document.getElementById('tablePromos');
+            tbody.innerHTML = '';
+            for(let key in data) {
+                let d = data[key];
+                tbody.innerHTML += `<tr>
+                    <td style="font-weight:600">${d.title}</td>
+                    <td>${d.discount_info}</td>
+                    <td><span class="badge" style="background:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
+                    <td style="text-align:right">
+                        <button class="btn btn-outline" style="padding:5px" onclick="editPromo('${key}', '${d.title}', '${d.discount_info}', '${d.description}', ${d.is_active})">✏️</button>
+                        <button class="btn btn-red" style="padding:5px" onclick="deletePromo('${key}')">🗑</button>
+                    </td>
+                </tr>`;
+            }
         });
+
+        window.savePromo = async function() {
+            let id = document.getElementById('promoId').value;
+            let data = {
+                title: document.getElementById('promoTitle').value,
+                discount_info: document.getElementById('promoDiscount').value,
+                description: document.getElementById('promoDesc').value,
+                is_active: document.getElementById('promoStatus').value === 'true'
+            };
+            if(!data.title) return showToast("Judul promo wajib diisi!", "error");
+            
+            if(id) {
+                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `promos/${id}`), data);
+                showToast("Promo Diperbarui");
+            } else {
+                await window.dbRef.push(window.dbRef.ref(window.dbRef.db, 'promos'), data);
+                showToast("Promo Baru Ditambahkan");
+            }
+            window.resetPromoForm();
+        }
+        window.editPromo = function(id, title, disc, desc, act) {
+            document.getElementById('promoId').value = id;
+            document.getElementById('promoTitle').value = title;
+            document.getElementById('promoDiscount').value = disc;
+            document.getElementById('promoDesc').value = desc;
+            document.getElementById('promoStatus').value = act ? 'true' : 'false';
+            window.scrollTo(0, 0);
+        }
+        window.resetPromoForm = function() {
+            document.getElementById('promoId').value = '';
+            document.getElementById('promoTitle').value = '';
+            document.getElementById('promoDiscount').value = '';
+            document.getElementById('promoDesc').value = '';
+        }
+        window.deletePromo = async function(id) {
+             const toast = document.createElement('div');
+            toast.className = 'toast'; toast.style.borderLeftColor = 'var(--c-unpaid)';
+            toast.innerHTML = `
+                <div>Hapus Promo ini?</div>
+                <div style="display:flex; gap:5px;">
+                    <button style="background:var(--c-unpaid); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="confirmDeletePromo('${id}'); this.parentElement.parentElement.remove()">Ya</button>
+                    <button style="background:#555; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Batal</button>
+                </div>
+            `;
+            document.getElementById('toastContainer').appendChild(toast);
+        }
+        window.confirmDeletePromo = async function(id) {
+            await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `promos/${id}`));
+            showToast("Promo Dihapus");
+        }
 
     </script>
 </body>
