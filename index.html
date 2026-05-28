@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental PS3 HEN - Premium Gaming</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --panel-bg: #1f2833;
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --text-main: #c5c6c7;
+            --white: #ffffff;
+            --danger: #ff003c;
+            --success: #00ff66;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
+        header { text-align: center; padding: 40px 0; border-bottom: 2px solid var(--neon-blue); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); margin-bottom: 30px; }
+        header h1 { color: var(--white); font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
+        header p { color: var(--neon-blue); font-size: 1.1rem; margin-top: 10px; }
+
+        /* Sections */
+        .section-title { color: var(--white); font-size: 1.5rem; border-left: 4px solid var(--neon-purple); padding-left: 10px; margin-bottom: 15px; text-shadow: 0 0 5px var(--neon-purple); }
+        .card { background-color: var(--panel-bg); border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* Lists */
+        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .item-card { background: linear-gradient(145deg, #1f2833, #151b22); border: 1px solid var(--neon-blue); border-radius: 8px; padding: 15px; transition: transform 0.3s; }
+        .item-card:hover { transform: translateY(-5px); box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+        .item-card h3 { color: var(--neon-blue); margin-bottom: 5px; }
+        .item-card .price { color: var(--white); font-weight: bold; font-size: 1.2rem; }
+        .item-card .desc { font-size: 0.9rem; margin-top: 10px; color: #a0a0a0; }
+
+        .promo-card { border-color: var(--neon-purple); }
+        .promo-card h3 { color: var(--neon-purple); }
+        .promo-card:hover { box-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
+
+        /* Form */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--white); }
+        input[type="text"], input[type="tel"], select { width: 100%; padding: 12px; background-color: #12181f; border: 1px solid #334; color: var(--white); border-radius: 5px; outline: none; transition: border 0.3s; }
+        input[type="text"]:focus, input[type="tel"]:focus, select:focus { border-color: var(--neon-blue); box-shadow: 0 0 8px rgba(0, 243, 255, 0.5); }
+        
+        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; }
+        .checkbox-group input { margin-top: 5px; cursor: pointer; width: 18px; height: 18px; }
+        .checkbox-group label { font-size: 0.9rem; line-height: 1.4; color: #ccc; }
+        .link-syarat { color: var(--neon-blue); cursor: pointer; text-decoration: underline; }
+
+        button.btn-sewa { width: 100%; padding: 15px; background: transparent; border: 2px solid var(--neon-blue); color: var(--neon-blue); font-size: 1.2rem; font-weight: bold; border-radius: 5px; cursor: pointer; text-transform: uppercase; transition: all 0.3s; text-shadow: 0 0 5px var(--neon-blue); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) inset; }
+        button.btn-sewa:hover:not(:disabled) { background: var(--neon-blue); color: #000; box-shadow: 0 0 20px var(--neon-blue); }
+        button.btn-sewa:disabled { border-color: #555; color: #555; cursor: not-allowed; text-shadow: none; box-shadow: none; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background-color: var(--panel-bg); margin: 10% auto; padding: 20px; border: 1px solid var(--neon-purple); border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 30px rgba(188, 19, 254, 0.3); }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close:hover { color: var(--white); }
+        .modal h2 { color: var(--neon-purple); margin-bottom: 15px; text-align: center; }
+        .modal ol { padding-left: 20px; color: #ddd; }
+        .modal li { margin-bottom: 10px; }
+
+        /* Loader */
+        #loader { display: none; text-align: center; color: var(--neon-blue); margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Rental PS3 HEN</h1>
+        <p>Experience Premium Console Gaming</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- Promo Section -->
+        <div id="promoSection" style="display:none;">
+            <h2 class="section-title">Promo Aktif</h2>
+            <div class="grid-list" id="promoList" style="margin-bottom: 30px;">
+                <!-- Diisi via JS -->
+            </div>
+        </div>
+
+        <!-- Price Section -->
+        <h2 class="section-title">Pilihan Paket Sewa</h2>
+        <div class="grid-list" id="packageList" style="margin-bottom: 30px;">
+            <!-- Diisi via JS -->
+        </div>
+
+        <!-- Form Section -->
+        <div class="card">
+            <h2 class="section-title">Form Pemesanan</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" placeholder="Masukkan nama Anda" required>
+                </div>
+                <div class="form-group">
+                    <label for="nohp">Nomor HP / WhatsApp Aktif</label>
+                    <input type="tel" id="nohp" placeholder="Contoh: 08123456789" required>
+                    <small id="hpError" style="color:var(--danger); display:none;">Nomor HP harus diawali 08 atau 62 dan valid.</small>
+                </div>
+                <div class="form-group">
+                    <label for="paket">Pilih Paket</label>
+                    <select id="paket" required>
+                        <option value="">-- Pilih Paket --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pembayaran">Metode Pembayaran</label>
+                    <select id="pembayaran" required>
+                        <option value="">-- Pilih Pembayaran --</option>
+                        <option value="Cash">Cash (Bayar di Tempat)</option>
+                        <option value="Transfer BRI">Transfer BRI</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="syaratCheck">
+                    <label for="syaratCheck">Saya telah membaca dan menyetujui <span class="link-syarat" id="btnSyarat">Syarat dan Aturan Penggunaan PS3 HEN</span>.</label>
+                </div>
+
+                <div id="loader">Memproses Data...</div>
+                <button type="submit" class="btn-sewa" id="btnSubmit" disabled>Sewa Sekarang</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Syarat & Ketentuan -->
+    <div id="syaratModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeSyarat">&times;</span>
+            <h2>Syarat & Aturan PS3 HEN</h2>
+            <ol>
+                <li>Penyewa wajib mengisi data diri dengan benar dan valid.</li>
+                <li><strong>DILARANG KERAS</strong> melakukan update sistem (System Update) pada PS3.</li>
+                <li><strong>DILARANG</strong> menghapus game, file, aplikasi, atau mengubah settingan PS3 HEN.</li>
+                <li><strong>DILARANG</strong> login akun PSN (PlayStation Network) sembarangan.</li>
+                <li><strong>DILARANG</strong> membongkar, merusak segel, atau memodifikasi unit PS3 dan kelengkapannya.</li>
+                <li>Jika terjadi kerusakan unit, stik, atau kehilangan akibat kelalaian penyewa, <strong>WAJIB GANTI RUGI</strong> sesuai harga perbaikan/barang.</li>
+                <li>Keterlambatan pengembalian dari waktu yang ditentukan akan dikenakan denda sesuai tarif jam tambahan.</li>
+                <li>Unit wajib dikembalikan dalam kondisi lengkap seperti semula (Konsol, Stik, Kabel HDMI, Kabel Power, Kabel Cas Stik).</li>
+                <li>Save data (progress game) pribadi menjadi tanggung jawab penyewa, sewaktu-waktu dapat terhapus.</li>
+                <li>PS3 hanya untuk penggunaan normal dan pribadi, <strong>BUKAN</strong> untuk disewakan ulang ke pihak lain.</li>
+            </ol>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="btnSetujuModal" style="padding: 10px 20px; background: var(--neon-purple); border: none; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Saya Mengerti & Setuju</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Modular v9 via module) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // Konfigurasi Firebase dari User
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV5S1jEFxw_tGWHBVqGe_erZSsOKRK2gU",
+            authDomain: "rental-ps3-hen.firebaseapp.com",
+            databaseURL: "https://rental-ps3-hen-default-rtdb.firebaseio.com", // Penting untuk Realtime DB
+            projectId: "rental-ps3-hen",
+            storageBucket: "rental-ps3-hen.firebasestorage.app",
+            messagingSenderId: "209728877379",
+            appId: "1:209728877379:web:3fcd356cc427c5172af5f6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        let availablePackages = {};
+
+        // DOM Elements
+        const form = document.getElementById('bookingForm');
+        const paketSelect = document.getElementById('paket');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const syaratCheck = document.getElementById('syaratCheck');
+        const modal = document.getElementById('syaratModal');
+        const btnSyarat = document.getElementById('btnSyarat');
+        const closeSyarat = document.getElementById('closeSyarat');
+        const btnSetujuModal = document.getElementById('btnSetujuModal');
+        const nohpInput = document.getElementById('nohp');
+        const hpError = document.getElementById('hpError');
+        const loader = document.getElementById('loader');
+        const adminPhone = "6287745756269";
+
+        // Handle Modal
+        btnSyarat.onclick = () => modal.style.display = "block";
+        closeSyarat.onclick = () => modal.style.display = "none";
+        btnSetujuModal.onclick = () => {
+            modal.style.display = "none";
+            syaratCheck.checked = true;
+            checkFormValidity();
+        };
+        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+        // Form Validation & Button State
+        function checkFormValidity() {
+            const isHpValid = /^(08|628)\d{8,12}$/.test(nohpInput.value.replace(/\D/g, ''));
+            if(nohpInput.value && !isHpValid) {
+                hpError.style.display = 'block';
+            } else {
+                hpError.style.display = 'none';
+            }
+            
+            const isFormFilled = document.getElementById('nama').value && nohpInput.value && paketSelect.value && document.getElementById('pembayaran').value;
+            
+            if (isFormFilled && isHpValid && syaratCheck.checked) {
+                btnSubmit.disabled = false;
+            } else {
+                btnSubmit.disabled = true;
+            }
+        }
+        
+        form.addEventListener('input', checkFormValidity);
+        syaratCheck.addEventListener('change', checkFormValidity);
+
+        // Fetch Data: Packages
+        onValue(ref(db, 'packages'), (snapshot) => {
+            const data = snapshot.val();
+            const packageList = document.getElementById('packageList');
+            packageList.innerHTML = '';
+            paketSelect.innerHTML = '<option value="">-- Pilih Paket --</option>';
+            availablePackages = {};
+
+            if (data) {
+                for (let key in data) {
+                    if (data[key].is_active) {
+                        availablePackages[key] = data[key];
+                        // Tampil di daftar harga
+                        packageList.innerHTML += `
+                            <div class="item-card">
+                                <h3>${data[key].name}</h3>
+                                <div class="price">Rp ${parseInt(data[key].price).toLocaleString('id-ID')}</div>
+                                <div class="desc">Durasi: ${data[key].duration_hours} Jam<br>${data[key].description}</div>
+                            </div>
+                        `;
+                        // Tampil di select box
+                        paketSelect.innerHTML += `<option value="${key}">${data[key].name} - Rp ${parseInt(data[key].price).toLocaleString('id-ID')}</option>`;
+                    }
+                }
+            } else {
+                packageList.innerHTML = '<p>Belum ada paket tersedia.</p>';
+            }
+        });
+
+        // Fetch Data: Promos
+        onValue(ref(db, 'promos'), (snapshot) => {
+            const data = snapshot.val();
+            const promoSection = document.getElementById('promoSection');
+            const promoList = document.getElementById('promoList');
+            promoList.innerHTML = '';
+            
+            let hasPromo = false;
+            if (data) {
+                for (let key in data) {
+                    if (data[key].is_active) {
+                        hasPromo = true;
+                        promoList.innerHTML += `
+                            <div class="item-card promo-card">
+                                <h3>🎁 ${data[key].title}</h3>
+                                <div class="desc" style="color:var(--white)">${data[key].discount_info}</div>
+                                <div class="desc">${data[key].description}</div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+            promoSection.style.display = hasPromo ? 'block' : 'none';
+        });
+
+        // Submit Booking
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btnSubmit.style.display = 'none';
+            loader.style.display = 'block';
+
+            const nama = document.getElementById('nama').value;
+            let nohp = nohpInput.value.replace(/\D/g, ''); // Bersihkan format
+            if(nohp.startsWith('0')) nohp = '62' + nohp.substring(1); // Format ke 62
+            
+            const paketId = paketSelect.value;
+            const pembayaran = document.getElementById('pembayaran').value;
+            const selectedPackage = availablePackages[paketId];
+            
+            // Generate Booking ID (Format: PS3-timestamp)
+            const dateNow = new Date();
+            const bookingId = "PS3-" + dateNow.getTime().toString().substring(5);
+            
+            const bookingData = {
+                booking_id: bookingId,
+                nama: nama,
+                nohp: nohp,
+                paket_id: paketId,
+                paket_nama: selectedPackage.name,
+                durasi_jam: parseFloat(selectedPackage.duration_hours),
+                harga: parseFloat(selectedPackage.price),
+                metode_pembayaran: pembayaran,
+                tanggal_booking: dateNow.toISOString(),
+                status_pembayaran: "Belum Bayar", // Belum bayar, Sudah bayar
+                status_konfirmasi: "Belum", // Belum, Sudah
+                status_countdown: "idle", // idle, running, paused, finished
+                sisa_waktu: parseFloat(selectedPackage.duration_hours) * 60 * 60 * 1000, // dalam milidetik
+                waktu_selesai: 0,
+                catatan_admin: "",
+                is_history: false
+            };
+
+            try {
+                // Simpan ke Firebase
+                await set(ref(db, 'bookings/' + bookingId), bookingData);
+                
+                // Format Pesan WhatsApp
+                const waMessage = `Halo Admin Rental PS3 HEN, saya ingin menyewa dengan detail berikut:
+                
+*No Booking:* ${bookingId}
+*Nama:* ${nama}
+*No HP:* ${nohp}
+*Paket:* ${selectedPackage.name} (${selectedPackage.duration_hours} Jam)
+*Harga:* Rp ${parseInt(selectedPackage.price).toLocaleString('id-ID')}
+*Pembayaran:* ${pembayaran}
+
+Mohon konfirmasi pesanan saya. Terima kasih.`;
+
+                const waUrl = `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(waMessage)}`;
+                
+                // Redirect ke WhatsApp
+                window.location.href = waUrl;
+                
+                // Reset Form
+                form.reset();
+                syaratCheck.checked = false;
+                checkFormValidity();
+            } catch (error) {
+                alert("Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.");
+                console.error(error);
+            } finally {
+                btnSubmit.style.display = 'block';
+                loader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
