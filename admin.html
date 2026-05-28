@@ -3,145 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PS3 Admin Command Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <title>Admin Area - PS3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0B0E14;
-            --bg-panel: #151A22;
-            --border-color: #2A3241;
+            --bg-dark: #0A0D14;
+            --bg-panel: #11151D;
+            --bg-card: #161B26;
+            --border: #212836;
             --primary: #3B82F6;
             --primary-hover: #2563EB;
-            --secondary: #8B5CF6;
-            --text-main: #F3F4F6;
-            --text-dim: #9CA3AF;
+            --text-main: #F8FAFC;
+            --text-dim: #94A3B8;
             
             --c-unpaid: #EF4444;
             --c-paid: #10B981;
-            --c-running: #3B82F6;
+            --c-running: #06B6D4;
             --c-paused: #F59E0B;
-            --c-finished: #6B7280;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
         body { background: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         
-        /* Toast Notification */
-        #toastContainer { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--bg-panel); border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: white; display: flex; align-items: center; justify-content: space-between; min-width: 250px; animation: slideIn 0.3s ease forwards; }
+        /* Toast */
+        #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 12px; }
+        .toast { background: var(--bg-panel); border-left: 4px solid var(--primary); padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; min-width: 280px; animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; border: 1px solid var(--border); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
-        /* Login Screen */
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 1px solid var(--border-color); text-align: center; width: 100%; max-width: 350px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .login-box h2 { color: var(--primary); margin-bottom: 25px; font-weight: 700; font-size: 1.8rem; }
-        .login-box input { width: 100%; margin-bottom: 20px; padding: 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px; font-size: 1rem; outline: none; transition: border 0.3s; }
+        /* Login */
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 380px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .login-box h2 { margin-bottom: 30px; font-weight: 700; font-size: 1.8rem; text-align: center; }
+        .login-box input { width: 100%; margin-bottom: 20px; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.2s; }
         .login-box input:focus { border-color: var(--primary); }
-        .login-box button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-weight: 700; font-size: 1.1rem; cursor: pointer; border-radius: 8px; transition: background 0.3s; }
-        .login-box button:hover { background: var(--primary-hover); }
+        .login-box button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; font-weight: 600; font-size: 1.1rem; cursor: pointer; border-radius: 12px; transition: 0.2s; }
+        .login-box button:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
         /* Sidebar */
-        .sidebar { width: 260px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 100; }
-        .brand { padding: 25px 20px; font-size: 1.5rem; font-weight: 800; color: white; border-bottom: 1px solid var(--border-color); letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .sidebar { width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 100; }
+        .brand { padding: 30px 24px; font-size: 1.6rem; font-weight: 800; border-bottom: 1px solid var(--border); }
         .brand span { color: var(--primary); }
-        .nav-menu { padding: 20px 0; display: flex; flex-direction: column; gap: 5px; flex: 1; }
-        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 15px 25px; text-align: left; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; }
+        .nav-menu { padding: 24px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 14px 20px; text-align: left; font-size: 1rem; font-weight: 500; border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .nav-btn:hover { background: rgba(255,255,255,0.03); color: white; }
-        .nav-btn.active { background: rgba(59, 130, 246, 0.1); color: var(--primary); border-left-color: var(--primary); }
-        .logout-btn { padding: 20px; border-top: 1px solid var(--border-color); }
-        .logout-btn button { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--c-unpaid); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .nav-btn.active { background: rgba(59, 130, 246, 0.1); color: var(--primary); font-weight: 600; }
+        .logout-btn { padding: 24px 12px; border-top: 1px solid var(--border); }
+        .logout-btn button { width: 100%; padding: 14px; background: rgba(239, 68, 68, 0.1); color: var(--c-unpaid); border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .logout-btn button:hover { background: var(--c-unpaid); color: white; }
 
         /* Main Content */
-        .main-content { flex: 1; margin-left: 260px; padding: 30px 40px; }
-        .section { display: none; animation: fadeIn 0.4s ease; }
+        .main-content { flex: 1; margin-left: 280px; padding: 40px; }
+        .section { display: none; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header-title { font-size: 2rem; font-weight: 700; margin-bottom: 25px; color: white; }
+        .header-title { font-size: 2.2rem; font-weight: 700; margin-bottom: 30px; letter-spacing: -0.5px; }
 
-        /* Filters */
-        .filter-bar { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; background: var(--bg-panel); padding: 10px; border-radius: 12px; border: 1px solid var(--border-color); }
-        .filter-btn { padding: 10px 20px; background: transparent; border: none; color: var(--text-dim); font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-        .filter-btn:hover { color: white; background: rgba(255,255,255,0.05); }
-        .filter-btn.active { background: var(--primary); color: white; }
+        .filter-bar { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
+        .filter-btn { padding: 10px 20px; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-dim); font-weight: 500; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .filter-btn:hover { color: white; border-color: #475569; }
+        .filter-btn.active { background: var(--text-main); color: #000; border-color: var(--text-main); font-weight: 600; }
 
-        /* Grid Cards */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
-        .card { background: var(--bg-panel); border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
-        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--border-color); }
+        /* Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+        .card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: 0.3s; }
+        .card:hover { transform: translateY(-4px); border-color: #334155; }
         
-        .card.st-unpaid::before { background: var(--c-unpaid); }
-        .card.st-paid::before { background: var(--c-paid); }
-        .card.st-running { border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); }
-        .card.st-running::before { background: var(--c-running); }
-        .card.st-paused::before { background: var(--c-paused); }
-        .card.st-finished { opacity: 0.7; }
-        .card.st-finished::before { background: var(--c-finished); }
-
-        .card-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.02); }
-        .card-title { font-weight: 700; font-size: 1.1rem; color: white; }
-        .badge { font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.1); color: var(--text-main); font-weight: 600; }
+        .card-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+        .card-title { font-weight: 700; font-size: 1.15rem; }
+        .badge { font-size: 0.75rem; padding: 6px 12px; border-radius: 20px; background: rgba(255,255,255,0.08); font-weight: 600; }
         
-        .card-body { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
-        .detail-row { display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .card-body { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+        .detail-row { display: flex; justify-content: space-between; font-size: 0.95rem; }
         .detail-label { color: var(--text-dim); }
-        .detail-val { font-weight: 600; color: var(--text-main); text-align: right; }
+        .detail-val { font-weight: 500; text-align: right; }
         
-        .timer-display { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 700; text-align: center; margin: 15px 0 5px; color: white; letter-spacing: 2px; }
+        /* Font Preview Timer */
+        .timer-display-admin { font-size: 2.5rem; text-align: center; margin: 20px 0 10px; color: white; letter-spacing: 1px; transition: font-family 0.3s; }
         
-        .card-actions { padding: 15px 20px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .card-actions { padding: 20px 24px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .action-btn { padding: 10px; font-size: 0.9rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: white; transition: 0.2s; text-align: center; }
+        .action-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .action-btn.full { grid-column: span 2; }
         
-        /* Buttons */
-        .btn { padding: 8px 12px; font-size: 0.85rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; color: white; transition: transform 0.1s, opacity 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn:active { transform: translateY(0); }
-        
-        .btn-green { background: var(--c-paid); }
+        .btn-green { background: var(--c-paid); color: #000; }
         .btn-red { background: var(--c-unpaid); }
-        .btn-blue { background: var(--c-running); }
+        .btn-blue { background: var(--c-running); color: #000; }
         .btn-yellow { background: var(--c-paused); color: #000; }
-        .btn-dark { background: #374151; } 
-        .btn-dark:hover { background: #4B5563; }
-        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+        .btn-dark { background: #2A3241; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+        .btn-outline:hover { color: white; border-color: #64748B; }
+
+        /* Settings Card */
+        .settings-card { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); padding: 30px; max-width: 600px; }
+        .settings-card label { display: block; margin-bottom: 10px; color: var(--text-dim); font-weight: 500; }
+        .settings-card select { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; outline: none; font-size: 1.1rem; margin-bottom: 20px; }
 
         /* Form CRUD */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .crud-box { background: var(--bg-panel); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px; }
-        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px; outline: none; margin-bottom: 10px; font-family: 'Outfit', sans-serif;}
+        .crud-box { background: var(--bg-card); padding: 30px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;}
+        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; outline: none; font-size: 1rem; }
         .crud-box input:focus, .crud-box textarea:focus { border-color: var(--primary); }
         
-        .table-responsive { width: 100%; overflow-x: auto; background: var(--bg-panel); border-radius: 12px; border: 1px solid var(--border-color); }
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
-        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-        td { font-size: 0.95rem; }
-        tr:last-child td { border-bottom: none; }
+        th, td { padding: 18px 24px; border-bottom: 1px solid var(--border); }
+        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
         tr:hover td { background: rgba(255,255,255,0.02); }
 
         /* Modals */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--bg-panel); width: 100%; max-width: 450px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow: hidden; animation: fadeIn 0.2s ease; }
-        .modal-header { padding: 20px 25px; border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 1.2rem; }
-        .modal-body { padding: 25px; }
-        .modal-footer { padding: 20px 25px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; background: rgba(0,0,0,0.2); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--bg-card); width: 100%; max-width: 480px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 25px 50px rgba(0,0,0,0.5); animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-header { padding: 24px 30px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.25rem; }
+        .modal-body { padding: 30px; }
+        .modal-footer { padding: 24px 30px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2); }
         
-        /* Modal Atur Waktu Manual Specifics */
-        .time-inputs { display: flex; gap: 10px; margin: 15px 0; }
+        .time-inputs { display: flex; gap: 15px; margin: 20px 0; }
         .time-inputs div { flex: 1; text-align: center; }
-        .time-inputs label { font-size: 0.8rem; color: var(--text-dim); display: block; margin-bottom: 5px;}
-        .time-inputs input { width: 100%; text-align: center; font-size: 1.5rem; font-family: 'JetBrains Mono'; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: white; border-radius: 8px; }
+        .time-inputs label { font-size: 0.8rem; color: var(--text-dim); display: block; margin-bottom: 8px; font-weight: 600;}
+        .time-inputs input { width: 100%; text-align: center; font-size: 1.8rem; font-family: 'JetBrains Mono', monospace; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; }
         .time-inputs input:focus { border-color: var(--primary); outline:none; }
-        select.mode-select { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: white; border-radius: 8px; margin-bottom: 10px; font-weight: 600; outline:none;}
-        
+        select.mode-select { width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: white; border-radius: 12px; font-weight: 500; outline:none; font-size: 1rem;}
+
         @media (max-width: 900px) {
             .sidebar { transform: translateX(-100%); transition: 0.3s; }
             .sidebar.open { transform: translateX(0); }
@@ -155,23 +142,22 @@
 
     <div id="loginOverlay">
         <div class="login-box">
-            <h2>Admin Area</h2>
-            <input type="password" id="adminPass" placeholder="Password (admin123)" onkeypress="if(event.key==='Enter') login()">
-            <button onclick="login()">Masuk Dashboard</button>
+            <h2>PS3 ADMIN</h2>
+            <input type="password" id="adminPass" placeholder="Password Admin" onkeypress="if(event.key==='Enter') login()">
+            <button onclick="login()">Masuk Sistem</button>
         </div>
     </div>
 
     <div class="sidebar">
-        <div class="brand">PS3<span>ADMIN</span></div>
+        <div class="brand">Admin<span>Panel</span></div>
         <div class="nav-menu">
             <button class="nav-btn active" data-target="dashboard">⚡ Live Dashboard</button>
             <button class="nav-btn" data-target="packages">📦 Paket Harga</button>
             <button class="nav-btn" data-target="promos">🎁 Kelola Promo</button>
-            <button class="nav-btn" data-target="history">📁 Riwayat Selesai</button>
+            <button class="nav-btn" data-target="history">📁 Riwayat Sewa</button>
+            <button class="nav-btn" data-target="settings">⚙️ Pengaturan TV</button>
         </div>
-        <div class="logout-btn">
-            <button onclick="logout()">Logout</button>
-        </div>
+        <div class="logout-btn"><button onclick="logout()">Logout Keluar</button></div>
     </div>
 
     <div class="main-content">
@@ -180,8 +166,8 @@
             <h1 class="header-title">Live Bookings</h1>
             <div class="filter-bar">
                 <button class="filter-btn active" data-filter="all">Semua</button>
-                <button class="filter-btn" data-filter="unpaid">Belum Bayar</button>
-                <button class="filter-btn" data-filter="paid">Sudah Bayar</button>
+                <button class="filter-btn" data-filter="unpaid">Belum Lunas</button>
+                <button class="filter-btn" data-filter="paid">Lunas (Menunggu)</button>
                 <button class="filter-btn" data-filter="running">Berjalan</button>
                 <button class="filter-btn" data-filter="finished">Waktu Habis</button>
             </div>
@@ -194,11 +180,11 @@
         </div>
 
         <div id="packages" class="section">
-            <h1 class="header-title">Manajemen Paket Harga</h1>
+            <h1 class="header-title">Paket Harga</h1>
             <div class="crud-box">
                 <input type="hidden" id="pkgId">
                 <div class="form-grid">
-                    <input type="text" id="pkgName" placeholder="Nama Paket (cth: Paket Malam)" required>
+                    <input type="text" id="pkgName" placeholder="Nama Paket" required>
                     <input type="number" id="pkgDuration" placeholder="Durasi (Jam)" step="0.5" required>
                     <input type="number" id="pkgPrice" placeholder="Harga (Rp)" required>
                     <select id="pkgStatus">
@@ -206,10 +192,10 @@
                         <option value="false">Status: Nonaktif</option>
                     </select>
                 </div>
-                <textarea id="pkgDesc" placeholder="Keterangan singkat paket" rows="2"></textarea>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button class="btn btn-blue" style="padding: 12px 25px;" onclick="savePackage()">Simpan Paket</button>
-                    <button class="btn btn-outline" style="padding: 12px 25px;" onclick="resetPackageForm()">Batal/Reset</button>
+                <textarea id="pkgDesc" placeholder="Keterangan / Fasilitas paket" rows="2" style="width:100%; margin-top:10px;"></textarea>
+                <div style="display:flex; gap:12px; margin-top:20px;">
+                    <button class="action-btn btn-blue" style="padding: 14px 30px;" onclick="savePackage()">Simpan Paket</button>
+                    <button class="action-btn btn-outline" style="padding: 14px 30px;" onclick="resetPackageForm()">Batal</button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -226,16 +212,16 @@
                 <input type="hidden" id="promoId">
                 <div class="form-grid">
                     <input type="text" id="promoTitle" placeholder="Judul Promo" required>
-                    <input type="text" id="promoDiscount" placeholder="Keterangan Sorotan (cth: Diskon Rp10.000)">
+                    <input type="text" id="promoDiscount" placeholder="Sorotan (cth: Diskon 10Rb)">
                 </div>
-                <textarea id="promoDesc" placeholder="Deskripsi/Syarat Lengkap Promo" rows="2"></textarea>
-                <select id="promoStatus" style="margin-top:10px;">
+                <textarea id="promoDesc" placeholder="Syarat Promo" rows="2" style="width:100%; margin-top:10px;"></textarea>
+                <select id="promoStatus" style="width:100%; margin-top:20px;">
                     <option value="true">Status: Aktif</option>
                     <option value="false">Status: Nonaktif</option>
                 </select>
-                <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button class="btn btn-blue" style="padding: 12px 25px;" onclick="savePromo()">Simpan Promo</button>
-                    <button class="btn btn-outline" style="padding: 12px 25px;" onclick="resetPromoForm()">Batal/Reset</button>
+                <div style="display:flex; gap:12px; margin-top:20px;">
+                    <button class="action-btn btn-blue" style="padding: 14px 30px;" onclick="savePromo()">Simpan Promo</button>
+                    <button class="action-btn btn-outline" style="padding: 14px 30px;" onclick="resetPromoForm()">Batal</button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -246,53 +232,65 @@
             </div>
         </div>
 
+        <div id="settings" class="section">
+            <h1 class="header-title">Pengaturan Layar TV</h1>
+            <div class="settings-card">
+                <label>Pilih Gaya Angka (Font) Countdown TV</label>
+                <select id="tvFontSelect" style="font-family: inherit;">
+                    <option value="'Orbitron', sans-serif" style="font-family: 'Orbitron', sans-serif">Orbitron (Modern Sci-Fi)</option>
+                    <option value="'JetBrains Mono', monospace" style="font-family: 'JetBrains Mono', monospace">JetBrains Mono (Hacker/Terminal)</option>
+                    <option value="'Share Tech Mono', monospace" style="font-family: 'Share Tech Mono', monospace">Share Tech Mono (Digital Jam)</option>
+                    <option value="'Teko', sans-serif" style="font-family: 'Teko', sans-serif">Teko (Tegas & Rapat)</option>
+                    <option value="'Outfit', sans-serif" style="font-family: 'Outfit', sans-serif">Outfit (Halus & Elegan)</option>
+                </select>
+                
+                <div style="padding: 20px; background: #0A0D14; border-radius: 12px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border);">
+                    <div style="color:var(--text-dim); font-size:0.85rem; margin-bottom:10px;">PREVIEW FONT</div>
+                    <div id="fontPreview" style="font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 15px rgba(0,229,255,0.4);">12:34:56</div>
+                </div>
+
+                <button class="action-btn btn-blue" style="padding: 14px 30px;" onclick="saveTvFont()">Simpan Pengaturan Font</button>
+            </div>
+        </div>
+
     </div>
 
     <div id="noteModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">Pesan Untuk Layar TV</div>
+            <div class="modal-header">Pesan TV Khusus</div>
             <div class="modal-body">
                 <input type="hidden" id="noteBookingId">
-                <textarea id="adminNoteText" rows="4" style="width:100%; padding:15px; background:rgba(0,0,0,0.3); border:1px solid var(--border-color); color:white; border-radius:8px; outline:none; resize:none;" placeholder="Tulis catatan yang akan tampil di TV penyewa..."></textarea>
+                <textarea id="adminNoteText" rows="4" style="width:100%; padding:20px; background:rgba(0,0,0,0.3); border:1px solid var(--border); color:white; border-radius:12px; outline:none; resize:none; font-size:1rem;" placeholder="Pesan peringatan / sapaan untuk tampil di layar..."></textarea>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeModal('noteModal')">Batal</button>
-                <button class="btn btn-blue" onclick="saveNote()">Simpan Pesan</button>
+                <button class="action-btn btn-outline" onclick="closeModal('noteModal')">Batal</button>
+                <button class="action-btn btn-blue" onclick="saveNote()">Tampilkan Pesan</button>
             </div>
         </div>
     </div>
 
     <div id="manualTimeModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">Atur Waktu Manual</div>
+            <div class="modal-header">Atur Ulang Waktu</div>
             <div class="modal-body">
                 <input type="hidden" id="manualTimeId">
-                <p style="color:var(--text-dim); font-size:0.9rem; margin-bottom:15px;">Pilih aksi dan masukkan jumlah waktu yang diinginkan.</p>
+                <p style="color:var(--text-dim); font-size:0.95rem; margin-bottom:20px; line-height:1.5;">Pilih mode perubahan dan ketikkan jumlah waktu yang diinginkan. Mesin akan menyesuaikan otomatis.</p>
                 
                 <select id="manualTimeMode" class="mode-select">
-                    <option value="set">SET (Ubah Menjadi Waktu Baru)</option>
-                    <option value="add">TAMBAH (+) Waktu Saat Ini</option>
-                    <option value="sub">KURANGI (-) Waktu Saat Ini</option>
+                    <option value="add">TAMBAH (+) Waktu Dari Sisa Sekarang</option>
+                    <option value="sub">KURANGI (-) Waktu Dari Sisa Sekarang</option>
+                    <option value="set">SET KAKU (Timpa Sisa Waktu Jadi Baru)</option>
                 </select>
 
                 <div class="time-inputs">
-                    <div>
-                        <label>JAM</label>
-                        <input type="number" id="manHour" min="0" value="0" onclick="this.select()">
-                    </div>
-                    <div>
-                        <label>MENIT</label>
-                        <input type="number" id="manMinute" min="0" max="59" value="0" onclick="this.select()">
-                    </div>
-                    <div>
-                        <label>DETIK</label>
-                        <input type="number" id="manSecond" min="0" max="59" value="0" onclick="this.select()">
-                    </div>
+                    <div><label>JAM</label><input type="number" id="manHour" min="0" value="0" onclick="this.select()"></div>
+                    <div><label>MENIT</label><input type="number" id="manMinute" min="0" max="59" value="0" onclick="this.select()"></div>
+                    <div><label>DETIK</label><input type="number" id="manSecond" min="0" max="59" value="0" onclick="this.select()"></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="closeModal('manualTimeModal')">Batal</button>
-                <button class="btn btn-blue" onclick="saveManualTime()">Terapkan Waktu</button>
+                <button class="action-btn btn-outline" onclick="closeModal('manualTimeModal')">Batal</button>
+                <button class="action-btn btn-blue" onclick="saveManualTime()">Jalankan Perubahan</button>
             </div>
         </div>
     </div>
@@ -312,506 +310,223 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
-        // Global DB Reference for inline HTML calls
         window.dbRef = { update, remove, set, push, ref, db };
 
-        // Server Time Sync Logic (CRUCIAL FOR FIXING SYNC BUG)
         let serverOffset = 0;
-        onValue(ref(db, '.info/serverTimeOffset'), (snap) => {
-            serverOffset = snap.val() || 0;
-        });
-        function getTrueTime() {
-            return Date.now() + serverOffset;
-        }
+        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
+        function getTrueTime() { return Date.now() + serverOffset; }
 
         let bookingsData = {};
         let currentFilter = 'all';
-        let uiInterval;
+        let currentTvFont = "'Orbitron', sans-serif";
 
-        // Custom Toast System
         window.showToast = function(message, type = 'success') {
             const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
+            const toast = document.createElement('div'); toast.className = 'toast';
             if(type === 'error') toast.style.borderLeftColor = 'var(--c-unpaid)';
             if(type === 'warning') toast.style.borderLeftColor = 'var(--c-paused)';
-            
             toast.innerHTML = `<div>${message}</div>`;
             container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'fadeOut 0.3s ease forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.animation = 'fadeOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // --- AUTH ---
         window.login = function() {
             if(document.getElementById('adminPass').value === 'admin123') {
-                localStorage.setItem('admin_logged', 'true');
-                document.getElementById('loginOverlay').style.display = 'none';
-                showToast("Berhasil Login", "success");
-            } else {
-                showToast("Password Salah!", "error");
-            }
+                localStorage.setItem('admin_logged', 'true'); document.getElementById('loginOverlay').style.display = 'none'; showToast("Akses Diberikan");
+            } else { showToast("Sandi Ditolak!", "error"); }
         }
-        window.logout = function() {
-            localStorage.removeItem('admin_logged');
-            location.reload();
-        }
-        if(localStorage.getItem('admin_logged') === 'true') {
-            document.getElementById('loginOverlay').style.display = 'none';
-        }
+        window.logout = function() { localStorage.removeItem('admin_logged'); location.reload(); }
+        if(localStorage.getItem('admin_logged') === 'true') document.getElementById('loginOverlay').style.display = 'none';
 
-        // --- NAVIGATION ---
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                e.target.classList.add('active');
-                document.getElementById(e.target.dataset.target).classList.add('active');
+                e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active');
             });
         });
 
-        // --- FILTER ---
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                currentFilter = e.target.dataset.filter;
-                renderBookings();
+                e.target.classList.add('active'); currentFilter = e.target.dataset.filter; renderBookings();
             });
         });
 
-        // --- BOOKING LOGIC & RENDER ---
-        onValue(ref(db, 'bookings'), (snapshot) => {
-            bookingsData = snapshot.val() || {};
-            renderBookings();
+        // --- PENGATURAN FONT LOGIC ---
+        const fontSelect = document.getElementById('tvFontSelect');
+        const fontPreview = document.getElementById('fontPreview');
+        
+        fontSelect.addEventListener('change', (e) => {
+            fontPreview.style.fontFamily = e.target.value;
         });
+
+        onValue(ref(db, 'settings/tv_font'), (snapshot) => {
+            const font = snapshot.val();
+            if(font) {
+                currentTvFont = font;
+                fontSelect.value = font;
+                fontPreview.style.fontFamily = font;
+                // Update existing timers on admin board
+                document.querySelectorAll('.timer-display-admin').forEach(el => el.style.fontFamily = font);
+            }
+        });
+
+        window.saveTvFont = async function() {
+            await set(ref(db, 'settings/tv_font'), fontSelect.value);
+            showToast("Gaya Font TV Berhasil Diubah!");
+        }
+
+        // --- BOOKING LOGIC ---
+        onValue(ref(db, 'bookings'), (snapshot) => { bookingsData = snapshot.val() || {}; renderBookings(); });
 
         function formatTimeRemaining(ms) {
             if(ms <= 0) return "00:00:00";
             let totalSeconds = Math.floor(ms / 1000);
-            let hours = Math.floor(totalSeconds / 3600);
-            let minutes = Math.floor((totalSeconds % 3600) / 60);
-            let seconds = totalSeconds % 60;
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            let h = Math.floor(totalSeconds / 3600); let m = Math.floor((totalSeconds % 3600) / 60); let s = totalSeconds % 60;
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         }
+        function calculateRemaining(b) { return (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu; }
 
-        // Hitung waktu berdasarkan Server Time
-        function calculateRemaining(b) {
-            if (b.status_countdown === 'running') {
-                return b.waktu_selesai - getTrueTime();
-            } else {
-                return b.sisa_waktu; // paused or idle
-            }
-        }
-
-        // Update UI timer per second
-        clearInterval(uiInterval);
-        uiInterval = setInterval(() => {
-            document.querySelectorAll('.timer-display').forEach(el => {
-                let id = el.dataset.id;
-                let b = bookingsData[id];
+        setInterval(() => {
+            document.querySelectorAll('.timer-display-admin').forEach(el => {
+                let id = el.dataset.id; let b = bookingsData[id];
                 if(b && b.status_countdown === 'running') {
                     let rem = b.waktu_selesai - getTrueTime();
-                    if(rem <= 0) {
-                        el.innerText = "00:00:00";
-                        el.style.color = 'var(--c-unpaid)';
-                    } else {
-                        el.innerText = formatTimeRemaining(rem);
-                        if(rem <= 600000) el.style.color = 'var(--c-paused)'; // <10 mins warning
-                        else el.style.color = 'white';
-                    }
+                    if(rem <= 0) { el.innerText = "00:00:00"; el.style.color = 'var(--c-unpaid)'; } 
+                    else { el.innerText = formatTimeRemaining(rem); el.style.color = rem <= 600000 ? 'var(--c-paused)' : 'white'; }
                 }
             });
         }, 1000);
 
         function renderBookings() {
-            const grid = document.getElementById('bookingGrid');
-            const historyGrid = document.getElementById('historyGrid');
-            grid.innerHTML = '';
-            historyGrid.innerHTML = '';
-
-            // Sort data: newest first based on timestamp in ID
-            let sortedIds = Object.keys(bookingsData).sort((a,b) => {
-                let tA = parseInt(a.split('-')[1] || 0);
-                let tB = parseInt(b.split('-')[1] || 0);
-                return tB - tA;
-            });
+            const grid = document.getElementById('bookingGrid'); const historyGrid = document.getElementById('historyGrid');
+            grid.innerHTML = ''; historyGrid.innerHTML = '';
+            let sortedIds = Object.keys(bookingsData).sort((a,b) => parseInt(b.split('-')[1] || 0) - parseInt(a.split('-')[1] || 0));
 
             sortedIds.forEach(id => {
-                let b = bookingsData[id];
-                let remTime = calculateRemaining(b);
-                let timeStr = formatTimeRemaining(remTime);
+                let b = bookingsData[id]; let remTime = calculateRemaining(b); let timeStr = formatTimeRemaining(remTime);
+                let cardClass = 'st-unpaid'; let statusText = 'Belum Bayar'; let statusColor = 'var(--c-unpaid)';
                 
-                // State Styling
-                let cardClass = 'st-unpaid';
-                let statusText = 'Belum Bayar';
-                let statusColor = 'var(--c-unpaid)';
-                
-                if(b.status_pembayaran === 'Sudah Bayar') {
-                    cardClass = 'st-paid'; statusText = 'Lunas (Menunggu)'; statusColor = 'var(--c-paid)';
-                    if(b.status_konfirmasi === 'Sudah') { statusText = 'Siap Dimulai'; }
-                }
-                if(b.status_countdown === 'running') { 
-                    cardClass = 'st-running'; statusText = 'Berjalan'; statusColor = 'var(--c-running)'; 
-                }
-                if(b.status_countdown === 'paused') { 
-                    cardClass = 'st-paused'; statusText = 'Di-jeda'; statusColor = 'var(--c-paused)'; 
-                }
-                if(b.status_countdown === 'finished' || remTime <= 0 && b.status_countdown === 'running') { 
-                    cardClass = 'st-finished'; statusText = 'Waktu Habis'; statusColor = 'var(--c-unpaid)'; 
-                }
+                if(b.status_pembayaran === 'Sudah Bayar') { cardClass = 'st-paid'; statusText = 'Menunggu Mulai'; statusColor = 'var(--c-paid)'; if(b.status_konfirmasi === 'Sudah') statusText = 'Siap Play'; }
+                if(b.status_countdown === 'running') { cardClass = 'st-running'; statusText = 'Sedang Main'; statusColor = 'var(--c-running)'; }
+                if(b.status_countdown === 'paused') { cardClass = 'st-paused'; statusText = 'Di-jeda Sementara'; statusColor = 'var(--c-paused)'; }
+                if(b.status_countdown === 'finished' || remTime <= 0 && b.status_countdown === 'running') { cardClass = 'st-finished'; statusText = 'Waktu Telah Habis'; statusColor = 'var(--c-unpaid)'; }
 
                 let cardHTML = `
                     <div class="card ${cardClass}">
-                        <div class="card-header">
-                            <div class="card-title">${b.nama}</div>
-                            <div class="badge">${b.paket_nama}</div>
-                        </div>
+                        <div class="card-header"><div class="card-title">${b.nama}</div><div class="badge">${b.paket_nama}</div></div>
                         <div class="card-body">
-                            <div class="detail-row">
-                                <span class="detail-label">Booking ID</span>
-                                <span class="detail-val" style="font-family:monospace; font-size:0.85rem">${id}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Metode</span>
-                                <span class="detail-val">${b.metode_pembayaran}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Status</span>
-                                <span class="detail-val" style="color:${statusColor}">${statusText}</span>
-                            </div>
-                            
-                            <div class="timer-display" data-id="${id}">${timeStr}</div>
+                            <div class="detail-row"><span class="detail-label">ID Nota</span><span class="detail-val" style="font-family:monospace; color:#FFF">${id}</span></div>
+                            <div class="detail-row"><span class="detail-label">Metode</span><span class="detail-val">${b.metode_pembayaran}</span></div>
+                            <div class="detail-row"><span class="detail-label">Sistem</span><span class="detail-val" style="color:${statusColor}">${statusText}</span></div>
+                            <div class="timer-display-admin" data-id="${id}" style="font-family:${currentTvFont}">${timeStr}</div>
                         </div>
-                        
                         <div class="card-actions">
-                            ${b.is_history ? `
-                                <button class="btn btn-red" onclick="act('${id}', 'delete')">Hapus Permanen</button>
-                            ` : `
-                                ${b.status_pembayaran === 'Belum Bayar' 
-                                    ? `<button class="btn btn-green" style="width:100%" onclick="act('${id}', 'bayar')">✅ Tandai Lunas</button>` 
-                                    : (b.status_konfirmasi === 'Belum' 
-                                        ? `<button class="btn btn-blue" style="width:100%" onclick="act('${id}', 'konfirmasi')">👍 Konfirmasi Sewa</button>`
-                                        : '')}
-                                
-                                ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="btn btn-green" onclick="act('${id}', 'start')">▶ Start</button>` : ''}
-                                ${b.status_countdown === 'running' ? `<button class="btn btn-yellow" onclick="act('${id}', 'pause')">⏸ Pause</button>` : ''}
-                                
-                                <button class="btn btn-dark" onclick="openManualTimeModal('${id}')">⏱ Atur Waktu</button>
-                                <button class="btn btn-dark" onclick="act('${id}', 'reset')">↺ Reset</button>
-                                
-                                <button class="btn btn-dark" onclick="openNoteModal('${id}')">💬 Pesan TV</button>
-                                <button class="btn btn-outline" onclick="copyLink('${id}')">🔗 Salin Link</button>
-                                <button class="btn btn-outline" onclick="act('${id}', 'finish')">🏁 Selesai</button>
-                                <button class="btn btn-red" onclick="act('${id}', 'delete')">🗑</button>
+                            ${b.is_history ? `<button class="action-btn btn-red full" onclick="act('${id}', 'delete')">Hapus Bukti Riwayat</button>` : `
+                                ${b.status_pembayaran === 'Belum Bayar' ? `<button class="action-btn btn-green full" onclick="act('${id}', 'bayar')">✅ Terima Pembayaran</button>` : (b.status_konfirmasi === 'Belum' ? `<button class="action-btn btn-blue full" onclick="act('${id}', 'konfirmasi')">👍 Konfirmasi Unit Siap</button>` : '')}
+                                ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="action-btn btn-green" onclick="act('${id}', 'start')">▶ PLAY</button>` : ''}
+                                ${b.status_countdown === 'running' ? `<button class="action-btn btn-yellow" onclick="act('${id}', 'pause')">⏸ JEDA</button>` : ''}
+                                <button class="action-btn btn-dark" onclick="openManualTimeModal('${id}')">⏱ Sesuaikan</button>
+                                <button class="action-btn btn-dark" onclick="openNoteModal('${id}')">💬 Tulis Pesan</button>
+                                <button class="action-btn btn-outline" onclick="copyLink('${id}')">🔗 Salin TV</button>
+                                <button class="action-btn btn-outline" onclick="act('${id}', 'reset')">↺ Ulang</button>
+                                <button class="action-btn btn-outline full" style="border-color:#334155" onclick="act('${id}', 'finish')">🏁 Pindah Riwayat Selesai</button>
+                                <button class="action-btn btn-red full" onclick="act('${id}', 'delete')">🗑 Buang Data Pemesan</button>
                             `}
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
-                if (b.is_history) {
-                    historyGrid.innerHTML += cardHTML;
-                } else {
+                if (b.is_history) historyGrid.innerHTML += cardHTML;
+                else {
                     let show = false;
                     if(currentFilter === 'all') show = true;
                     if(currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') show = true;
                     if(currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') show = true;
                     if(currentFilter === 'running' && b.status_countdown === 'running') show = true;
                     if(currentFilter === 'finished' && (b.status_countdown === 'finished' || remTime <= 0)) show = true;
-                    
                     if(show) grid.innerHTML += cardHTML;
                 }
             });
         }
 
-        // --- ACTIONS ---
         window.act = async function(id, action) {
-            let b = bookingsData[id];
-            let updates = {};
-            let now = getTrueTime();
-            
-            if(action === 'bayar') {
-                updates['status_pembayaran'] = 'Sudah Bayar';
-                showToast('Pembayaran Diterima');
-            }
-            if(action === 'konfirmasi') {
-                updates['status_konfirmasi'] = 'Sudah';
-                showToast('Pesanan Dikonfirmasi');
-            }
-            
+            let b = bookingsData[id]; let updates = {}; let now = getTrueTime();
+            if(action === 'bayar') { updates['status_pembayaran'] = 'Sudah Bayar'; showToast('Lunas!'); }
+            if(action === 'konfirmasi') { updates['status_konfirmasi'] = 'Sudah'; showToast('Terkonfirmasi!'); }
             if(action === 'start') {
-                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') {
-                    return showToast("Lunas & Konfirmasi dulu!", "error");
-                }
+                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return showToast("Pastikan Lunas & Konfirmasi!", "error");
                 let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
-                if(rem <= 0) return showToast("Waktu 0. Tambah waktu dulu.", "error");
-                updates['status_countdown'] = 'running';
-                updates['waktu_selesai'] = now + rem;
-                showToast('Waktu Berjalan');
+                if(rem <= 0) return showToast("Sisa nol. Tambah manual.", "error");
+                updates['status_countdown'] = 'running'; updates['waktu_selesai'] = now + rem; showToast('Mulai Bermain!');
             }
-            
-            if(action === 'pause') {
-                updates['status_countdown'] = 'paused';
-                updates['sisa_waktu'] = Math.max(0, b.waktu_selesai - now);
-                showToast('Waktu Di-jeda', "warning");
-            }
-            
-            if(action === 'reset') {
-                updates['status_countdown'] = 'idle';
-                updates['sisa_waktu'] = b.durasi_jam * 3600000;
-                updates['waktu_selesai'] = 0;
-                showToast('Waktu Direset Ulang');
-            }
-
-            if(action === 'finish') {
-                updates['is_history'] = true;
-                updates['status_countdown'] = 'finished';
-                showToast('Dipindah ke Riwayat');
-            }
-
+            if(action === 'pause') { updates['status_countdown'] = 'paused'; updates['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); showToast('Permainan Dijeda', "warning"); }
+            if(action === 'reset') { updates['status_countdown'] = 'idle'; updates['sisa_waktu'] = b.durasi_jam * 3600000; updates['waktu_selesai'] = 0; showToast('Reset Berhasil'); }
+            if(action === 'finish') { updates['is_history'] = true; updates['status_countdown'] = 'finished'; showToast('Beres & Diarsipkan'); }
             if(action === 'delete') {
-                // Toast as confirm
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.style.borderLeftColor = 'var(--c-unpaid)';
-                toast.innerHTML = `
-                    <div>Hapus data ${b.nama}?</div>
-                    <div style="display:flex; gap:5px;">
-                        <button style="background:var(--c-unpaid); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="confirmDelete('${id}'); this.parentElement.parentElement.remove()">Ya</button>
-                        <button style="background:#555; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Batal</button>
-                    </div>
-                `;
-                document.getElementById('toastContainer').appendChild(toast);
-                return; // halt logic
+                const toast = document.createElement('div'); toast.className = 'toast'; toast.style.borderLeftColor = 'var(--c-unpaid)';
+                toast.innerHTML = `<div>Yakin Hapus ${b.nama}?</div><div style="display:flex; gap:8px;"><button style="background:var(--c-unpaid); border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;" onclick="confirmDelete('${id}'); this.parentElement.parentElement.remove()">HAPUS</button><button style="background:#475569; border:none; color:white; padding:8px 14px; border-radius:6px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">KEMBALI</button></div>`;
+                document.getElementById('toastContainer').appendChild(toast); return;
             }
-
-            if(Object.keys(updates).length > 0) {
-                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), updates);
-            }
+            if(Object.keys(updates).length > 0) await update(ref(db, `bookings/${id}`), updates);
         }
-
-        window.confirmDelete = async function(id) {
-            await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `bookings/${id}`));
-            showToast('Data Dihapus Permanen', 'success');
-        }
-
+        window.confirmDelete = async function(id) { await remove(ref(db, `bookings/${id}`)); showToast('Musnah Permanen', 'success'); }
         window.copyLink = function(id) {
-            // URL otomatis diarahkan ke countdown.html di direktori yang sama
             let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
-            navigator.clipboard.writeText(url).then(() => showToast("Link TV Berhasil Disalin"));
+            navigator.clipboard.writeText(url).then(() => showToast("URL TV Tersalin"));
         }
 
-        // --- MODAL UTILS ---
         window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
-        
-        // --- NOTES MODAL ---
-        window.openNoteModal = function(id) {
-            document.getElementById('noteBookingId').value = id;
-            document.getElementById('adminNoteText').value = bookingsData[id].catatan_admin || "";
-            document.getElementById('noteModal').style.display = 'flex';
-        }
-        window.saveNote = async function() {
-            let id = document.getElementById('noteBookingId').value;
-            let note = document.getElementById('adminNoteText').value;
-            await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), { catatan_admin: note });
-            window.closeModal('noteModal');
-            showToast("Pesan TV Diperbarui");
-        }
+        window.openNoteModal = function(id) { document.getElementById('noteBookingId').value = id; document.getElementById('adminNoteText').value = bookingsData[id].catatan_admin || ""; document.getElementById('noteModal').style.display = 'flex'; }
+        window.saveNote = async function() { await update(ref(db, `bookings/${document.getElementById('noteBookingId').value}`), { catatan_admin: document.getElementById('adminNoteText').value }); closeModal('noteModal'); showToast("Pesan Naik Ke TV"); }
 
-        // --- MANUAL TIME MODAL (FITUR BARU) ---
         window.openManualTimeModal = function(id) {
             document.getElementById('manualTimeId').value = id;
-            document.getElementById('manHour').value = "0";
-            document.getElementById('manMinute').value = "0";
-            document.getElementById('manSecond').value = "0";
-            document.getElementById('manualTimeMode').value = "set";
-            document.getElementById('manualTimeModal').style.display = 'flex';
+            document.getElementById('manHour').value = "0"; document.getElementById('manMinute').value = "0"; document.getElementById('manSecond').value = "0";
+            document.getElementById('manualTimeMode').value = "add"; document.getElementById('manualTimeModal').style.display = 'flex';
         }
-
         window.saveManualTime = async function() {
-            let id = document.getElementById('manualTimeId').value;
-            let b = bookingsData[id];
-            let mode = document.getElementById('manualTimeMode').value;
-            
-            let h = parseInt(document.getElementById('manHour').value) || 0;
-            let m = parseInt(document.getElementById('manMinute').value) || 0;
-            let s = parseInt(document.getElementById('manSecond').value) || 0;
-            
-            let inputMs = (h * 3600 + m * 60 + s) * 1000;
-            let now = getTrueTime();
-            
-            // Dapatkan sisa waktu faktual saat ini
-            let currentSisa = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
-            let newSisa = 0;
-
-            if(mode === 'set') newSisa = inputMs;
-            if(mode === 'add') newSisa = currentSisa + inputMs;
-            if(mode === 'sub') newSisa = Math.max(0, currentSisa - inputMs);
-
-            let updates = {};
-            if(b.status_countdown === 'running') {
-                // Jika sedang jalan, sesuaikan titik akhirnya
-                updates['waktu_selesai'] = now + newSisa;
-                updates['sisa_waktu'] = newSisa; // update juga sebagai fallback
-            } else {
-                // Jika tidak jalan, cukup update sisa_waktunya
-                updates['sisa_waktu'] = newSisa;
-                // Ubah status ke paused jika sebelumnya finish agar bisa distart lagi
-                if(b.status_countdown === 'finished') updates['status_countdown'] = 'paused';
-            }
-
-            await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), updates);
-            window.closeModal('manualTimeModal');
-            showToast("Waktu Berhasil Diatur!");
+            let id = document.getElementById('manualTimeId').value; let b = bookingsData[id]; let mode = document.getElementById('manualTimeMode').value;
+            let ms = ((parseInt(document.getElementById('manHour').value) || 0) * 3600 + (parseInt(document.getElementById('manMinute').value) || 0) * 60 + (parseInt(document.getElementById('manSecond').value) || 0)) * 1000;
+            let now = getTrueTime(); let cur = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
+            let nSisa = mode === 'set' ? ms : (mode === 'add' ? cur + ms : Math.max(0, cur - ms));
+            let up = {};
+            if(b.status_countdown === 'running') { up['waktu_selesai'] = now + nSisa; up['sisa_waktu'] = nSisa; } 
+            else { up['sisa_waktu'] = nSisa; if(b.status_countdown === 'finished') up['status_countdown'] = 'paused'; }
+            await update(ref(db, `bookings/${id}`), up); closeModal('manualTimeModal'); showToast("Waktu Selesai Disesuaikan");
         }
 
-
-        // --- CRUD PACKAGES ---
+        // Pakets
         onValue(ref(db, 'packages'), (snapshot) => {
-            const data = snapshot.val() || {};
-            const tbody = document.getElementById('tablePackages');
-            tbody.innerHTML = '';
-            for(let key in data) {
-                let d = data[key];
-                tbody.innerHTML += `<tr>
-                    <td style="font-weight:600">${d.name}</td>
-                    <td>${d.duration_hours} Jam</td>
-                    <td>Rp ${parseInt(d.price).toLocaleString()}</td>
-                    <td><span class="badge" style="background:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
-                    <td style="text-align:right">
-                        <button class="btn btn-outline" style="padding:5px" onclick="editPackage('${key}', '${d.name}', ${d.duration_hours}, ${d.price}, '${d.description}', ${d.is_active})">✏️</button>
-                        <button class="btn btn-red" style="padding:5px" onclick="deletePackage('${key}')">🗑</button>
-                    </td>
-                </tr>`;
-            }
+            const data = snapshot.val() || {}; const tbody = document.getElementById('tablePackages'); tbody.innerHTML = '';
+            for(let key in data) { let d = data[key]; tbody.innerHTML += `<tr><td style="font-weight:600">${d.name}</td><td>${d.duration_hours} Jam</td><td>Rp ${parseInt(d.price).toLocaleString()}</td><td><span class="badge" style="background:${d.is_active ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'; color:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'ON' : 'OFF'}</span></td><td style="text-align:right"><button class="action-btn btn-outline" style="padding:6px 12px" onclick="editPackage('${key}', '${d.name}', ${d.duration_hours}, ${d.price}, '${d.description}', ${d.is_active})">Edit</button> <button class="action-btn btn-red" style="padding:6px 12px" onclick="deletePackage('${key}')">X</button></td></tr>`; }
         });
-
         window.savePackage = async function() {
             let id = document.getElementById('pkgId').value;
-            let data = {
-                name: document.getElementById('pkgName').value,
-                duration_hours: parseFloat(document.getElementById('pkgDuration').value),
-                price: parseFloat(document.getElementById('pkgPrice').value),
-                description: document.getElementById('pkgDesc').value,
-                is_active: document.getElementById('pkgStatus').value === 'true'
-            };
-            if(!data.name || !data.duration_hours || !data.price) return showToast("Lengkapi form paket!", "error");
-            
-            if(id) {
-                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `packages/${id}`), data);
-                showToast("Paket Diperbarui");
-            } else {
-                await window.dbRef.push(window.dbRef.ref(window.dbRef.db, 'packages'), data);
-                showToast("Paket Baru Ditambahkan");
-            }
-            window.resetPackageForm();
+            let data = { name: document.getElementById('pkgName').value, duration_hours: parseFloat(document.getElementById('pkgDuration').value), price: parseFloat(document.getElementById('pkgPrice').value), description: document.getElementById('pkgDesc').value, is_active: document.getElementById('pkgStatus').value === 'true' };
+            if(!data.name || !data.duration_hours || !data.price) return showToast("Isi yang lengkap!", "error");
+            if(id) { await update(ref(db, `packages/${id}`), data); showToast("Selesai Edit"); } else { await push(ref(db, 'packages'), data); showToast("Masuk Database"); }
+            resetPackageForm();
         }
-        window.editPackage = function(id, name, dur, price, desc, act) {
-            document.getElementById('pkgId').value = id;
-            document.getElementById('pkgName').value = name;
-            document.getElementById('pkgDuration').value = dur;
-            document.getElementById('pkgPrice').value = price;
-            document.getElementById('pkgDesc').value = desc;
-            document.getElementById('pkgStatus').value = act ? 'true' : 'false';
-            window.scrollTo(0, 0);
-        }
-        window.resetPackageForm = function() {
-            document.getElementById('pkgId').value = '';
-            document.getElementById('pkgName').value = '';
-            document.getElementById('pkgDuration').value = '';
-            document.getElementById('pkgPrice').value = '';
-            document.getElementById('pkgDesc').value = '';
-        }
-        window.deletePackage = async function(id) {
-            // Toast Delete Logic
-            const toast = document.createElement('div');
-            toast.className = 'toast'; toast.style.borderLeftColor = 'var(--c-unpaid)';
-            toast.innerHTML = `
-                <div>Hapus Paket ini?</div>
-                <div style="display:flex; gap:5px;">
-                    <button style="background:var(--c-unpaid); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="confirmDeletePkg('${id}'); this.parentElement.parentElement.remove()">Ya</button>
-                    <button style="background:#555; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Batal</button>
-                </div>
-            `;
-            document.getElementById('toastContainer').appendChild(toast);
-        }
-        window.confirmDeletePkg = async function(id) {
-            await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `packages/${id}`));
-            showToast("Paket Dihapus");
-        }
+        window.editPackage = function(id, n, d, p, ds, a) { document.getElementById('pkgId').value = id; document.getElementById('pkgName').value = n; document.getElementById('pkgDuration').value = d; document.getElementById('pkgPrice').value = p; document.getElementById('pkgDesc').value = ds; document.getElementById('pkgStatus').value = a ? 'true' : 'false'; window.scrollTo(0,0); }
+        window.resetPackageForm = function() { document.getElementById('pkgId').value = ''; document.getElementById('pkgName').value = ''; document.getElementById('pkgDuration').value = ''; document.getElementById('pkgPrice').value = ''; document.getElementById('pkgDesc').value = ''; }
+        window.deletePackage = async function(id) { if(confirm("Tendang paket ini?")) { await remove(ref(db, `packages/${id}`)); showToast("Lenyap"); } }
 
-        // --- CRUD PROMOS ---
+        // Promos
         onValue(ref(db, 'promos'), (snapshot) => {
-            const data = snapshot.val() || {};
-            const tbody = document.getElementById('tablePromos');
-            tbody.innerHTML = '';
-            for(let key in data) {
-                let d = data[key];
-                tbody.innerHTML += `<tr>
-                    <td style="font-weight:600">${d.title}</td>
-                    <td>${d.discount_info}</td>
-                    <td><span class="badge" style="background:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
-                    <td style="text-align:right">
-                        <button class="btn btn-outline" style="padding:5px" onclick="editPromo('${key}', '${d.title}', '${d.discount_info}', '${d.description}', ${d.is_active})">✏️</button>
-                        <button class="btn btn-red" style="padding:5px" onclick="deletePromo('${key}')">🗑</button>
-                    </td>
-                </tr>`;
-            }
+            const data = snapshot.val() || {}; const tbody = document.getElementById('tablePromos'); tbody.innerHTML = '';
+            for(let key in data) { let d = data[key]; tbody.innerHTML += `<tr><td style="font-weight:600">${d.title}</td><td>${d.discount_info}</td><td><span class="badge" style="background:${d.is_active ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'; color:${d.is_active ? 'var(--c-paid)' : 'var(--c-unpaid)'}">${d.is_active ? 'ON' : 'OFF'}</span></td><td style="text-align:right"><button class="action-btn btn-outline" style="padding:6px 12px" onclick="editPromo('${key}', '${d.title}', '${d.discount_info}', '${d.description}', ${d.is_active})">Edit</button> <button class="action-btn btn-red" style="padding:6px 12px" onclick="deletePromo('${key}')">X</button></td></tr>`; }
         });
-
         window.savePromo = async function() {
             let id = document.getElementById('promoId').value;
-            let data = {
-                title: document.getElementById('promoTitle').value,
-                discount_info: document.getElementById('promoDiscount').value,
-                description: document.getElementById('promoDesc').value,
-                is_active: document.getElementById('promoStatus').value === 'true'
-            };
-            if(!data.title) return showToast("Judul promo wajib diisi!", "error");
-            
-            if(id) {
-                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `promos/${id}`), data);
-                showToast("Promo Diperbarui");
-            } else {
-                await window.dbRef.push(window.dbRef.ref(window.dbRef.db, 'promos'), data);
-                showToast("Promo Baru Ditambahkan");
-            }
-            window.resetPromoForm();
+            let data = { title: document.getElementById('promoTitle').value, discount_info: document.getElementById('promoDiscount').value, description: document.getElementById('promoDesc').value, is_active: document.getElementById('promoStatus').value === 'true' };
+            if(!data.title) return showToast("Butuh judul!", "error");
+            if(id) { await update(ref(db, `promos/${id}`), data); showToast("Selesai Edit"); } else { await push(ref(db, 'promos'), data); showToast("Masuk Database"); }
+            resetPromoForm();
         }
-        window.editPromo = function(id, title, disc, desc, act) {
-            document.getElementById('promoId').value = id;
-            document.getElementById('promoTitle').value = title;
-            document.getElementById('promoDiscount').value = disc;
-            document.getElementById('promoDesc').value = desc;
-            document.getElementById('promoStatus').value = act ? 'true' : 'false';
-            window.scrollTo(0, 0);
-        }
-        window.resetPromoForm = function() {
-            document.getElementById('promoId').value = '';
-            document.getElementById('promoTitle').value = '';
-            document.getElementById('promoDiscount').value = '';
-            document.getElementById('promoDesc').value = '';
-        }
-        window.deletePromo = async function(id) {
-             const toast = document.createElement('div');
-            toast.className = 'toast'; toast.style.borderLeftColor = 'var(--c-unpaid)';
-            toast.innerHTML = `
-                <div>Hapus Promo ini?</div>
-                <div style="display:flex; gap:5px;">
-                    <button style="background:var(--c-unpaid); border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="confirmDeletePromo('${id}'); this.parentElement.parentElement.remove()">Ya</button>
-                    <button style="background:#555; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Batal</button>
-                </div>
-            `;
-            document.getElementById('toastContainer').appendChild(toast);
-        }
-        window.confirmDeletePromo = async function(id) {
-            await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `promos/${id}`));
-            showToast("Promo Dihapus");
-        }
+        window.editPromo = function(id, t, di, ds, a) { document.getElementById('promoId').value = id; document.getElementById('promoTitle').value = t; document.getElementById('promoDiscount').value = di; document.getElementById('promoDesc').value = ds; document.getElementById('promoStatus').value = a ? 'true' : 'false'; window.scrollTo(0,0); }
+        window.resetPromoForm = function() { document.getElementById('promoId').value = ''; document.getElementById('promoTitle').value = ''; document.getElementById('promoDiscount').value = ''; document.getElementById('promoDesc').value = ''; }
+        window.deletePromo = async function(id) { if(confirm("Tendang promo ini?")) { await remove(ref(db, `promos/${id}`)); showToast("Lenyap"); } }
 
     </script>
 </body>
