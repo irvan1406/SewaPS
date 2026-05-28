@@ -3,131 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PS3 Live Screen</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>Live TV Monitor - PS3 HEN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030712;
-            --primary: #00f3ff;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --glass: rgba(15, 23, 42, 0.6);
+            --bg: #05050A;
+            --text: #FFFFFF;
+            --neon-blue: #00E5FF;
+            --warning: #FFB800;
+            --danger: #FF1F5A;
+            --success: #00FF88;
         }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
             background-color: var(--bg); 
-            color: white; 
+            background-image: radial-gradient(circle at center, rgba(0, 229, 255, 0.05) 0%, transparent 60%);
+            color: var(--text); 
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
             overflow: hidden; 
-            font-family: 'Poppins', sans-serif;
-            background-image: radial-gradient(circle at center, rgba(0, 243, 255, 0.05), transparent 60%);
+            font-family: 'Outfit', sans-serif;
         }
         
-        /* Glass Info Panel */
-        .info-panel {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
+        .container { text-align: center; width: 100%; max-width: 1000px; padding: 40px; z-index: 2; }
+        
+        /* User Info Box */
+        .header-info { 
+            background: rgba(255,255,255,0.02); 
             border: 1px solid rgba(255,255,255,0.05);
-            padding: 20px 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 5vh;
+            padding: 20px 40px; 
+            border-radius: 20px; 
+            margin-bottom: 50px; 
+            display: inline-block;
+            backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: all 0.5s ease;
         }
-        .player-name { font-size: 2rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 15px rgba(0, 243, 255, 0.5); }
-        .pkg-info { font-size: 1.1rem; color: #94a3b8; margin-top: 5px; font-weight: 300; letter-spacing: 1px;}
+        .header-info h2 { 
+            color: var(--neon-blue); 
+            text-transform: uppercase; 
+            letter-spacing: 4px; 
+            font-weight: 900;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        }
+        .header-info p { 
+            font-size: 1.1rem; 
+            color: #A0A0B0;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        /* Timer Display */
+        .timer-box { position: relative; margin: 20px 0; }
         
-        /* The Massive Timer */
-        .timer-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; }
         .timer { 
-            font-family: 'Share Tech Mono', monospace; 
-            font-size: 12vw; 
-            font-weight: 400; 
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11vw; /* Responsive huge text */
+            font-weight: 900; 
             line-height: 1;
-            text-shadow: 0 0 30px var(--primary), 0 0 60px rgba(0, 243, 255, 0.5); 
-            color: #ffffff; 
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            color: #FFFFFF; 
+            text-shadow: 0 0 20px rgba(255,255,255,0.2), 0 0 50px rgba(0, 229, 255, 0.6); 
+            transition: all 0.3s ease; 
         }
         
-        .timer.warning { color: var(--warning); text-shadow: 0 0 30px var(--warning), 0 0 60px rgba(245, 158, 11, 0.5); animation: pulseWarn 2s infinite; }
-        .timer.danger { color: var(--danger); text-shadow: 0 0 30px var(--danger), 0 0 80px rgba(239, 68, 68, 0.8); animation: shake 0.5s infinite; }
+        .timer.warning { 
+            color: var(--warning); 
+            text-shadow: 0 0 30px rgba(255, 184, 0, 0.6), 0 0 60px rgba(255, 184, 0, 0.3); 
+            animation: pulse-warn 2s infinite; 
+        }
         
-        .status-badge {
-            margin-top: 20px;
-            padding: 8px 30px;
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid var(--primary);
-            border-radius: 30px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-            transition: all 0.3s;
+        .timer.danger { 
+            color: var(--danger); 
+            text-shadow: 0 0 30px rgba(255, 31, 90, 0.8), 0 0 80px rgba(255, 31, 90, 0.5); 
+            animation: shake 0.4s infinite; 
+        }
+        
+        /* Status Text */
+        .status-text { 
+            font-size: 2rem; 
+            margin-top: 20px; 
+            letter-spacing: 8px; 
+            text-transform: uppercase; 
+            font-weight: 700;
+            color: var(--neon-blue); 
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
         }
 
-        /* Admin Direct Note */
-        .admin-note {
-            position: absolute;
-            bottom: 40px;
-            background: rgba(239, 68, 68, 0.15);
-            backdrop-filter: blur(5px);
-            border-left: 6px solid var(--danger);
-            padding: 20px 30px;
-            border-radius: 0 10px 10px 0;
-            text-align: left;
-            max-width: 80%;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation: slideIn 0.5s ease;
+        /* TV Admin Message */
+        .admin-note { 
+            margin-top: 50px; 
+            background: rgba(255, 31, 90, 0.08); 
+            border: 1px solid rgba(255, 31, 90, 0.3);
+            border-left: 6px solid var(--danger); 
+            padding: 20px 30px; 
+            text-align: left; 
+            display: none; 
+            border-radius: 8px;
+            max-width: 700px;
+            margin-left: auto; margin-right: auto;
+            box-shadow: 0 10px 20px rgba(255, 31, 90, 0.1);
         }
-        .admin-note h4 { color: var(--danger); font-size: 1.2rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;}
-        .admin-note p { font-size: 1.5rem; font-weight: 600; color: white;}
+        .admin-note h4 { color: var(--danger); margin-bottom: 8px; font-weight: 900; letter-spacing: 1px; font-size:1.1rem; }
+        .admin-note p { font-size: 1.2rem; line-height: 1.5; }
 
-        /* Audio Init Overlay */
-        #audioOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .btn-start { padding: 20px 50px; font-size: 1.5rem; font-family: 'Poppins'; background: transparent; border: 2px solid var(--primary); color: var(--primary); border-radius: 12px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s; }
-        .btn-start:hover { background: var(--primary); color: #000; box-shadow: 0 0 40px rgba(0,243,255,0.6); transform: scale(1.05); }
+        /* Initial Audio Unlock Overlay */
+        #audioOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(5, 5, 10, 0.95); z-index: 9999; 
+            display: flex; align-items: center; justify-content: center; flex-direction: column; 
+            backdrop-filter: blur(10px);
+        }
+        .btn-start { 
+            padding: 20px 50px; font-size: 1.5rem; 
+            background: linear-gradient(135deg, var(--neon-blue), #0088ff); 
+            color: #000; border: none; border-radius: 12px; 
+            font-weight: 900; cursor: pointer; text-transform: uppercase; 
+            letter-spacing: 2px; box-shadow: 0 10px 30px rgba(0, 229, 255, 0.4); 
+            transition: transform 0.2s;
+        }
+        .btn-start:hover { transform: scale(1.05); }
 
-        /* Keyframes */
-        @keyframes pulseWarn { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.02); opacity: 0.8; } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-        @keyframes slideIn { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
+        /* Animations */
+        @keyframes pulse-warn {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+            20% { transform: translate(-2px, 0px) rotate(0.5deg); }
+            30% { transform: translate(2px, 1px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(0.5deg); }
+            50% { transform: translate(-1px, 1px) rotate(-0.5deg); }
+            60% { transform: translate(-2px, 1px) rotate(0deg); }
+            70% { transform: translate(2px, 1px) rotate(-0.5deg); }
+            80% { transform: translate(-1px, -1px) rotate(0.5deg); }
+            90% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(1px, -1px) rotate(-0.5deg); }
+        }
+        
+        @media (max-width: 800px) {
+            .timer { font-size: 15vw; }
+            .header-info { padding: 15px 20px; }
+            .header-info h2 { font-size: 1.5rem; }
+            .status-text { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Audio Permission Overlay -->
     <div id="audioOverlay">
-        <h2 style="font-weight:300; letter-spacing:3px; margin-bottom:40px;">SISTEM MONITORING PS3</h2>
+        <h2 style="color:white; margin-bottom:30px; font-weight:800; text-align:center; letter-spacing:2px;">SISTEM MONITOR TV AKTIF</h2>
         <button class="btn-start" onclick="initAudio()">Tampilkan Layar TV</button>
     </div>
 
-    <!-- Main UI -->
-    <div class="info-panel" id="infoBox" style="display:none;">
-        <div class="player-name" id="userName">Loading Data...</div>
-        <div class="pkg-info">ID: <span id="bId">-</span> | <span id="bPkg">-</span></div>
+    <div class="container">
+        <div class="header-info" id="infoBox" style="display:none;">
+            <h2 id="userName">MEMUAT DATA...</h2>
+            <p><span id="bookingIdText" style="font-family:'Orbitron'">-</span> &nbsp;|&nbsp; <span id="packageName">-</span></p>
+        </div>
+
+        <div class="timer-box">
+            <div class="timer" id="timerDisplay">00:00:00</div>
+            <div class="status-text" id="statusDisplay">MENGHUBUNGKAN...</div>
+        </div>
+
+        <div class="admin-note" id="adminNoteBox">
+            <h4>PESAN DARI ADMIN:</h4>
+            <p id="adminNoteText"></p>
+        </div>
     </div>
 
-    <div class="timer-wrapper">
-        <div class="timer" id="timeDisplay">00:00:00</div>
-        <div class="status-badge" id="statusBadge">CONNECTING...</div>
-    </div>
-
-    <div class="admin-note" id="noteBox">
-        <h4>⚠️ PESAN ADMIN SERVER</h4>
-        <p id="noteText"></p>
-    </div>
-
-    <!-- Firebase SDK (Modular v9) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -144,122 +197,187 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // SYNC SERVER TIME (CRITICAL FIX)
-        let offset = 0;
-        onValue(ref(db, '.info/serverTimeOffset'), snap => { offset = snap.val() || 0; });
-        const getNow = () => Date.now() + offset;
+        // Server Time Sync Logic (CRUCIAL FOR FIXING SYNC BUG)
+        let serverOffset = 0;
+        onValue(ref(db, '.info/serverTimeOffset'), (snap) => {
+            serverOffset = snap.val() || 0;
+        });
+        function getTrueTime() {
+            return Date.now() + serverOffset;
+        }
 
-        // URL Params
+        // Get ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const bookingId = urlParams.get('id');
 
-        // Embedded Audio Engine
+        // Audio Synthesis 
         window.audioCtx = null;
-        window.initAudio = () => {
+        window.initAudio = function() {
             document.getElementById('audioOverlay').style.display = 'none';
             window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            let osc = audioCtx.createOscillator(); osc.connect(audioCtx.destination);
-            osc.start(0); osc.stop(0.01);
-        };
+            let osc = audioCtx.createOscillator();
+            osc.frequency.value = 1;
+            osc.connect(audioCtx.destination);
+            osc.start(0);
+            osc.stop(0.01);
+        }
 
-        const playSiren = (type) => {
+        function playBeep(type) {
             if(!window.audioCtx) return;
-            const o = window.audioCtx.createOscillator(), g = window.audioCtx.createGain();
-            o.connect(g); g.connect(window.audioCtx.destination);
-            if(type === 'warn') {
-                o.type = 'square'; o.frequency.setValueAtTime(600, window.audioCtx.currentTime);
-                g.gain.setValueAtTime(0.05, window.audioCtx.currentTime);
-                o.start(); g.gain.exponentialRampToValueAtTime(0.00001, window.audioCtx.currentTime + 0.3); o.stop(window.audioCtx.currentTime + 0.3);
-            } else {
-                o.type = 'sawtooth'; o.frequency.setValueAtTime(400, window.audioCtx.currentTime); o.frequency.linearRampToValueAtTime(800, window.audioCtx.currentTime + 0.4);
-                g.gain.setValueAtTime(0.1, window.audioCtx.currentTime);
-                o.start(); g.gain.exponentialRampToValueAtTime(0.00001, window.audioCtx.currentTime + 1); o.stop(window.audioCtx.currentTime + 1);
+            const osc = window.audioCtx.createOscillator();
+            const gain = window.audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(window.audioCtx.destination);
+            
+            if(type === 'warning') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(800, window.audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, window.audioCtx.currentTime);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, window.audioCtx.currentTime + 0.5);
+                osc.stop(window.audioCtx.currentTime + 0.5);
+            } else if(type === 'alarm') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(400, window.audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(800, window.audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, window.audioCtx.currentTime);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.00001, window.audioCtx.currentTime + 1);
+                osc.stop(window.audioCtx.currentTime + 1);
             }
-        };
+        }
 
-        // State Loop
-        let bData = null;
-        let warnFired = false, alarmFired = false, alarmInt = null;
+        // Timer Logic
+        let bookingData = null;
+        let warningPlayed = false;
+        let alarmTriggered = false;
+        let alarmInterval = null;
 
         if(!bookingId) {
-            document.getElementById('statusBadge').innerText = "INVALID ACCESS LINK";
-            document.getElementById('statusBadge').style.borderColor = "var(--danger)";
-            document.getElementById('statusBadge').style.color = "var(--danger)";
+            document.getElementById('statusDisplay').innerText = "LINK TIDAK VALID / KOSONG";
+            document.getElementById('statusDisplay').style.color = "var(--danger)";
         } else {
-            document.getElementById('infoBox').style.display = 'block';
-            document.getElementById('bId').innerText = bookingId;
+            document.getElementById('infoBox').style.display = 'inline-block';
+            document.getElementById('bookingIdText').innerText = bookingId;
             
-            onValue(ref(db, `bookings/${bookingId}`), (snap) => {
-                bData = snap.val();
-                if(!bData) return document.getElementById('statusBadge').innerText = "DATA DELETED / NOT FOUND";
+            // Listen realtime from DB
+            onValue(ref(db, `bookings/${bookingId}`), (snapshot) => {
+                bookingData = snapshot.val();
+                if(!bookingData) {
+                    document.getElementById('statusDisplay').innerText = "DATA TIDAK DITEMUKAN";
+                    document.getElementById('statusDisplay').style.color = "var(--danger)";
+                    return;
+                }
                 
-                document.getElementById('userName').innerText = bData.nama;
-                document.getElementById('bPkg').innerText = bData.paket_nama;
+                document.getElementById('userName').innerText = bookingData.nama;
+                document.getElementById('packageName').innerText = bookingData.paket_nama;
                 
-                if(bData.catatan_admin && bData.catatan_admin.trim() !== "") {
-                    document.getElementById('noteBox').style.display = 'block';
-                    document.getElementById('noteText').innerText = bData.catatan_admin;
-                } else { document.getElementById('noteBox').style.display = 'none'; }
+                // Notes Check
+                if(bookingData.catatan_admin && bookingData.catatan_admin.trim() !== "") {
+                    document.getElementById('adminNoteBox').style.display = 'block';
+                    document.getElementById('adminNoteText').innerText = bookingData.catatan_admin;
+                } else {
+                    document.getElementById('adminNoteBox').style.display = 'none';
+                }
                 
-                // Reset states if time is manually added
-                let remCheck = bData.status_countdown === 'running' ? (bData.waktu_selesai - getNow()) : bData.sisa_waktu;
-                if(remCheck > 600000) warnFired = false;
-                if(remCheck > 0) { alarmFired = false; clearInterval(alarmInt); }
+                // Reset audio flags if time increases again (e.g. admin added time)
+                let remCheck = calculateRemaining(bookingData);
+                if(remCheck > 600000) warningPlayed = false;
+                if(remCheck > 0) {
+                    alarmTriggered = false;
+                    clearInterval(alarmInterval);
+                }
+                
+                updateUI();
             });
         }
 
-        // Render Frame
-        setInterval(() => {
-            if(!bData) return;
+        function calculateRemaining(b) {
+            if (b.status_countdown === 'running') return b.waktu_selesai - getTrueTime(); // 100% Sync with server
+            return b.sisa_waktu; // paused or idle
+        }
+
+        function updateUI() {
+            if(!bookingData) return;
             
-            const tEl = document.getElementById('timeDisplay');
-            const sEl = document.getElementById('statusBadge');
+            const timerEl = document.getElementById('timerDisplay');
+            const statusEl = document.getElementById('statusDisplay');
             
-            let rem = bData.status_countdown === 'running' ? (bData.waktu_selesai - getNow()) : bData.sisa_waktu;
+            let remTime = calculateRemaining(bookingData);
             
-            // Set Base Colors
-            document.body.style.backgroundImage = 'radial-gradient(circle at center, rgba(0, 243, 255, 0.05), transparent 60%)';
-            sEl.style.color = 'var(--primary)'; sEl.style.borderColor = 'var(--primary)'; sEl.style.background = 'rgba(0, 243, 255, 0.1)';
-            
-            if(bData.status_countdown === 'idle') {
-                sEl.innerText = "STANDBY MODE"; tEl.className = "timer";
+            // STATE: IDLE
+            if (bookingData.status_countdown === 'idle') {
+                statusEl.innerText = "SIAP DIMULAI";
+                statusEl.style.color = "var(--neon-blue)";
+                timerEl.className = "timer";
+                timerEl.style.textShadow = "0 0 20px rgba(255,255,255,0.2), 0 0 50px rgba(0, 229, 255, 0.6)";
             } 
-            else if(bData.status_countdown === 'paused') {
-                sEl.innerText = "SYSTEM PAUSED";
-                sEl.style.color = 'var(--warning)'; sEl.style.borderColor = 'var(--warning)'; sEl.style.background = 'rgba(245, 158, 11, 0.1)';
-                tEl.className = "timer warning";
-                document.body.style.backgroundImage = 'radial-gradient(circle at center, rgba(245, 158, 11, 0.05), transparent 60%)';
+            // STATE: PAUSED
+            else if (bookingData.status_countdown === 'paused') {
+                statusEl.innerText = "PERMAINAN DI-JEDA";
+                statusEl.style.color = "var(--warning)";
+                timerEl.className = "timer"; // Remove shake/pulse if paused
+                timerEl.style.color = "var(--warning)";
+                timerEl.style.textShadow = "0 0 30px rgba(255, 184, 0, 0.6)";
             }
-            else if(bData.status_countdown === 'running') {
-                sEl.innerText = "PLAYING"; tEl.className = "timer";
+            // STATE: RUNNING
+            else if (bookingData.status_countdown === 'running') {
+                statusEl.innerText = "SEDANG BERMAIN";
+                statusEl.style.color = "var(--success)";
+                timerEl.className = "timer";
+                timerEl.style.color = "#FFFFFF";
+                timerEl.style.textShadow = "0 0 20px rgba(255,255,255,0.2), 0 0 50px rgba(0, 255, 136, 0.6)";
                 
-                if(rem <= 600000 && rem > 0) {
-                    sEl.innerText = "WARNING: < 10 MINUTES"; tEl.className = "timer warning";
-                    sEl.style.color = 'var(--warning)'; sEl.style.borderColor = 'var(--warning)'; sEl.style.background = 'rgba(245, 158, 11, 0.1)';
-                    document.body.style.backgroundImage = 'radial-gradient(circle at center, rgba(245, 158, 11, 0.1), transparent 60%)';
-                    if(!warnFired) { playSiren('warn'); warnFired = true; }
+                // Audio Warnings
+                if(remTime <= 600000 && remTime > 0 && !warningPlayed) {
+                    playBeep('warning');
+                    warningPlayed = true; 
+                }
+                
+                // Visual Warnings (< 10 minutes)
+                if(remTime <= 600000 && remTime > 0) {
+                    statusEl.innerText = "SISA WAKTU < 10 MENIT!";
+                    statusEl.style.color = "var(--warning)";
+                    timerEl.className = "timer warning";
                 }
             }
-            else if(bData.status_countdown === 'finished') { rem = 0; }
+            // STATE: FINISHED manually
+            else if (bookingData.status_countdown === 'finished') {
+                statusEl.innerText = "WAKTU HABIS!";
+                statusEl.style.color = "var(--danger)";
+                timerEl.className = "timer danger";
+                remTime = 0;
+            }
 
-            if(rem <= 0 && (bData.status_countdown === 'running' || bData.status_countdown === 'finished')) {
-                sEl.innerText = "TIME IS UP - CONTACT ADMIN";
-                sEl.style.color = 'var(--danger)'; sEl.style.borderColor = 'var(--danger)'; sEl.style.background = 'rgba(239, 68, 68, 0.2)';
-                tEl.className = "timer danger";
-                document.body.style.backgroundImage = 'radial-gradient(circle at center, rgba(239, 68, 68, 0.15), transparent 60%)';
-                rem = 0;
-                if(!alarmFired && bData.status_countdown === 'running') {
-                    alarmFired = true; alarmInt = setInterval(() => playSiren('alarm'), 1500);
+            // STATE: TIME IS UP
+            if(remTime <= 0 && bookingData.status_countdown === 'running') {
+                statusEl.innerText = "WAKTU HABIS! SILAKAN HUBUNGI ADMIN";
+                statusEl.style.color = "var(--danger)";
+                timerEl.className = "timer danger";
+                remTime = 0;
+                
+                if(!alarmTriggered) {
+                    alarmTriggered = true;
+                    // Play alarm repeatedly every 1.5 seconds
+                    alarmInterval = setInterval(() => playBeep('alarm'), 1500);
                 }
             }
 
-            let sTot = Math.max(0, Math.floor(rem / 1000));
-            let h = Math.floor(sTot / 3600).toString().padStart(2, '0');
-            let m = Math.floor((sTot % 3600) / 60).toString().padStart(2, '0');
-            let s = (sTot % 60).toString().padStart(2, '0');
-            tEl.innerText = `${h}:${m}:${s}`;
+            // Format Timer Text
+            let totalSeconds = Math.max(0, Math.floor(remTime / 1000));
+            let h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+            let m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+            let s = (totalSeconds % 60).toString().padStart(2, '0');
+            timerEl.innerText = `${h}:${m}:${s}`;
+        }
 
-        }, 100); // 100ms refresh rate for smooth numeric display
+        // Render Loop for Running state
+        setInterval(() => {
+            if(bookingData && bookingData.status_countdown === 'running') {
+                updateUI();
+            }
+        }, 1000);
+
     </script>
 </body>
 </html>
