@@ -18,7 +18,12 @@
             --danger: #EF4444;
         }
         
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', sans-serif; 
+        }
         
         body { 
             background-color: var(--bg-dark); 
@@ -32,89 +37,339 @@
 
         /* Background Pattern */
         body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            content: ''; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
             background-image: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15), transparent 50%);
-            z-index: -1; pointer-events: none;
+            z-index: -1; 
+            pointer-events: none;
         }
 
-        .container { width: 100%; max-width: 1000px; padding: 40px 20px; }
+        .container { 
+            width: 100%; 
+            max-width: 1000px; 
+            padding: 40px 20px; 
+        }
         
         /* Header Hero */
-        header { text-align: center; margin-bottom: 60px; padding-top: 40px; }
-        header h1 { 
-            font-family: 'Outfit', sans-serif; font-size: 3.5rem; font-weight: 800; 
-            letter-spacing: -1px; margin-bottom: 15px; color: #FFF;
+        header { 
+            text-align: center; 
+            margin-bottom: 60px; 
+            padding-top: 40px; 
         }
-        header h1 span { color: var(--primary); }
-        header p { color: var(--text-dim); font-size: 1.2rem; font-weight: 400; max-width: 600px; margin: 0 auto; }
+        
+        header h1 { 
+            font-family: 'Outfit', sans-serif; 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            letter-spacing: -1px; 
+            margin-bottom: 15px; 
+            color: #FFF;
+        }
+        
+        header h1 span { 
+            color: var(--primary); 
+        }
+        
+        header p { 
+            color: var(--text-dim); 
+            font-size: 1.2rem; 
+            font-weight: 400; 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
 
-        .section-header { margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
-        .section-header h2 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 700; color: #FFF; }
-        .section-header .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+        .section-header { 
+            margin-bottom: 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+        
+        .section-header h2 { 
+            font-family: 'Outfit', sans-serif; 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            color: #FFF; 
+        }
+        
+        .section-header .line { 
+            flex: 1; 
+            height: 1px; 
+            background: linear-gradient(90deg, var(--border), transparent); 
+        }
 
         /* Grid Layouts */
-        .packages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 60px; }
+        .packages-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 24px; 
+            margin-bottom: 60px; 
+        }
         
         .card { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 16px; 
-            padding: 30px; transition: 0.3s ease; position: relative; overflow: hidden;
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            padding: 30px; 
+            transition: 0.3s ease; 
+            position: relative; 
+            overflow: hidden;
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px var(--primary-glow); }
         
-        .card h3 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; color: #FFF; margin-bottom: 10px; }
-        .card .price { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-bottom: 15px; display: flex; align-items: baseline; gap: 5px;}
-        .card .price span { font-size: 1rem; color: var(--text-dim); font-weight: 400; }
-        .card .desc { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; }
+        .card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--primary); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px var(--primary-glow); 
+        }
+        
+        .card h3 { 
+            font-family: 'Outfit', sans-serif; 
+            font-size: 1.4rem; 
+            color: #FFF; 
+            margin-bottom: 10px; 
+        }
+        
+        .card .price { 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            color: var(--primary); 
+            margin-bottom: 15px; 
+            display: flex; 
+            align-items: baseline; 
+            gap: 5px;
+        }
+        
+        .card .price span { 
+            font-size: 1rem; 
+            color: var(--text-dim); 
+            font-weight: 400; 
+        }
+        
+        .card .desc { 
+            font-size: 0.95rem; 
+            color: var(--text-dim); 
+            line-height: 1.6; 
+        }
         
         /* Form Section */
         .form-container { 
-            background: var(--surface); border: 1px solid var(--border); border-radius: 24px; 
-            padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); max-width: 700px; margin: 0 auto;
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            border-radius: 24px; 
+            padding: 40px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            max-width: 700px; 
+            margin: 0 auto;
         }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            margin-bottom: 20px; 
+        }
         
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 0.9rem; font-weight: 500; color: var(--text-dim); }
+        @media (max-width: 600px) { 
+            .form-grid { 
+                grid-template-columns: 1fr; 
+            } 
+        }
+        
+        .input-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+        }
+        
+        .input-group label { 
+            font-size: 0.9rem; 
+            font-weight: 500; 
+            color: var(--text-dim); 
+        }
         
         input, select { 
-            width: 100%; padding: 14px 18px; background: #09090B; border: 1px solid var(--border); 
-            color: #FFF; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.2s; 
+            width: 100%; 
+            padding: 14px 18px; 
+            background: #09090B; 
+            border: 1px solid var(--border); 
+            color: #FFF; 
+            border-radius: 12px; 
+            font-size: 1rem; 
+            outline: none; 
+            transition: 0.2s; 
         }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15); }
         
-        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin: 30px 0; padding: 20px; background: #09090B; border-radius: 12px; border: 1px dashed var(--border); }
-        .checkbox-group input { margin-top: 4px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
-        .checkbox-group label { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; cursor: pointer; }
-        .link-syarat { color: var(--primary); text-decoration: underline; font-weight: 500; }
+        input:focus, select:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15); 
+        }
+        
+        .checkbox-group { 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 12px; 
+            margin: 30px 0; 
+            padding: 20px; 
+            background: #09090B; 
+            border-radius: 12px; 
+            border: 1px dashed var(--border); 
+        }
+        
+        .checkbox-group input { 
+            margin-top: 4px; 
+            width: 18px; 
+            height: 18px; 
+            cursor: pointer; 
+            accent-color: var(--primary); 
+        }
+        
+        .checkbox-group label { 
+            font-size: 0.9rem; 
+            color: var(--text-dim); 
+            line-height: 1.5; 
+            cursor: pointer; 
+        }
+        
+        .link-syarat { 
+            color: var(--primary); 
+            text-decoration: underline; 
+            font-weight: 500; 
+        }
 
         .btn-submit { 
-            width: 100%; padding: 16px; background: var(--primary); color: #000; font-family: 'Outfit', sans-serif;
-            font-size: 1.1rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; 
-            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--primary); 
+            color: #000; 
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            transition: 0.3s; 
         }
-        .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 25px var(--primary-glow); background: #08D9FA; }
-        .btn-submit:disabled { background: var(--border); color: #64748B; cursor: not-allowed; }
+        
+        .btn-submit:hover:not(:disabled) { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px var(--primary-glow); 
+            background: #08D9FA; 
+        }
+        
+        .btn-submit:disabled { 
+            background: var(--border); 
+            color: #64748B; 
+            cursor: not-allowed; 
+        }
 
         /* Loader */
-        .loader { display: none; text-align: center; margin-bottom: 20px; color: var(--primary); font-weight: 500; }
+        .loader { 
+            display: none; 
+            text-align: center; 
+            margin-bottom: 20px; 
+            color: var(--primary); 
+            font-weight: 500; 
+        }
 
         /* Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; animation: slideUp 0.3s ease; }
-        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h2 { font-family: 'Outfit', sans-serif; color: #FFF; font-size: 1.4rem; }
-        .modal-close { color: var(--text-dim); font-size: 24px; cursor: pointer; }
-        .modal-close:hover { color: #FFF; }
-        .modal-body { padding: 24px; overflow-y: auto; font-size: 0.95rem; color: var(--text-dim); line-height: 1.7; }
-        .modal-body ol { padding-left: 20px; }
-        .modal-body li { margin-bottom: 12px; }
-        .modal-footer { padding: 20px 24px; border-top: 1px solid var(--border); text-align: right; background: #09090B; }
-        .btn-outline { padding: 12px 24px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-outline:hover { background: var(--primary); color: #000; }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px); 
+            z-index: 1000; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+        }
+        
+        .modal-content { 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 600px; 
+            max-height: 85vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            animation: slideUp 0.3s ease; 
+        }
+        
+        .modal-header { 
+            padding: 24px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .modal-header h2 { 
+            font-family: 'Outfit', sans-serif; 
+            color: #FFF; 
+            font-size: 1.4rem; 
+        }
+        
+        .modal-close { 
+            color: var(--text-dim); 
+            font-size: 24px; 
+            cursor: pointer; 
+        }
+        
+        .modal-close:hover { 
+            color: #FFF; 
+        }
+        
+        .modal-body { 
+            padding: 24px; 
+            overflow-y: auto; 
+            font-size: 0.95rem; 
+            color: var(--text-dim); 
+            line-height: 1.7; 
+        }
+        
+        .modal-body ol { 
+            padding-left: 20px; 
+        }
+        
+        .modal-body li { 
+            margin-bottom: 12px; 
+        }
+        
+        .modal-footer { 
+            padding: 20px 24px; 
+            border-top: 1px solid var(--border); 
+            text-align: right; 
+            background: #09090B; 
+        }
+        
+        .btn-outline { 
+            padding: 12px 24px; 
+            background: transparent; 
+            border: 1px solid var(--primary); 
+            color: var(--primary); 
+            border-radius: 10px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: 0.2s; 
+        }
+        
+        .btn-outline:hover { 
+            background: var(--primary); 
+            color: #000; 
+        }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
     </style>
 </head>
 <body>
@@ -128,11 +383,17 @@
 
     <div class="container">
         <div id="promoSection" style="display:none;">
-            <div class="section-header"><h2>Promo Aktif</h2><div class="line"></div></div>
+            <div class="section-header">
+                <h2>Promo Aktif</h2>
+                <div class="line"></div>
+            </div>
             <div class="packages-grid" id="promoList" style="margin-bottom: 40px;"></div>
         </div>
 
-        <div class="section-header"><h2>Pilihan Paket</h2><div class="line"></div></div>
+        <div class="section-header">
+            <h2>Pilihan Paket</h2>
+            <div class="line"></div>
+        </div>
         <div class="packages-grid" id="packageList"></div>
 
         <div class="form-container">
@@ -158,7 +419,9 @@
                 <div class="form-grid">
                     <div class="input-group">
                         <label>Pilih Paket</label>
-                        <select id="paket" required><option value="">-- Pilih Paket Dulu --</option></select>
+                        <select id="paket" required>
+                            <option value="">-- Pilih Paket Dulu --</option>
+                        </select>
                     </div>
                     <div class="input-group">
                         <label>Metode Pembayaran</label>
@@ -207,6 +470,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+        // Konfigurasi Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDV5S1jEFxw_tGWHBVqGe_erZSsOKRK2gU",
             authDomain: "rental-ps3-hen.firebaseapp.com",
@@ -219,10 +483,17 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
+        // Logika Sinkronisasi Waktu Server
         let serverOffset = 0;
-        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
-        function getTrueTime() { return Date.now() + serverOffset; }
+        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { 
+            serverOffset = snap.val() || 0; 
+        });
+        
+        function getTrueTime() { 
+            return Date.now() + serverOffset; 
+        }
 
+        // Variabel Global
         let availablePackages = {};
         const form = document.getElementById('bookingForm');
         const paketSelect = document.getElementById('paket');
@@ -230,31 +501,57 @@
         const syaratCheck = document.getElementById('syaratCheck');
         const modal = document.getElementById('syaratModal');
         const nohpInput = document.getElementById('nohp');
+        const hpError = document.getElementById('hpError');
         const adminPhone = "6287745756269";
 
-        // Modal Logic
-        document.getElementById('btnSyarat').onclick = () => modal.style.display = "flex";
-        document.getElementById('closeSyarat').onclick = () => modal.style.display = "none";
-        document.getElementById('btnSetujuModal').onclick = () => { modal.style.display = "none"; syaratCheck.checked = true; checkFormValidity(); };
+        // Logika Modal Syarat
+        document.getElementById('btnSyarat').onclick = () => {
+            modal.style.display = "flex";
+        };
+        
+        document.getElementById('closeSyarat').onclick = () => {
+            modal.style.display = "none";
+        };
+        
+        document.getElementById('btnSetujuModal').onclick = () => {
+            modal.style.display = "none"; 
+            syaratCheck.checked = true; 
+            checkFormValidity(); 
+        };
 
+        // Validasi Form
         function checkFormValidity() {
             const hpVal = nohpInput.value.replace(/\D/g, '');
             const isHpValid = /^(08|628)\d{8,12}$/.test(hpVal);
-            document.getElementById('hpError').style.display = (hpVal.length > 0 && !isHpValid) ? 'block' : 'none';
-            nohpInput.style.borderColor = (hpVal.length > 0 && !isHpValid) ? 'var(--danger)' : 'var(--border)';
             
-            const isFilled = document.getElementById('nama').value.trim() !== '' && hpVal.length >= 10 && paketSelect.value !== '' && document.getElementById('pembayaran').value !== '';
+            if(hpVal.length > 0 && !isHpValid) {
+                hpError.style.display = 'block';
+                nohpInput.style.borderColor = 'var(--danger)';
+            } else {
+                hpError.style.display = 'none';
+                nohpInput.style.borderColor = 'var(--border)';
+            }
+            
+            const isFilled = document.getElementById('nama').value.trim() !== '' && 
+                             hpVal.length >= 10 && 
+                             paketSelect.value !== '' && 
+                             document.getElementById('pembayaran').value !== '';
+                             
             btnSubmit.disabled = !(isFilled && isHpValid && syaratCheck.checked);
         }
+
         form.addEventListener('input', checkFormValidity);
         syaratCheck.addEventListener('change', checkFormValidity);
 
-        // Fetch Packages
+        // Ambil Data Paket dari Firebase
         onValue(ref(db, 'packages'), (snapshot) => {
             const data = snapshot.val();
             const packageList = document.getElementById('packageList');
-            packageList.innerHTML = ''; paketSelect.innerHTML = '<option value="">-- Pilih Paket --</option>';
+            
+            packageList.innerHTML = ''; 
+            paketSelect.innerHTML = '<option value="">-- Pilih Paket --</option>';
             availablePackages = {};
+            
             if (data) {
                 for (let key in data) {
                     if (data[key].is_active) {
@@ -262,21 +559,30 @@
                         packageList.innerHTML += `
                             <div class="card">
                                 <h3>${data[key].name}</h3>
-                                <div class="price">Rp${parseInt(data[key].price).toLocaleString('id-ID')} <span>/ ${data[key].duration_hours} Jam</span></div>
+                                <div class="price">
+                                    Rp${parseInt(data[key].price).toLocaleString('id-ID')} 
+                                    <span>/ ${data[key].duration_hours} Jam</span>
+                                </div>
                                 <div class="desc">${data[key].description}</div>
-                            </div>`;
+                            </div>
+                        `;
                         paketSelect.innerHTML += `<option value="${key}">${data[key].name} - Rp${parseInt(data[key].price).toLocaleString('id-ID')}</option>`;
                     }
                 }
-            } else { packageList.innerHTML = '<p style="color:var(--text-dim)">Belum ada paket tersedia.</p>'; }
+            } else { 
+                packageList.innerHTML = '<p style="color:var(--text-dim)">Belum ada paket tersedia.</p>'; 
+            }
         });
 
-        // Fetch Promos
+        // Ambil Data Promo dari Firebase
         onValue(ref(db, 'promos'), (snapshot) => {
             const data = snapshot.val();
             const promoSection = document.getElementById('promoSection');
             const promoList = document.getElementById('promoList');
-            promoList.innerHTML = ''; let hasPromo = false;
+            
+            promoList.innerHTML = ''; 
+            let hasPromo = false;
+            
             if (data) {
                 for (let key in data) {
                     if (data[key].is_active) {
@@ -284,42 +590,75 @@
                         promoList.innerHTML += `
                             <div class="card" style="border-color: rgba(6, 182, 212, 0.4);">
                                 <h3 style="color: var(--primary)">🎁 ${data[key].title}</h3>
-                                <div style="color: #FFF; font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">${data[key].discount_info}</div>
+                                <div style="color: #FFF; font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
+                                    ${data[key].discount_info}
+                                </div>
                                 <div class="desc">${data[key].description}</div>
-                            </div>`;
+                            </div>
+                        `;
                     }
                 }
             }
             promoSection.style.display = hasPromo ? 'block' : 'none';
         });
 
-        // Submit
+        // Logika Submit Pesanan
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             document.getElementById('loader').style.display = 'block';
             
             const nama = document.getElementById('nama').value.trim();
-            let nohp = nohpInput.value.replace(/\D/g, ''); if(nohp.startsWith('0')) nohp = '62' + nohp.substring(1);
+            let nohp = nohpInput.value.replace(/\D/g, ''); 
+            if(nohp.startsWith('0')) {
+                nohp = '62' + nohp.substring(1);
+            }
+            
             const paketId = paketSelect.value;
             const pembayaran = document.getElementById('pembayaran').value;
             const selectedPackage = availablePackages[paketId];
             
             const bookingId = "PS3-" + getTrueTime().toString().substring(5);
             const bookingData = {
-                booking_id: bookingId, nama: nama, nohp: nohp, paket_id: paketId, paket_nama: selectedPackage.name,
-                durasi_jam: parseFloat(selectedPackage.duration_hours), harga: parseFloat(selectedPackage.price),
-                metode_pembayaran: pembayaran, tanggal_booking: new Date(getTrueTime()).toISOString(),
-                status_pembayaran: "Belum Bayar", status_konfirmasi: "Belum", status_countdown: "idle", 
-                sisa_waktu: parseFloat(selectedPackage.duration_hours) * 3600000, waktu_selesai: 0, catatan_admin: "", is_history: false
+                booking_id: bookingId, 
+                nama: nama, 
+                nohp: nohp, 
+                paket_id: paketId, 
+                paket_nama: selectedPackage.name,
+                durasi_jam: parseFloat(selectedPackage.duration_hours), 
+                harga: parseFloat(selectedPackage.price),
+                metode_pembayaran: pembayaran, 
+                tanggal_booking: new Date(getTrueTime()).toISOString(),
+                status_pembayaran: "Belum Bayar", 
+                status_konfirmasi: "Belum", 
+                status_countdown: "idle", 
+                sisa_waktu: parseFloat(selectedPackage.duration_hours) * 3600000, 
+                waktu_selesai: 0, 
+                catatan_admin: "", 
+                is_history: false
             };
 
             try {
                 await set(ref(db, 'bookings/' + bookingId), bookingData);
-                const waMessage = `*PESANAN RENTAL PS3* 🎮\n\n*ID:* ${bookingId}\n*Nama:* ${nama}\n*HP:* ${nohp}\n*Paket:* ${selectedPackage.name} (${selectedPackage.duration_hours} Jam)\n*Total:* Rp ${parseInt(selectedPackage.price).toLocaleString('id-ID')}\n*Metode:* ${pembayaran}\n\nMohon segera diproses.`;
+                
+                const waMessage = `*PESANAN RENTAL PS3* 🎮\n\n` +
+                                  `*ID:* ${bookingId}\n` +
+                                  `*Nama:* ${nama}\n` +
+                                  `*HP:* ${nohp}\n` +
+                                  `*Paket:* ${selectedPackage.name} (${selectedPackage.duration_hours} Jam)\n` +
+                                  `*Total:* Rp ${parseInt(selectedPackage.price).toLocaleString('id-ID')}\n` +
+                                  `*Metode:* ${pembayaran}\n\n` +
+                                  `Mohon segera diproses.`;
+                                  
                 window.location.href = `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(waMessage)}`;
-                form.reset(); syaratCheck.checked = false; checkFormValidity();
-            } catch (error) { alert("Gagal koneksi ke server."); } 
-            finally { document.getElementById('loader').style.display = 'none'; }
+                
+                form.reset(); 
+                syaratCheck.checked = false; 
+                checkFormValidity();
+            } catch (error) { 
+                alert("Gagal koneksi ke server."); 
+            } finally { 
+                document.getElementById('loader').style.display = 'none'; 
+            }
         });
     </script>
 </body>
