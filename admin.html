@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Rental PS3</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-bg: #1e1e1e;
+            --primary: #bb86fc;
+            --secondary: #03dac6;
+            --error: #cf6679;
+            --text: #e0e0e0;
+            --border: #333;
+            
+            --c-unpaid: #ff4c4c;
+            --c-paid: #00e676;
+            --c-running: #2196f3;
+            --c-paused: #ffeb3b;
+            --c-finished: #9e9e9e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg-color); color: var(--text); padding-top: 60px; }
+        
+        /* Login Overlay */
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .login-box { background: var(--panel-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--primary); text-align: center; width: 300px; }
+        .login-box input { width: 100%; margin: 15px 0; padding: 10px; background: #2c2c2c; border: 1px solid #555; color: white; border-radius: 4px; }
+        .login-box button { width: 100%; padding: 10px; background: var(--primary); border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+
+        /* Navbar */
+        nav { position: fixed; top: 0; left: 0; width: 100%; background: var(--panel-bg); display: flex; padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+        .nav-links button { background: transparent; color: var(--text); border: none; margin-right: 15px; font-size: 1rem; cursor: pointer; padding: 5px 10px; transition: color 0.3s; }
+        .nav-links button:hover, .nav-links button.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+        .btn-logout { background: var(--error) !important; color: white !important; border-radius: 4px; padding: 5px 15px !important; }
+
+        /* Layout */
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        h2 { margin-bottom: 20px; color: var(--secondary); border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+        /* Filters */
+        .filter-bar { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 15px; background: #2c2c2c; border: 1px solid var(--border); color: var(--text); border-radius: 20px; cursor: pointer; }
+        .filter-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
+
+        /* Grid Cards */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .card { background: var(--panel-bg); border-radius: 8px; padding: 15px; border-left: 5px solid #555; position: relative; display: flex; flex-direction: column; gap: 8px; }
+        .card.st-unpaid { border-left-color: var(--c-unpaid); }
+        .card.st-paid { border-left-color: var(--c-paid); }
+        .card.st-running { border-left-color: var(--c-running); box-shadow: 0 0 10px rgba(33, 150, 243, 0.3); }
+        .card.st-paused { border-left-color: var(--c-paused); }
+        .card.st-finished { border-left-color: var(--c-finished); opacity: 0.8; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; background: #333; }
+        .timer-display { font-size: 1.8rem; font-weight: bold; text-align: center; margin: 10px 0; font-family: monospace; letter-spacing: 2px; }
+        .detail-row { font-size: 0.9rem; display: flex; justify-content: space-between; }
+        
+        .action-group { display: flex; flex-wrap: wrap; gap: 5px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border); }
+        .btn { flex: 1; min-width: 30%; padding: 6px; font-size: 0.8rem; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-green { background: #4caf50; } .btn-green:hover{ background: #388e3c;}
+        .btn-red { background: #f44336; } .btn-red:hover{ background: #d32f2f;}
+        .btn-blue { background: #2196f3; } .btn-blue:hover{ background: #1976d2;}
+        .btn-yellow { background: #ff9800; } .btn-yellow:hover{ background: #f57c00;}
+        .btn-dark { background: #555; } .btn-dark:hover{ background: #333;}
+        .btn-copy { background: var(--secondary); color: #000; }
+
+        /* Form CRUD */
+        .crud-form { background: var(--panel-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .crud-form input, .crud-form select, .crud-form textarea { width: 100%; padding: 10px; margin-bottom: 10px; background: #121212; border: 1px solid #444; color: white; border-radius: 4px; }
+        .crud-form button { padding: 10px 20px; background: var(--secondary); color: #000; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+        .crud-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .crud-table th, .crud-table td { padding: 10px; border: 1px solid var(--border); text-align: left; }
+        .crud-table th { background: #2c2c2c; }
+        
+        /* Modal Catatan */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--panel-bg); padding: 20px; width: 300px; border-radius: 8px; }
+        .modal-content textarea { width: 100%; height: 100px; margin: 10px 0; background: #222; color: white; border: 1px solid #555; padding: 10px;}
+    </style>
+</head>
+<body>
+
+    <!-- Login -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2 style="border:none; margin:0">Admin Login</h2>
+            <input type="password" id="adminPass" placeholder="Password (admin123)">
+            <button onclick="login()">LOGIN</button>
+        </div>
+    </div>
+
+    <!-- Nav -->
+    <nav>
+        <div style="font-weight: bold; color: var(--primary); font-size: 1.2rem;">PS3 ADMIN</div>
+        <div class="nav-links">
+            <button class="nav-btn active" data-target="dashboard">Dashboard</button>
+            <button class="nav-btn" data-target="packages">Paket Harga</button>
+            <button class="nav-btn" data-target="promos">Promo</button>
+            <button class="nav-btn" data-target="history">Riwayat Selesai</button>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- DASHBOARD (Aktif) -->
+        <div id="dashboard" class="section active">
+            <h2>Live Bookings</h2>
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="unpaid">Belum Bayar</button>
+                <button class="filter-btn" data-filter="paid">Sudah Bayar</button>
+                <button class="filter-btn" data-filter="running">Berjalan</button>
+                <button class="filter-btn" data-filter="finished">Selesai</button>
+            </div>
+            <div class="grid" id="bookingGrid">
+                <!-- Data Rendered by JS -->
+            </div>
+        </div>
+
+        <!-- RIWAYAT -->
+        <div id="history" class="section">
+            <h2>Riwayat Selesai</h2>
+            <div class="grid" id="historyGrid"></div>
+        </div>
+
+        <!-- PAKET HARGA -->
+        <div id="packages" class="section">
+            <h2>Manajemen Paket Harga</h2>
+            <div class="crud-form">
+                <input type="hidden" id="pkgId">
+                <input type="text" id="pkgName" placeholder="Nama Paket (cth: Paket Begadang)" required>
+                <input type="number" id="pkgDuration" placeholder="Durasi (Jam)" step="0.5" required>
+                <input type="number" id="pkgPrice" placeholder="Harga (Rp)" required>
+                <textarea id="pkgDesc" placeholder="Keterangan"></textarea>
+                <select id="pkgStatus">
+                    <option value="true">Aktif</option>
+                    <option value="false">Nonaktif</option>
+                </select>
+                <button onclick="savePackage()">Simpan Paket</button>
+                <button onclick="resetPackageForm()" style="background:var(--dark); color:white; margin-left:10px;">Batal</button>
+            </div>
+            <table class="crud-table">
+                <thead><tr><th>Nama</th><th>Durasi</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="tablePackages"></tbody>
+            </table>
+        </div>
+
+        <!-- PROMO -->
+        <div id="promos" class="section">
+            <h2>Manajemen Promo</h2>
+            <div class="crud-form">
+                <input type="hidden" id="promoId">
+                <input type="text" id="promoTitle" placeholder="Judul Promo" required>
+                <input type="text" id="promoDiscount" placeholder="Keterangan Diskon/Bonus (cth: Diskon Rp10.000)">
+                <textarea id="promoDesc" placeholder="Deskripsi Syarat Promo"></textarea>
+                <select id="promoStatus">
+                    <option value="true">Aktif</option>
+                    <option value="false">Nonaktif</option>
+                </select>
+                <button onclick="savePromo()">Simpan Promo</button>
+                <button onclick="resetPromoForm()" style="background:var(--dark); color:white; margin-left:10px;">Batal</button>
+            </div>
+            <table class="crud-table">
+                <thead><tr><th>Judul</th><th>Diskon/Bonus</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="tablePromos"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Modal Catatan -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:var(--primary); margin-bottom:10px;">Catatan Admin</h3>
+            <input type="hidden" id="noteBookingId">
+            <textarea id="adminNoteText" placeholder="Tulis catatan yang akan tampil di layar penyewa..."></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-green" onclick="saveNote()">Simpan</button>
+                <button class="btn btn-red" onclick="document.getElementById('noteModal').style.display='none'">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Modular v9 via module) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV5S1jEFxw_tGWHBVqGe_erZSsOKRK2gU",
+            authDomain: "rental-ps3-hen.firebaseapp.com",
+            databaseURL: "https://rental-ps3-hen-default-rtdb.firebaseio.com",
+            projectId: "rental-ps3-hen",
+            storageBucket: "rental-ps3-hen.firebasestorage.app",
+            messagingSenderId: "209728877379",
+            appId: "1:209728877379:web:3fcd356cc427c5172af5f6"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Global DB Reference for window access (since we use modules)
+        window.dbRef = { update, remove, set, push, ref, db };
+
+        let bookingsData = {};
+        let currentFilter = 'all';
+        let uiInterval;
+
+        // --- AUTH ---
+        window.login = function() {
+            if(document.getElementById('adminPass').value === 'admin123') {
+                localStorage.setItem('admin_logged', 'true');
+                document.getElementById('loginOverlay').style.display = 'none';
+            } else {
+                alert('Password Salah!');
+            }
+        }
+        window.logout = function() {
+            localStorage.removeItem('admin_logged');
+            location.reload();
+        }
+        if(localStorage.getItem('admin_logged') === 'true') {
+            document.getElementById('loginOverlay').style.display = 'none';
+        }
+
+        // --- NAVIGATION ---
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                e.target.classList.add('active');
+                document.getElementById(e.target.dataset.target).classList.add('active');
+            });
+        });
+
+        // --- FILTER ---
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                renderBookings();
+            });
+        });
+
+        // --- BOOKING LOGIC & RENDER ---
+        onValue(ref(db, 'bookings'), (snapshot) => {
+            bookingsData = snapshot.val() || {};
+            renderBookings();
+        });
+
+        function formatTimeRemaining(ms) {
+            if(ms <= 0) return "00:00:00";
+            let totalSeconds = Math.floor(ms / 1000);
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let seconds = totalSeconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function calculateRemaining(b) {
+            if (b.status_countdown === 'running') {
+                return b.waktu_selesai - Date.now();
+            } else {
+                return b.sisa_waktu; // paused or idle
+            }
+        }
+
+        // Update UI timer per second
+        clearInterval(uiInterval);
+        uiInterval = setInterval(() => {
+            document.querySelectorAll('.timer-display').forEach(el => {
+                let id = el.dataset.id;
+                let b = bookingsData[id];
+                if(b && b.status_countdown === 'running') {
+                    let rem = b.waktu_selesai - Date.now();
+                    if(rem <= 0) {
+                        el.innerText = "00:00:00";
+                        el.style.color = 'var(--error)';
+                    } else {
+                        el.innerText = formatTimeRemaining(rem);
+                        if(rem <= 600000) el.style.color = '#ff9800'; // <10 mins warning color
+                        else el.style.color = 'var(--c-running)';
+                    }
+                }
+            });
+        }, 1000);
+
+        function renderBookings() {
+            const grid = document.getElementById('bookingGrid');
+            const historyGrid = document.getElementById('historyGrid');
+            grid.innerHTML = '';
+            historyGrid.innerHTML = '';
+
+            for (let id in bookingsData) {
+                let b = bookingsData[id];
+                let remTime = calculateRemaining(b);
+                let timeStr = formatTimeRemaining(remTime);
+                
+                // Card Color State
+                let cardClass = 'st-unpaid';
+                let statusText = 'Belum Bayar';
+                if(b.status_pembayaran === 'Sudah Bayar') {
+                    cardClass = 'st-paid'; statusText = 'Sudah Bayar (Wait)';
+                    if(b.status_konfirmasi === 'Sudah') statusText = 'Siap Main';
+                }
+                if(b.status_countdown === 'running') { cardClass = 'st-running'; statusText = 'Berjalan'; }
+                if(b.status_countdown === 'paused') { cardClass = 'st-paused'; statusText = 'Jeda'; }
+                if(b.status_countdown === 'finished') { cardClass = 'st-finished'; statusText = 'Waktu Habis'; }
+
+                let cardHTML = `
+                    <div class="card ${cardClass}">
+                        <div class="card-header">
+                            <span>${b.nama}</span>
+                            <span class="badge" style="background:var(--border)">${b.paket_nama}</span>
+                        </div>
+                        <div class="detail-row"><span>ID:</span> <span>${id}</span></div>
+                        <div class="detail-row"><span>HP:</span> <span>${b.nohp}</span></div>
+                        <div class="detail-row"><span>Status:</span> <b>${statusText}</b></div>
+                        
+                        <div class="timer-display" data-id="${id}">${timeStr}</div>
+                        
+                        <div class="action-group">
+                            ${b.is_history ? `
+                                <button class="btn btn-red" onclick="deleteBooking('${id}')">Hapus Data</button>
+                            ` : `
+                                <!-- Payment & Confirm -->
+                                ${b.status_pembayaran === 'Belum Bayar' 
+                                    ? `<button class="btn btn-green" onclick="act('${id}', 'bayar')">Tandai Lunas</button>` 
+                                    : (b.status_konfirmasi === 'Belum' 
+                                        ? `<button class="btn btn-blue" onclick="act('${id}', 'konfirmasi')">Konfirmasi Sewa</button>`
+                                        : '')}
+                                
+                                <!-- Play/Pause Control -->
+                                ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="btn btn-blue" onclick="act('${id}', 'start')">▶ Start</button>` : ''}
+                                ${b.status_countdown === 'running' ? `<button class="btn btn-yellow" onclick="act('${id}', 'pause')">⏸ Pause</button>` : ''}
+                                
+                                <!-- Time Adjustments -->
+                                <button class="btn btn-dark" onclick="act('${id}', 'add_1h')">+1 Jam</button>
+                                <button class="btn btn-dark" onclick="act('${id}', 'min_15m')">-15 Mnt</button>
+                                <button class="btn btn-dark" onclick="act('${id}', 'reset')">↺ Reset</button>
+                                
+                                <!-- Utils -->
+                                <button class="btn btn-dark" onclick="openNoteModal('${id}')">Catatan</button>
+                                <button class="btn btn-copy" onclick="copyLink('${id}')">Copy Link</button>
+                                <button class="btn btn-green" onclick="waLink('${b.nohp}', '${id}')">WA Link</button>
+                                <button class="btn btn-dark" onclick="act('${id}', 'finish')">Selesai/Pindah</button>
+                                <button class="btn btn-red" onclick="deleteBooking('${id}')">Hapus</button>
+                            `}
+                        </div>
+                    </div>
+                `;
+
+                if (b.is_history) {
+                    historyGrid.innerHTML += cardHTML;
+                } else {
+                    // Filter Logic for Live Board
+                    let show = false;
+                    if(currentFilter === 'all') show = true;
+                    if(currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') show = true;
+                    if(currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') show = true;
+                    if(currentFilter === 'running' && b.status_countdown === 'running') show = true;
+                    if(currentFilter === 'finished' && b.status_countdown === 'finished') show = true;
+                    
+                    if(show) grid.innerHTML += cardHTML;
+                }
+            }
+        }
+
+        // --- ACTIONS ---
+        window.act = async function(id, action) {
+            let b = bookingsData[id];
+            let updates = {};
+            
+            if(action === 'bayar') updates['status_pembayaran'] = 'Sudah Bayar';
+            if(action === 'konfirmasi') updates['status_konfirmasi'] = 'Sudah';
+            
+            if(action === 'start') {
+                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') {
+                    return alert("Pastikan sudah Lunas dan Dikonfirmasi sebelum Start!");
+                }
+                let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
+                if(rem <= 0) return alert("Waktu habis. Tambah waktu dulu.");
+                updates['status_countdown'] = 'running';
+                updates['waktu_selesai'] = Date.now() + rem;
+            }
+            
+            if(action === 'pause') {
+                updates['status_countdown'] = 'paused';
+                updates['sisa_waktu'] = b.waktu_selesai - Date.now();
+            }
+            
+            if(action === 'add_1h') {
+                let ms = 60 * 60 * 1000;
+                if(b.status_countdown === 'running') updates['waktu_selesai'] = b.waktu_selesai + ms;
+                else updates['sisa_waktu'] = b.sisa_waktu + ms;
+                // If it was finished, change back to paused so it can be resumed
+                if(b.status_countdown === 'finished') updates['status_countdown'] = 'paused';
+            }
+            
+            if(action === 'min_15m') {
+                let ms = 15 * 60 * 1000;
+                if(b.status_countdown === 'running') updates['waktu_selesai'] = b.waktu_selesai - ms;
+                else updates['sisa_waktu'] = Math.max(0, b.sisa_waktu - ms);
+            }
+            
+            if(action === 'reset') {
+                updates['status_countdown'] = 'idle';
+                updates['sisa_waktu'] = b.durasi_jam * 60 * 60 * 1000;
+                updates['waktu_selesai'] = 0;
+            }
+
+            if(action === 'finish') {
+                if(confirm("Pindahkan data ini ke riwayat selesai?")) {
+                    updates['is_history'] = true;
+                    updates['status_countdown'] = 'finished';
+                }
+            }
+
+            if(Object.keys(updates).length > 0) {
+                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), updates);
+            }
+        }
+
+        window.deleteBooking = async function(id) {
+            if(confirm("Hapus permanen data ini? (1/2)")) {
+                if(confirm("Yakin 100% ingin menghapus data ini? Aksi ini tidak bisa diubah. (2/2)")) {
+                    await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `bookings/${id}`));
+                }
+            }
+        }
+
+        window.copyLink = function(id) {
+            let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
+            navigator.clipboard.writeText(url).then(() => alert("Link tercopy:\n" + url));
+        }
+
+        window.waLink = function(hp, id) {
+            let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
+            let text = `Halo, pesanan rental PS3 Anda telah dikonfirmasi. Berikut adalah link unik untuk memantau sisa waktu Anda secara live:\n\n${url}\n\nSelamat bermain!`;
+            window.open(`https://api.whatsapp.com/send?phone=${hp}&text=${encodeURIComponent(text)}`);
+        }
+
+        // --- NOTES ---
+        window.openNoteModal = function(id) {
+            document.getElementById('noteBookingId').value = id;
+            document.getElementById('adminNoteText').value = bookingsData[id].catatan_admin || "";
+            document.getElementById('noteModal').style.display = 'flex';
+        }
+        window.saveNote = async function() {
+            let id = document.getElementById('noteBookingId').value;
+            let note = document.getElementById('adminNoteText').value;
+            await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `bookings/${id}`), { catatan_admin: note });
+            document.getElementById('noteModal').style.display = 'none';
+        }
+
+        // --- CRUD PACKAGES ---
+        onValue(ref(db, 'packages'), (snapshot) => {
+            const data = snapshot.val() || {};
+            const tbody = document.getElementById('tablePackages');
+            tbody.innerHTML = '';
+            for(let key in data) {
+                let d = data[key];
+                tbody.innerHTML += `<tr>
+                    <td>${d.name}</td>
+                    <td>${d.duration_hours} Jam</td>
+                    <td>Rp ${parseInt(d.price).toLocaleString()}</td>
+                    <td>${d.is_active ? 'Aktif' : 'Nonaktif'}</td>
+                    <td>
+                        <button class="btn btn-blue" onclick="editPackage('${key}', '${d.name}', ${d.duration_hours}, ${d.price}, '${d.description}', ${d.is_active})">Edit</button>
+                        <button class="btn btn-red" onclick="deletePackage('${key}')">Hapus</button>
+                    </td>
+                </tr>`;
+            }
+        });
+
+        window.savePackage = async function() {
+            let id = document.getElementById('pkgId').value;
+            let data = {
+                name: document.getElementById('pkgName').value,
+                duration_hours: parseFloat(document.getElementById('pkgDuration').value),
+                price: parseFloat(document.getElementById('pkgPrice').value),
+                description: document.getElementById('pkgDesc').value,
+                is_active: document.getElementById('pkgStatus').value === 'true'
+            };
+            if(!data.name || !data.duration_hours || !data.price) return alert("Isi data penting!");
+            
+            if(id) {
+                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `packages/${id}`), data);
+            } else {
+                await window.dbRef.push(window.dbRef.ref(window.dbRef.db, 'packages'), data);
+            }
+            window.resetPackageForm();
+        }
+        window.editPackage = function(id, name, dur, price, desc, act) {
+            document.getElementById('pkgId').value = id;
+            document.getElementById('pkgName').value = name;
+            document.getElementById('pkgDuration').value = dur;
+            document.getElementById('pkgPrice').value = price;
+            document.getElementById('pkgDesc').value = desc;
+            document.getElementById('pkgStatus').value = act ? 'true' : 'false';
+        }
+        window.resetPackageForm = function() {
+            document.getElementById('pkgId').value = '';
+            document.getElementById('pkgName').value = '';
+            document.getElementById('pkgDuration').value = '';
+            document.getElementById('pkgPrice').value = '';
+            document.getElementById('pkgDesc').value = '';
+        }
+        window.deletePackage = async function(id) {
+            if(confirm("Hapus paket ini?")) await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `packages/${id}`));
+        }
+
+        // --- CRUD PROMOS ---
+        onValue(ref(db, 'promos'), (snapshot) => {
+            const data = snapshot.val() || {};
+            const tbody = document.getElementById('tablePromos');
+            tbody.innerHTML = '';
+            for(let key in data) {
+                let d = data[key];
+                tbody.innerHTML += `<tr>
+                    <td>${d.title}</td>
+                    <td>${d.discount_info}</td>
+                    <td>${d.is_active ? 'Aktif' : 'Nonaktif'}</td>
+                    <td>
+                        <button class="btn btn-blue" onclick="editPromo('${key}', '${d.title}', '${d.discount_info}', '${d.description}', ${d.is_active})">Edit</button>
+                        <button class="btn btn-red" onclick="deletePromo('${key}')">Hapus</button>
+                    </td>
+                </tr>`;
+            }
+        });
+
+        window.savePromo = async function() {
+            let id = document.getElementById('promoId').value;
+            let data = {
+                title: document.getElementById('promoTitle').value,
+                discount_info: document.getElementById('promoDiscount').value,
+                description: document.getElementById('promoDesc').value,
+                is_active: document.getElementById('promoStatus').value === 'true'
+            };
+            if(!data.title) return alert("Judul wajib diisi!");
+            
+            if(id) {
+                await window.dbRef.update(window.dbRef.ref(window.dbRef.db, `promos/${id}`), data);
+            } else {
+                await window.dbRef.push(window.dbRef.ref(window.dbRef.db, 'promos'), data);
+            }
+            window.resetPromoForm();
+        }
+        window.editPromo = function(id, title, disc, desc, act) {
+            document.getElementById('promoId').value = id;
+            document.getElementById('promoTitle').value = title;
+            document.getElementById('promoDiscount').value = disc;
+            document.getElementById('promoDesc').value = desc;
+            document.getElementById('promoStatus').value = act ? 'true' : 'false';
+        }
+        window.resetPromoForm = function() {
+            document.getElementById('promoId').value = '';
+            document.getElementById('promoTitle').value = '';
+            document.getElementById('promoDiscount').value = '';
+            document.getElementById('promoDesc').value = '';
+        }
+        window.deletePromo = async function(id) {
+            if(confirm("Hapus promo ini?")) await window.dbRef.remove(window.dbRef.ref(window.dbRef.db, `promos/${id}`));
+        }
+
+    </script>
+</body>
+</html>
