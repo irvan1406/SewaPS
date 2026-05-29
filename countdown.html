@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Layar Monitor PS3</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@700&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@700&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
     <style>
         * { 
             box-sizing: border-box; 
@@ -58,6 +58,19 @@
             border-radius: 40px; 
             border: 1px solid rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
+        }
+
+        /* === INFO WAKTU (MULAI & BERAKHIR) === */
+        .time-detail-box {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            color: #94A3B8;
+            background: rgba(0,0,0,0.4);
+            padding: 10px 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none; /* Disembunyikan dulu sampai data termuat */
+            font-weight: 500;
         }
 
         /* === TIMER UTAMA (DINAMIS DARI ADMIN) === */
@@ -159,13 +172,12 @@
         }
 
         /* === SPECIAL GRADIENT THEMES (INSTAGRAM & VAPORWAVE) === */
-        /* Override warna text biasa agar menjadi gradient penuh warna */
         .theme-instagram .tv-timer:not(.warning):not(.danger) {
             background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 40px rgba(225, 48, 108, 0.5));
-            text-shadow: none !important; /* Wajib dihilangkan agar gradient tidak rusak */
+            text-shadow: none !important;
         }
         
         .theme-vaporwave .tv-timer:not(.warning):not(.danger) {
@@ -205,6 +217,10 @@
         <div class="header-info" id="infoBox" style="display:none;">
             <h2 id="userName">SINKRONISASI DATA...</h2>
             <p><span id="bookingIdText">ID: -</span> &nbsp;|&nbsp; <span id="packageName">-</span></p>
+            
+            <div id="timeDetailBox" class="time-detail-box">
+                <span id="tvWaktuMulai">Mulai: -</span> &nbsp;&nbsp;•&nbsp;&nbsp; <span id="tvWaktuSelesai">Berakhir: -</span>
+            </div>
         </div>
 
         <div class="timer-box">
@@ -245,26 +261,26 @@
             return Date.now() + serverOffset; 
         }
 
+        // Fungsi Format Waktu/Tanggal
+        function formatDateTime(val) {
+            if(!val) return "-";
+            let d = new Date(val);
+            return d.toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'}) + ' ' + d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) + ' WIB';
+        }
+
         // === VARIABEL DESAIN TEMA GLOBAL ===
         let tvColorHex = "#06B6D4"; // Default warna Cyan
         let tvColorRgba = "rgba(6, 182, 212, 0.4)";
-        let currentThemeType = "normal"; // Nilai: normal, instagram, vaporwave
+        let currentThemeType = "normal";
 
         // === FUNGSI TRANSLASI 11 TEMA TV PINTAR ===
         function applyTvTheme(config) {
-            // Bersihkan kelas tema body terlebih dahulu
             document.body.className = ''; 
             currentThemeType = "normal";
 
-            // Update Pengaturan Font
-            if(config.font) {
-                document.getElementById('timerDisplay').style.fontFamily = config.font;
-            }
-            
-            // Update Pengaturan Ukuran Teks Raksasa
-            if(config.size) {
-                document.getElementById('timerDisplay').style.fontSize = config.size;
-            }
+            // Update Pengaturan Font & Ukuran
+            if(config.font) document.getElementById('timerDisplay').style.fontFamily = config.font;
+            if(config.size) document.getElementById('timerDisplay').style.fontSize = config.size;
 
             // Update Logika Pewarnaan (Color Dictionary)
             if(config.color) {
@@ -298,13 +314,13 @@
                 
                 // Tema Spesial: Gradient (Membutuhkan logic CSS Class khusus)
                 else if(config.color === 'instagram') { 
-                    tvColorHex = "#E1306C"; // Warna fallback Instagram
+                    tvColorHex = "#E1306C"; 
                     tvColorRgba = "rgba(225, 48, 108, 0.3)"; 
                     currentThemeType = "instagram";
                     document.body.classList.add('theme-instagram');
                 }
                 else if(config.color === 'vaporwave') { 
-                    tvColorHex = "#00E5FF"; // Warna fallback Vaporwave
+                    tvColorHex = "#00E5FF"; 
                     tvColorRgba = "rgba(255, 0, 255, 0.3)"; 
                     currentThemeType = "vaporwave";
                     document.body.classList.add('theme-vaporwave');
@@ -320,7 +336,7 @@
                     radial-gradient(circle at 50% 100%, ${tvColorRgba.replace('0.4', '0.08').replace('0.3', '0.05')} 0%, transparent 70%)
                 `;
 
-                // Terapkan Warna ke Teks Status Default (MENGHUBUNGKAN, SIAP DIMULAI, dll)
+                // Terapkan Warna ke Teks Status Default
                 document.getElementById('statusDisplay').style.color = tvColorHex;
                 document.getElementById('statusDisplay').style.textShadow = `0 0 20px ${tvColorRgba}`;
             }
@@ -333,7 +349,6 @@
                 applyTvTheme(config);
                 updateUI(); // Panggil ulang untuk merender ulang bayangan CSS saat tema berubah
             } else {
-                // Terapkan Pengaturan Standar jika belum ada
                 applyTvTheme({ font: "'Orbitron', sans-serif", color: "cyan", size: "18vw" });
             }
         });
@@ -341,17 +356,16 @@
         const urlParams = new URLSearchParams(window.location.search);
         const bookingId = urlParams.get('id');
 
-        // === SISTEM AUDIO (Peringatan Sisa Waktu & Alarm Habis) ===
+        // === SISTEM AUDIO ===
         window.audioCtx = null;
         
         window.initAudio = function() {
             document.getElementById('audioOverlay').style.display = 'none';
-            // Aktifkan Audio Context Browser
             window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             let osc = audioCtx.createOscillator(); 
             osc.connect(audioCtx.destination); 
             osc.start(0); 
-            osc.stop(0.01); // Bunyi diam sebagai pancingan bypass
+            osc.stop(0.01); 
         }
 
         function playBeep(type) {
@@ -363,7 +377,6 @@
             gain.connect(window.audioCtx.destination);
             
             if(type === 'warning') {
-                // Bunyi Tut Pendek (Peringatan 10 Menit)
                 osc.type = 'square'; 
                 osc.frequency.setValueAtTime(800, window.audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.05, window.audioCtx.currentTime); 
@@ -371,7 +384,6 @@
                 gain.gain.exponentialRampToValueAtTime(0.00001, window.audioCtx.currentTime + 0.5); 
                 osc.stop(window.audioCtx.currentTime + 0.5);
             } else if(type === 'alarm') {
-                // Bunyi Sirene Peringatan (Waktu Habis)
                 osc.type = 'sawtooth'; 
                 osc.frequency.setValueAtTime(400, window.audioCtx.currentTime);
                 osc.frequency.linearRampToValueAtTime(800, window.audioCtx.currentTime + 0.3);
@@ -391,7 +403,6 @@
         if(!bookingId) {
             document.getElementById('statusDisplay').innerText = "ID TIDAK VALID / KOSONG"; 
             document.getElementById('statusDisplay').style.color = "#EF4444";
-            document.getElementById('statusDisplay').style.textShadow = "none";
         } else {
             document.getElementById('infoBox').style.display = 'flex';
             document.getElementById('bookingIdText').innerText = "ID: " + bookingId;
@@ -403,13 +414,28 @@
                 if(!bookingData) {
                     document.getElementById('statusDisplay').innerText = "DATA TIDAK DITEMUKAN"; 
                     document.getElementById('statusDisplay').style.color = "#EF4444"; 
-                    document.getElementById('statusDisplay').style.textShadow = "none";
                     return;
                 }
                 
                 document.getElementById('userName').innerText = bookingData.nama;
-                document.getElementById('packageName').innerText = bookingData.paket_nama;
                 
+                // Menambahkan Durasi Paket di Judul
+                document.getElementById('packageName').innerText = `${bookingData.paket_nama} (${bookingData.durasi_jam} Jam)`;
+                
+                // Menampilkan Keterangan Mulai & Berakhir
+                if(bookingData.waktu_mulai) {
+                    document.getElementById('timeDetailBox').style.display = 'inline-block';
+                    document.getElementById('tvWaktuMulai').innerHTML = `<strong style="color:#FFF;">Mulai:</strong> ${formatDateTime(bookingData.waktu_mulai)}`;
+                    
+                    if(bookingData.status_countdown === 'running' || bookingData.status_countdown === 'finished') {
+                        document.getElementById('tvWaktuSelesai').innerHTML = `<strong style="color:#FFF;">Berakhir:</strong> ${formatDateTime(bookingData.waktu_selesai)}`;
+                    } else if (bookingData.status_countdown === 'paused') {
+                        document.getElementById('tvWaktuSelesai').innerHTML = `<strong style="color:var(--warning);">Berakhir: (Waktu Sedang Dijeda)</strong>`;
+                    }
+                } else {
+                    document.getElementById('timeDetailBox').style.display = 'none';
+                }
+
                 // Menampilkan Pesan Pop-Up dari Admin Jika Ada
                 if(bookingData.catatan_admin && bookingData.catatan_admin.trim() !== "") {
                     document.getElementById('adminNoteBox').style.display = 'block'; 
@@ -418,15 +444,14 @@
                     document.getElementById('adminNoteBox').style.display = 'none'; 
                 }
                 
-                // Cek Sisa Waktu untuk me-reset alarm jika admin memberikan tambahan waktu manual
                 let remCheck = (bookingData.status_countdown === 'running') ? bookingData.waktu_selesai - getTrueTime() : bookingData.sisa_waktu;
                 
                 if(remCheck > 600000) {
-                    warningPlayed = false; // Reset Peringatan 10 Menit
+                    warningPlayed = false; 
                 }
                 if(remCheck > 0) { 
                     alarmTriggered = false; 
-                    clearInterval(alarmInterval); // Matikan alarm jika waktu kembali ditambahkan admin
+                    clearInterval(alarmInterval); 
                 }
                 
                 updateUI();
@@ -440,10 +465,9 @@
             const timerEl = document.getElementById('timerDisplay'); 
             const statusEl = document.getElementById('statusDisplay');
             
-            // Hitung sisa waktu aktual (Detik Sekarang terhadap Detik Selesai Server)
+            // Hitung sisa waktu aktual
             let remTime = (bookingData.status_countdown === 'running') ? bookingData.waktu_selesai - getTrueTime() : bookingData.sisa_waktu;
             
-            // Fungsi Membersihkan CSS Inline agar Tema Gradient tidak terhalang (Konflik)
             function resetToThemeBase() {
                 statusEl.style.color = tvColorHex; 
                 statusEl.style.textShadow = `0 0 20px ${tvColorRgba}`;
@@ -456,26 +480,22 @@
                     timerEl.style.webkitBackgroundClip = 'initial';
                 }
                 
-                // Jika sedang pakai tema Instagram/Vaporwave, hapus shadow agar warna CSS class bekerja maksimal
                 if(currentThemeType === "instagram" || currentThemeType === "vaporwave") {
                     timerEl.style.textShadow = "none";
                 }
             }
 
-            // KONDISI: BARU MASUK / BELUM DIMULAI (IDLE)
             if (bookingData.status_countdown === 'idle') {
                 statusEl.innerText = "MENUNGGU PERMAINAN DIMULAI"; 
                 resetToThemeBase();
                 timerEl.className = "tv-timer"; 
                 
             } 
-            // KONDISI: WAKTU DIJEDA SEMENTARA OLEH ADMIN (PAUSED)
             else if (bookingData.status_countdown === 'paused') {
                 statusEl.innerText = "PERMAINAN DI-JEDA SEMENTARA"; 
                 statusEl.style.color = "#F59E0B"; 
                 statusEl.style.textShadow = "0 0 20px rgba(245, 158, 11, 0.4)";
                 
-                // Menimpa tema menjadi Kuning/Jeda dan menghapus background gradient bawaan
                 timerEl.style.background = 'none'; 
                 timerEl.style.webkitTextFillColor = 'initial';
                 timerEl.className = "tv-timer"; 
@@ -483,31 +503,26 @@
                 timerEl.style.textShadow = "0 0 50px rgba(245, 158, 11, 0.4)";
                 
             } 
-            // KONDISI: PERMAINAN BERJALAN NORMAL (RUNNING)
             else if (bookingData.status_countdown === 'running') {
                 statusEl.innerText = "SEDANG BERMAIN"; 
                 resetToThemeBase();
                 timerEl.className = "tv-timer"; 
                 
-                // Mainkan bunyi 'TUT' sekali saja pada titik sisa 10 menit
                 if(remTime <= 600000 && remTime > 0 && !warningPlayed) { 
                     playBeep('warning'); 
                     warningPlayed = true; 
                 }
                 
-                // Kondisi Kritis: Sisa waktu di bawah 10 menit
                 if(remTime <= 600000 && remTime > 0) {
                     statusEl.innerText = "PERHATIAN: SISA WAKTU < 10 MENIT!"; 
                     statusEl.style.color = "#F59E0B"; 
                     statusEl.style.textShadow = "0 0 30px rgba(245, 158, 11, 0.5)";
                     
-                    // Timpa Tema Menjadi Mode Warning (Kedip-kedip Kuning)
                     timerEl.style.background = 'none'; 
                     timerEl.style.webkitTextFillColor = 'initial';
                     timerEl.className = "tv-timer warning";
                 }
             } 
-            // KONDISI: WAKTU TELAH HABIS DIPAKSA OLEH ADMIN (FINISHED)
             else if (bookingData.status_countdown === 'finished') {
                 statusEl.innerText = "WAKTU PERMAINAN TELAH HABIS"; 
                 statusEl.style.color = "#EF4444"; 
@@ -520,7 +535,6 @@
                 remTime = 0;
             }
 
-            // KONDISI: WAKTU MENTOK DI ANGKA 0 SECARA OTOMATIS
             if(remTime <= 0 && bookingData.status_countdown === 'running') {
                 statusEl.innerText = "WAKTU HABIS! SILAKAN HUBUNGI ADMIN"; 
                 statusEl.style.color = "#EF4444"; 
@@ -532,19 +546,16 @@
                 timerEl.style.color = "#EF4444";
                 remTime = 0;
                 
-                // Bunyikan Sirine Terus Menerus Tiap 1.5 Detik
                 if(!alarmTriggered) { 
                     alarmTriggered = true; 
                     alarmInterval = setInterval(() => playBeep('alarm'), 1500); 
                 }
             }
 
-            // Menerapkan Kalkulasi Matematika Menjadi Format Waktu Jam:Menit:Detik ke Layar HTML
             let ts = Math.max(0, Math.floor(remTime / 1000));
             timerEl.innerText = `${Math.floor(ts / 3600).toString().padStart(2, '0')}:${Math.floor((ts % 3600) / 60).toString().padStart(2, '0')}:${(ts % 60).toString().padStart(2, '0')}`;
         }
 
-        // Jalankan Fungsi Update UI Layar Secara Konstan Tiap 1 Detik
         setInterval(() => { 
             if(bookingData && bookingData.status_countdown === 'running') {
                 updateUI(); 
