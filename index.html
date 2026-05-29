@@ -4,89 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium PS3 Rental</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
+        /* === VARIABEL WARNA PREMIUM === */
         :root {
-            --bg-dark: #09090B; --surface: #18181B; --surface-hover: #27272A;
-            --border: #334155; --primary: #06B6D4; --primary-glow: rgba(6, 182, 212, 0.4);
-            --text-main: #F8FAFC; --text-dim: #94A3B8; --danger: #EF4444; --success: #10B981;
+            --bg-base: #0B0E14;
+            --bg-surface: rgba(17, 24, 39, 0.6);
+            --bg-surface-hover: rgba(30, 41, 59, 0.8);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(0, 229, 255, 0.3);
+            
+            --primary: #00E5FF;
+            --primary-dim: rgba(0, 229, 255, 0.15);
+            --secondary: #9D00FF;
+            
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --danger: #FF2A55;
+            --success: #10B981;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 60px; }
-        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15), transparent 50%); z-index: -1; pointer-events: none; }
         
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-base); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding-bottom: 60px; 
+            position: relative;
+        }
+
+        /* Ambient Glow Background */
+        body::before { 
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-image: 
+                radial-gradient(circle at 15% 30%, rgba(157, 0, 255, 0.12), transparent 40%),
+                radial-gradient(circle at 85% 70%, rgba(0, 229, 255, 0.12), transparent 40%);
+            z-index: -1; pointer-events: none; 
+        }
+
         .container { width: 100%; max-width: 1000px; padding: 40px 20px; }
-        
-        /* Toast Notification */
-        #toastContainer { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--surface); border-left: 4px solid var(--primary); padding: 12px 24px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 500; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); color: white; animation: slideUpToast 0.3s ease forwards; text-align: center; }
-        @keyframes slideUpToast { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Header */
-        header { text-align: center; margin-bottom: 50px; padding-top: 30px; }
-        header h1 { font-family: 'Outfit', sans-serif; font-size: 3.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 15px; color: #FFF; }
+        /* === TOAST NOTIFICATION === */
+        #toastContainer { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-left: 4px solid var(--primary); padding: 14px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-weight: 500; border: 1px solid var(--border); color: white; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; text-align: center; }
+
+        /* === HEADER === */
+        header { text-align: center; margin-bottom: 50px; padding-top: 20px; }
+        header h1 { font-family: 'Outfit', sans-serif; font-size: 3.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; color: #FFF; text-shadow: 0 0 30px rgba(0, 229, 255, 0.2); }
         header h1 span { color: var(--primary); }
-        header p { color: var(--text-dim); font-size: 1.15rem; max-width: 600px; margin: 0 auto; }
+        header p { color: var(--text-muted); font-size: 1.15rem; max-width: 600px; margin: 0 auto; }
 
-        .section-header { margin-bottom: 25px; display: flex; align-items: center; gap: 12px; }
+        .section-header { margin-bottom: 25px; display: flex; align-items: center; gap: 15px; }
         .section-header h2 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 700; color: #FFF; }
         .section-header .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
 
-        /* Grid */
-        .packages-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 60px; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 30px; transition: 0.3s ease; position: relative; overflow: hidden; }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px var(--primary-glow); }
-        .card h3 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; color: #FFF; margin-bottom: 10px; }
-        .card .price { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-bottom: 15px; display: flex; align-items: baseline; gap: 5px;}
-        .card .price span { font-size: 1rem; color: var(--text-dim); font-weight: 400; text-decoration: line-through; margin-left: 5px; }
-        .card .desc { font-size: 0.95rem; color: var(--text-dim); line-height: 1.6; }
+        /* === GLASS CARDS === */
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 60px; }
+        
+        .glass-card { 
+            background: var(--bg-surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border); border-radius: 20px; padding: 30px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
+        }
+        
+        .glass-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent); opacity: 0; transition: opacity 0.3s;
+        }
 
-        /* Form */
-        .form-container { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); max-width: 750px; margin: 0 auto; }
+        .glass-card:hover { 
+            transform: translateY(-5px); background: var(--bg-surface-hover); 
+            border-color: var(--border-glow); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(0, 229, 255, 0.15); 
+        }
+        .glass-card:hover::before { opacity: 1; }
+        
+        .glass-card h3 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; color: #FFF; margin-bottom: 12px; }
+        .glass-card .price { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: baseline; gap: 6px; letter-spacing: -1px;}
+        
+        /* HARGA SUDAH TIDAK DICORET */
+        .glass-card .price span { font-size: 1rem; color: var(--text-muted); font-weight: 500; letter-spacing: normal;}
+        
+        .glass-card .desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+        .promo-card { border-color: rgba(157, 0, 255, 0.2); }
+        .promo-card::before { background: linear-gradient(90deg, var(--secondary), transparent); }
+        .promo-card:hover { border-color: var(--secondary); box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(157, 0, 255, 0.2); }
+        .promo-card h3 { color: #E0B0FF; }
+
+        /* === FORM RESERVASI === */
+        .form-container { 
+            background: var(--bg-surface); backdrop-filter: blur(20px); border: 1px solid var(--border); 
+            border-radius: 24px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
+            max-width: 800px; margin: 0 auto; 
+        }
+
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
         
         .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 0.9rem; font-weight: 500; color: var(--text-dim); }
-        input, select { width: 100%; padding: 14px 18px; background: #09090B; border: 1px solid var(--border); color: #FFF; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.2s; }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15); }
+        .input-group label { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
+        
+        input, select { 
+            width: 100%; padding: 16px 20px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); 
+            color: #FFF; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.2s; 
+        }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-dim); background: rgba(0, 0, 0, 0.5); }
+        select option { background: #0F172A; color: #FFF; }
         
         /* Fitur Voucher & Pembayaran */
         .voucher-box { display: flex; gap: 10px; }
-        .btn-check-voucher { padding: 0 20px; background: #334155; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-check-voucher:hover { background: var(--primary); color: #000; }
-        .voucher-msg { font-size: 0.85rem; margin-top: 5px; font-weight: 500; display: none; }
+        .btn-check-voucher { padding: 0 24px; background: #334155; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: 'Outfit', sans-serif; font-size: 1rem;}
+        .btn-check-voucher:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary-dim); }
+        .voucher-msg { font-size: 0.85rem; margin-top: 5px; font-weight: 500; display: none; padding: 8px 12px; border-radius: 8px; }
 
-        .transfer-menu { display: none; margin-top: 15px; padding: 20px; background: #09090B; border-radius: 12px; border: 1px dashed var(--border); }
-        .rekening-box { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); margin-top: 10px; }
-        .btn-copy { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
-        .btn-copy:hover { background: var(--primary); color: #000; }
+        .transfer-menu { display: none; margin-top: 15px; padding: 25px; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px dashed var(--border); }
+        .rekening-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 16px 20px; border-radius: 12px; border: 1px solid var(--border); margin-top: 12px; transition: 0.2s; }
+        .rekening-box:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+        
+        .bank-details { display: flex; flex-direction: column; gap: 4px; }
+        .bank-name { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .bank-number { font-size: 1.2rem; color: #FFF; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+        
+        .btn-copy { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: 0.2s; }
+        .btn-copy:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary-dim); }
 
-        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin: 30px 0; padding: 20px; background: #09090B; border-radius: 12px; border: 1px solid var(--border); }
+        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin: 30px 0; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border); }
         .checkbox-group input { margin-top: 4px; width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
-        .checkbox-group label { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; cursor: pointer; }
-        .link-syarat { color: var(--primary); text-decoration: underline; font-weight: 500; }
+        .checkbox-group label { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; cursor: pointer; }
+        .link-syarat { color: var(--primary); text-decoration: underline; font-weight: 600; }
 
-        .btn-submit { width: 100%; padding: 18px; background: var(--primary); color: #000; font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 25px var(--primary-glow); background: #08D9FA; }
-        .btn-submit:disabled { background: var(--border); color: #64748B; cursor: not-allowed; }
+        .btn-submit { 
+            width: 100%; padding: 20px; background: linear-gradient(135deg, #00E5FF, #0088FF); 
+            color: #000; font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 800; 
+            border: none; border-radius: 16px; cursor: pointer; text-transform: uppercase; 
+            letter-spacing: 2px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .btn-submit:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 229, 255, 0.4); filter: brightness(1.1); }
+        .btn-submit:disabled { background: #1E293B; color: #475569; cursor: not-allowed; box-shadow: none; }
 
-        .loader { display: none; text-align: center; margin-bottom: 20px; color: var(--primary); font-weight: 500; }
+        .loader { display: none; text-align: center; margin-bottom: 20px; color: var(--primary); font-weight: 600; font-size: 1.1rem; letter-spacing: 1px; animation: pulse 1.5s infinite;}
 
-        /* Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; animation: slideUp 0.3s ease; }
-        .modal-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h2 { font-family: 'Outfit', sans-serif; color: #FFF; font-size: 1.4rem; }
-        .modal-close { color: var(--text-dim); font-size: 24px; cursor: pointer; }
-        .modal-body { padding: 24px; overflow-y: auto; font-size: 0.95rem; color: var(--text-dim); line-height: 1.7; }
+        /* === MODAL === */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 600px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; animation: slideUp 0.3s ease; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .modal-header { padding: 24px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
+        .modal-header h2 { font-family: 'Outfit', sans-serif; color: #FFF; font-size: 1.5rem; }
+        .modal-close { color: var(--text-muted); font-size: 28px; cursor: pointer; line-height: 1; transition: 0.2s;}
+        .modal-close:hover { color: var(--danger); }
+        .modal-body { padding: 30px; overflow-y: auto; font-size: 1rem; color: var(--text-muted); line-height: 1.8; }
         .modal-body ol { padding-left: 20px; }
-        .modal-body li { margin-bottom: 12px; }
-        .modal-footer { padding: 20px 24px; border-top: 1px solid var(--border); text-align: right; background: #09090B; }
-        .btn-outline { padding: 12px 24px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-outline:hover { background: var(--primary); color: #000; }
+        .modal-body li { margin-bottom: 15px; }
+        .modal-body strong { color: #FFF; }
+        .modal-footer { padding: 20px 30px; border-top: 1px solid var(--border); text-align: right; background: rgba(0,0,0,0.3); }
+        
+        .btn-outline { padding: 12px 24px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem;}
+        .btn-outline:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary-dim); }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        footer { margin-top: 60px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -96,36 +178,36 @@
     <header>
         <div class="container">
             <h1>Rental <span>PS3 HEN</span></h1>
-            <p>Sistem reservasi otomatis dengan pantauan layar TV Real-time.</p>
+            <p>Sistem reservasi premium dengan pantauan layar TV Real-time.</p>
         </div>
     </header>
 
     <div class="container">
         <div id="promoSection" style="display:none;">
             <div class="section-header"><h2>Promo & Penawaran</h2><div class="line"></div></div>
-            <div class="packages-grid" id="promoList" style="margin-bottom: 40px;"></div>
+            <div class="grid-layout" id="promoList" style="margin-bottom: 40px;"></div>
         </div>
 
         <div class="section-header"><h2>Pilihan Paket</h2><div class="line"></div></div>
-        <div class="packages-grid" id="packageList"></div>
+        <div class="grid-layout" id="packageList"></div>
 
         <div class="form-container">
             <div class="section-header" style="justify-content: center; margin-bottom: 30px;">
-                <h2 style="font-size: 1.6rem;">Form Reservasi</h2>
+                <h2 style="font-size: 1.8rem; text-shadow: 0 0 20px rgba(0, 229, 255, 0.2);">Form Reservasi</h2>
             </div>
             
-            <div class="loader" id="loader">Memproses pesanan Anda...</div>
+            <div class="loader" id="loader">Mengamankan pesanan Anda ke server...</div>
 
             <form id="bookingForm">
                 <div class="form-grid">
                     <div class="input-group">
                         <label>Nama Lengkap</label>
-                        <input type="text" id="nama" placeholder="Sesuai KTP" required autocomplete="off">
+                        <input type="text" id="nama" placeholder="Sesuai kartu identitas" required autocomplete="off">
                     </div>
                     <div class="input-group">
                         <label>Nomor WhatsApp</label>
                         <input type="tel" id="nohp" placeholder="08xxxxxxxxxx" required autocomplete="off">
-                        <small id="hpError" style="color:var(--danger); display:none; margin-top:4px; font-size:0.8rem;">Format wajib 08 atau 62.</small>
+                        <small id="hpError" style="color:var(--danger); display:none; margin-top:4px; font-size:0.8rem;">Format nomor tidak valid (Wajib awalan 08 / 62).</small>
                     </div>
                 </div>
                 
@@ -133,7 +215,7 @@
                     <div class="input-group">
                         <label>Pilih Paket</label>
                         <select id="paket" required>
-                            <option value="">-- Pilih Paket Dulu --</option>
+                            <option value="">-- Pilih Paket Terlebih Dahulu --</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -149,51 +231,57 @@
                 <div class="input-group" style="margin-top: 10px;">
                     <label>Metode Pembayaran</label>
                     <select id="pembayaran" required>
-                        <option value="">-- Pilih Metode --</option>
+                        <option value="">-- Pilih Metode Pembayaran --</option>
                         <option value="Cash">Cash (Bayar di Tempat)</option>
-                        <option value="Transfer">Transfer Bank / QRIS</option>
+                        <option value="Transfer">Transfer Bank / E-Wallet</option>
                     </select>
                 </div>
 
                 <div id="transferMenu" class="transfer-menu">
-                    <label style="color:var(--text-dim); font-size:0.9rem; font-weight:500; display:block; margin-bottom:10px;">Pilih Tujuan Transfer</label>
+                    <label style="color:var(--text-main); font-size:1rem; font-weight:600; display:block; margin-bottom:12px;">Pilih Tujuan Transfer</label>
                     <select id="jenisTransfer">
                         <option value="">-- Silakan Pilih Bank / QRIS --</option>
-                        <option value="BRI">Bank BRI</option>
-                        <option value="QRIS">QRIS</option>
+                        <option value="BRI">Transfer Bank BRI</option>
+                        <option value="QRIS">Scan QRIS</option>
                     </select>
 
                     <div id="rekeningBRI" style="display:none; margin-top:20px;">
                         <div class="rekening-box">
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--text-dim);">Bank BRI a/n IRVAN MAULANA</div>
-                                <div style="font-size:1.1rem; color:#FFF; font-weight:600; font-family:'JetBrains Mono', monospace; margin-top:4px;">611901029752532</div>
+                            <div class="bank-details">
+                                <div class="bank-name">Bank BRI a/n IRVAN MAULANA</div>
+                                <div class="bank-number">611901029752532</div>
                             </div>
                             <button type="button" class="btn-copy" onclick="copyText('611901029752532')">Salin</button>
                         </div>
                         <div class="rekening-box">
-                            <div>
-                                <div style="font-size:0.8rem; color:var(--text-dim);">Bank BRI a/n ANANDA WARDANA ROHMA</div>
-                                <div style="font-size:1.1rem; color:#FFF; font-weight:600; font-family:'JetBrains Mono', monospace; margin-top:4px;">613901023317534</div>
+                            <div class="bank-details">
+                                <div class="bank-name">Bank BRI a/n ANANDA WARDANA ROHMA</div>
+                                <div class="bank-number">613901023317534</div>
                             </div>
                             <button type="button" class="btn-copy" onclick="copyText('613901023317534')">Salin</button>
                         </div>
                     </div>
 
-                    <div id="rekeningQRIS" style="display:none; margin-top:20px; text-align:center; padding:20px; border:1px dashed var(--danger); border-radius:12px;">
-                        <span style="color:var(--text-dim); font-style:italic;">Pembayaran QRIS Sedang Menunggu Update / Segera Hadir</span>
+                    <div id="rekeningQRIS" style="display:none; margin-top:20px; text-align:center; padding:30px 20px; background: rgba(0,0,0,0.3); border:1px dashed var(--border); border-radius:12px;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="margin-bottom:10px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect><rect x="14" y="14" width="3" height="3"></rect></svg>
+                        <br>
+                        <span style="color:var(--text-muted); font-size:0.95rem;">Sistem Pembayaran QRIS Sedang Menunggu Update.<br>Silakan gunakan opsi Transfer BRI sementara waktu.</span>
                     </div>
                 </div>
 
                 <div class="checkbox-group">
                     <input type="checkbox" id="syaratCheck">
-                    <label for="syaratCheck">Saya menyetujui <span class="link-syarat" id="btnSyarat">Syarat & Aturan</span> penyewaan konsol PS3 HEN.</label>
+                    <label for="syaratCheck">Saya telah membaca, memahami, dan menyetujui seluruh <span class="link-syarat" id="btnSyarat">Syarat & Ketentuan</span> penggunaan konsol PS3 HEN.</label>
                 </div>
 
                 <button type="submit" class="btn-submit" id="btnSubmit" disabled>Sewa Sekarang</button>
             </form>
         </div>
     </div>
+
+    <footer>
+        <p>&copy; 2026 PS3 Rental System. Created by Irvan Maulana.</p>
+    </footer>
 
     <div id="syaratModal" class="modal">
         <div class="modal-content">
@@ -203,17 +291,18 @@
             </div>
             <div class="modal-body">
                 <ol>
-                    <li>Data pemesan wajib valid dan sesuai dengan identitas asli.</li>
-                    <li><strong style="color:var(--danger)">DILARANG KERAS</strong> melakukan <i>System Update</i>.</li>
-                    <li><strong style="color:var(--danger)">DILARANG</strong> menghapus file/game atau mengubah settingan HEN.</li>
-                    <li><strong style="color:var(--danger)">DILARANG</strong> sembarangan login akun PSN yang bisa mengakibatkan Banned.</li>
-                    <li>Kerusakan unit/stik akibat kelalaian (jatuh, kena air) <strong>WAJIB GANTI RUGI</strong>.</li>
-                    <li>Keterlambatan pengembalian unit dikenakan denda sesuai tarif jam normal.</li>
-                    <li><i>Save data</i> (progress game) dapat terhapus sewaktu-waktu oleh sistem/admin.</li>
+                    <li>Penyewa wajib memberikan data diri sesuai KTP asli saat serah terima unit.</li>
+                    <li><strong style="color:var(--danger)">DILARANG KERAS</strong> melakukan <i>System Update</i> pada konsol. Hal ini merusak sistem HEN.</li>
+                    <li><strong>DILARANG</strong> menghapus game yang ada, file sistem, atau mengubah settingan jaringan sembarangan.</li>
+                    <li><strong>DILARANG</strong> melakukan login akun PSN (PlayStation Network). Akibat Banned konsol menjadi tanggung jawab penyewa secara penuh.</li>
+                    <li><strong>DILARANG</strong> membongkar atau merusak segel pengaman mesin.</li>
+                    <li>Segala bentuk kerusakan unit (jatuh, tersiram air) dan aksesoris (stik rusak, kabel hilang) akibat kelalaian <strong>WAJIB DIGANTI RUGI</strong> senilai perbaikan/beli baru.</li>
+                    <li>Keterlambatan mengembalikan unit dari jam yang ditentukan akan dihitung denda sesuai tarif jam tambahan normal.</li>
+                    <li><i>Save data</i> (progress game pribadi) sewaktu-waktu dapat terhapus oleh sistem/admin, dan bukan merupakan tanggung jawab pihak rental.</li>
                 </ol>
             </div>
             <div class="modal-footer">
-                <button id="btnSetujuModal" class="btn-outline" type="button">Saya Setuju</button>
+                <button id="btnSetujuModal" class="btn-outline" type="button">Saya Mengerti & Setuju</button>
             </div>
         </div>
     </div>
@@ -222,6 +311,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+        // Konfigurasi Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDV5S1jEFxw_tGWHBVqGe_erZSsOKRK2gU",
             authDomain: "rental-ps3-hen.firebaseapp.com",
@@ -234,21 +324,39 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
+        // Sinkronisasi Waktu Server
         let serverOffset = 0;
-        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
-        function getTrueTime() { return Date.now() + serverOffset; }
+        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { 
+            serverOffset = snap.val() || 0; 
+        });
+        function getTrueTime() { 
+            return Date.now() + serverOffset; 
+        }
 
+        // Fungsi Utilities (Toast & Copy)
         window.showToast = function(msg, isError = false) {
             const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div'); toast.className = 'toast';
-            if(isError) toast.style.borderLeftColor = 'var(--danger)';
-            toast.innerHTML = msg; container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+            const toast = document.createElement('div'); 
+            toast.className = 'toast';
+            
+            if(isError) {
+                toast.style.borderLeftColor = 'var(--danger)';
+            } else {
+                toast.style.background = 'rgba(16, 185, 129, 0.2)';
+                toast.style.borderColor = 'var(--success)';
+            }
+            
+            toast.innerHTML = msg; 
+            container.appendChild(toast);
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                setTimeout(() => toast.remove(), 300); 
+            }, 3000);
         }
 
         window.copyText = function(text) {
             navigator.clipboard.writeText(text);
-            window.showToast('Nomor Rekening Disalin!');
+            window.showToast('✔️ Nomor Rekening Berhasil Disalin!');
         }
 
         // Variabel Global
@@ -264,6 +372,7 @@
         const modal = document.getElementById('syaratModal');
         const nohpInput = document.getElementById('nohp');
         const hpError = document.getElementById('hpError');
+        
         const adminPhone = "6287745756269";
 
         // Logika Transfer Sub-Menu
@@ -289,21 +398,32 @@
 
         jenisTransfer.addEventListener('change', (e) => {
             if(e.target.value === 'BRI') {
-                rekeningBRI.style.display = 'block'; rekeningQRIS.style.display = 'none';
+                rekeningBRI.style.display = 'block'; 
+                rekeningQRIS.style.display = 'none';
             } else if(e.target.value === 'QRIS') {
-                rekeningBRI.style.display = 'none'; rekeningQRIS.style.display = 'block';
+                rekeningBRI.style.display = 'none'; 
+                rekeningQRIS.style.display = 'block';
             } else {
-                rekeningBRI.style.display = 'none'; rekeningQRIS.style.display = 'none';
+                rekeningBRI.style.display = 'none'; 
+                rekeningQRIS.style.display = 'none';
             }
             checkFormValidity();
         });
 
         // Modal Logic
-        document.getElementById('btnSyarat').onclick = () => modal.style.display = "flex";
-        document.getElementById('closeSyarat').onclick = () => modal.style.display = "none";
-        document.getElementById('btnSetujuModal').onclick = () => { modal.style.display = "none"; syaratCheck.checked = true; checkFormValidity(); };
+        document.getElementById('btnSyarat').onclick = () => {
+            modal.style.display = "flex";
+        };
+        document.getElementById('closeSyarat').onclick = () => {
+            modal.style.display = "none";
+        };
+        document.getElementById('btnSetujuModal').onclick = () => { 
+            modal.style.display = "none"; 
+            syaratCheck.checked = true; 
+            checkFormValidity(); 
+        };
 
-        // Form Validation
+        // Form Validation Real-time
         function checkFormValidity() {
             const hpVal = nohpInput.value.replace(/\D/g, '');
             const isHpValid = /^(08|628)\d{8,12}$/.test(hpVal);
@@ -311,8 +431,15 @@
             hpError.style.display = (hpVal.length > 0 && !isHpValid) ? 'block' : 'none';
             nohpInput.style.borderColor = (hpVal.length > 0 && !isHpValid) ? 'var(--danger)' : 'var(--border)';
             
-            let isFilled = document.getElementById('nama').value.trim() !== '' && hpVal.length >= 10 && paketSelect.value !== '' && pembayaranSelect.value !== '';
-            if(pembayaranSelect.value === 'Transfer' && jenisTransfer.value === '') isFilled = false;
+            let isFilled = document.getElementById('nama').value.trim() !== '' && 
+                           hpVal.length >= 10 && 
+                           paketSelect.value !== '' && 
+                           pembayaranSelect.value !== '';
+                           
+            // Jika pilih transfer, wajib pilih bank
+            if(pembayaranSelect.value === 'Transfer' && jenisTransfer.value === '') {
+                isFilled = false;
+            }
 
             btnSubmit.disabled = !(isFilled && isHpValid && syaratCheck.checked);
         }
@@ -320,11 +447,13 @@
         form.addEventListener('input', checkFormValidity);
         syaratCheck.addEventListener('change', checkFormValidity);
 
-        // Fetch Packages
+        // Fetch Data: Packages
         onValue(ref(db, 'packages'), (snapshot) => {
             const data = snapshot.val();
             const packageList = document.getElementById('packageList');
-            packageList.innerHTML = ''; paketSelect.innerHTML = '<option value="">-- Pilih Paket --</option>';
+            
+            packageList.innerHTML = ''; 
+            paketSelect.innerHTML = '<option value="">-- Pilih Paket Terlebih Dahulu --</option>';
             availablePackages = {};
             
             if (data) {
@@ -332,38 +461,48 @@
                     if (data[key].is_active) {
                         availablePackages[key] = data[key];
                         packageList.innerHTML += `
-                            <div class="card">
+                            <div class="glass-card">
                                 <h3>${data[key].name}</h3>
-                                <div class="price">Rp${parseInt(data[key].price).toLocaleString('id-ID')} <span>/ ${data[key].duration_hours} Jam</span></div>
+                                <div class="price">
+                                    Rp${parseInt(data[key].price).toLocaleString('id-ID')} 
+                                    <span>/ ${data[key].duration_hours} Jam</span>
+                                </div>
                                 <div class="desc">${data[key].description}</div>
                             </div>
                         `;
                         paketSelect.innerHTML += `<option value="${key}">${data[key].name} - Rp${parseInt(data[key].price).toLocaleString('id-ID')}</option>`;
                     }
                 }
-            } else { packageList.innerHTML = '<p style="color:var(--text-dim)">Belum ada paket tersedia.</p>'; }
+            } else { 
+                packageList.innerHTML = '<p style="color:var(--text-dim)">Belum ada paket tersedia.</p>'; 
+            }
         });
 
-        // Fetch Promos (Hanya Umum yang tidak punya kode voucher rahasia yang expired_date-nya valid)
+        // Fetch Data: Promos (Hanya Publik Tanpa Kode)
         onValue(ref(db, 'promos'), (snapshot) => {
             promosData = snapshot.val() || {};
             const promoSection = document.getElementById('promoSection');
             const promoList = document.getElementById('promoList');
-            promoList.innerHTML = ''; let hasPromo = false;
+            
+            promoList.innerHTML = ''; 
+            let hasPromo = false;
             let now = getTrueTime();
 
             for (let key in promosData) {
                 let d = promosData[key];
-                // Syarat Tampil di Publik: Aktif, Expired Date masih jauh/nol, Limit masih ada/nol, dan TIDAK PUNYA Kode Rahasia
+                
+                // Syarat Tampil Publik: Aktif, Belum Expired, Kuota Masih Ada, TIDAK PUNYA Kode
                 let isExpired = d.expiry_date > 0 && now > d.expiry_date;
                 let isOut = d.usage_limit > 0 && d.usage_limit <= d.usage_used;
                 
                 if (d.is_active && !isExpired && !isOut && (!d.voucher_code || d.voucher_code.trim() === "")) {
                     hasPromo = true;
                     promoList.innerHTML += `
-                        <div class="card" style="border-color: rgba(6, 182, 212, 0.4);">
-                            <h3 style="color: var(--primary)">🎁 ${d.title}</h3>
-                            <div style="color: #FFF; font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">${d.discount_info}</div>
+                        <div class="glass-card promo-card">
+                            <h3>🎁 ${d.title}</h3>
+                            <div style="color: #FFF; font-weight: 600; font-size: 1.15rem; margin-bottom: 8px;">
+                                ${d.discount_info}
+                            </div>
                             <div class="desc">${d.description}</div>
                         </div>
                     `;
@@ -372,58 +511,85 @@
             promoSection.style.display = hasPromo ? 'block' : 'none';
         });
 
-        // Logika Cek Voucher
+        // Logika Cek Voucher Rahasia / Spesial
         document.getElementById('btnCekVoucher').onclick = () => {
             const codeInput = document.getElementById('voucherCode').value.trim().toUpperCase();
             const msgBox = document.getElementById('voucherMsg');
             let now = getTrueTime();
 
             if(codeInput === "") {
-                msgBox.style.display = "block"; msgBox.style.color = "var(--danger)"; msgBox.innerText = "Masukkan kode voucher!"; return;
+                msgBox.style.display = "block"; 
+                msgBox.style.color = "var(--danger)"; 
+                msgBox.style.backgroundColor = "rgba(255, 42, 85, 0.1)";
+                msgBox.innerText = "Masukkan kode voucher terlebih dahulu!"; 
+                return;
             }
 
             let found = false;
+            
             for(let key in promosData) {
                 let d = promosData[key];
+                
+                // Cari yang punya kode voucher dan cocok
                 if(d.voucher_code && d.voucher_code.toUpperCase() === codeInput) {
                     found = true;
+                    
                     let isExpired = d.expiry_date > 0 && now > d.expiry_date;
                     let isOut = d.usage_limit > 0 && d.usage_used >= d.usage_limit;
 
                     if(!d.is_active || isExpired) {
-                        msgBox.style.display = "block"; msgBox.style.color = "var(--danger)"; msgBox.innerText = "Voucher sudah kedaluwarsa atau tidak aktif.";
+                        msgBox.style.display = "block"; 
+                        msgBox.style.color = "var(--danger)"; 
+                        msgBox.style.backgroundColor = "rgba(255, 42, 85, 0.1)";
+                        msgBox.innerText = "Voucher sudah kedaluwarsa atau tidak aktif.";
                         appliedVoucherId = null;
                     } else if (isOut) {
-                        msgBox.style.display = "block"; msgBox.style.color = "var(--danger)"; msgBox.innerText = "Kuota pemakaian voucher ini sudah habis.";
+                        msgBox.style.display = "block"; 
+                        msgBox.style.color = "var(--danger)"; 
+                        msgBox.style.backgroundColor = "rgba(255, 42, 85, 0.1)";
+                        msgBox.innerText = "Kuota pemakaian voucher ini sudah habis.";
                         appliedVoucherId = null;
                     } else {
-                        // Sukses
-                        msgBox.style.display = "block"; msgBox.style.color = "var(--success)"; msgBox.innerText = `Berhasil! Voucher "${d.title}" diterapkan. (${d.discount_info})`;
+                        // VOUCHER VALID & SUKSES
+                        msgBox.style.display = "block"; 
+                        msgBox.style.color = "var(--success)"; 
+                        msgBox.style.backgroundColor = "rgba(16, 185, 129, 0.1)";
+                        msgBox.innerText = `✔️ Sukses! Voucher "${d.title}" diterapkan. (${d.discount_info})`;
+                        
                         appliedVoucherId = key;
                         appliedVoucherInfo = d.discount_info;
                     }
                     break;
                 }
             }
+            
             if(!found) {
-                msgBox.style.display = "block"; msgBox.style.color = "var(--danger)"; msgBox.innerText = "Kode voucher tidak ditemukan.";
+                msgBox.style.display = "block"; 
+                msgBox.style.color = "var(--danger)"; 
+                msgBox.style.backgroundColor = "rgba(255, 42, 85, 0.1)";
+                msgBox.innerText = "Kode voucher tidak ditemukan atau salah.";
                 appliedVoucherId = null;
             }
         };
 
-        // Submit Pesanan
+        // Submit Pesanan LENGKAP & ANTI GAGAL
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             document.getElementById('loader').style.display = 'block';
             
             const nama = document.getElementById('nama').value.trim();
-            let nohp = nohpInput.value.replace(/\D/g, ''); if(nohp.startsWith('0')) nohp = '62' + nohp.substring(1);
+            let nohp = nohpInput.value.replace(/\D/g, ''); 
+            if(nohp.startsWith('0')) {
+                nohp = '62' + nohp.substring(1);
+            }
             
             const paketId = paketSelect.value;
             const selectedPackage = availablePackages[paketId];
             
             let metodeFinal = pembayaranSelect.value;
-            if(metodeFinal === 'Transfer') metodeFinal = "Transfer " + jenisTransfer.value;
+            if(metodeFinal === 'Transfer') {
+                metodeFinal = "Transfer Bank " + jenisTransfer.value;
+            }
             
             const bookingId = "PS3-" + getTrueTime().toString().substring(5);
             
@@ -448,35 +614,49 @@
             };
 
             try {
-                // Update Limit Voucher jika pakai voucher
+                // Proses Kurangi Kuota Voucher Jika Digunakan
                 if(appliedVoucherId && promosData[appliedVoucherId]) {
                     let currentUsed = promosData[appliedVoucherId].usage_used || 0;
-                    await update(ref(db, `promos/${appliedVoucherId}`), { usage_used: currentUsed + 1 });
+                    await update(ref(db, `promos/${appliedVoucherId}`), { 
+                        usage_used: currentUsed + 1 
+                    });
                 }
 
-                // Simpan Booking
+                // SIMPAN KE FIREBASE SEBELUM REDIRECT
                 await set(ref(db, 'bookings/' + bookingId), bookingData);
                 
                 let waMessage = `*PESANAN RENTAL PS3* 🎮\n\n` +
-                                `*ID:* ${bookingId}\n` +
-                                `*Nama:* ${nama}\n` +
-                                `*Paket:* ${selectedPackage.name} (${selectedPackage.duration_hours} Jam)\n` +
+                                `*ID Nota:* ${bookingId}\n` +
+                                `*Nama Pemesan:* ${nama}\n` +
+                                `*Pilihan Paket:* ${selectedPackage.name} (${selectedPackage.duration_hours} Jam)\n` +
                                 `*Harga Normal:* Rp ${parseInt(selectedPackage.price).toLocaleString('id-ID')}\n`;
                 
                 if(appliedVoucherId) {
-                    waMessage += `*Voucher/Diskon:* ${appliedVoucherInfo}\n`;
+                    waMessage += `*Voucher/Diskon:* ${appliedVoucherInfo} ✅\n`;
                 }
-                waMessage += `*Metode:* ${metodeFinal}\n\nMohon segera diproses admin.`;
-                                  
-                window.location.href = `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(waMessage)}`;
                 
-                form.reset(); syaratCheck.checked = false; checkFormValidity();
-                document.getElementById('transferMenu').style.display = 'none';
-                document.getElementById('voucherMsg').style.display = 'none';
-                appliedVoucherId = null;
+                waMessage += `*Metode Bayar:* ${metodeFinal}\n\n` +
+                             `Mohon segera diproses admin. Terima kasih!`;
+                                  
+                window.showToast("✔️ Pesanan Berhasil Terkirim ke Admin!");
+                
+                // MENGGUNAKAN WINDOW.OPEN AGAR PROSES TIDAK TERPUTUS BROWSER
+                window.open(`https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(waMessage)}`, '_blank');
+                
+                // Reset form setelah 2 detik
+                setTimeout(() => {
+                    form.reset(); 
+                    syaratCheck.checked = false; 
+                    checkFormValidity();
+                    document.getElementById('transferMenu').style.display = 'none';
+                    document.getElementById('voucherMsg').style.display = 'none';
+                    appliedVoucherId = null;
+                    document.getElementById('loader').style.display = 'none';
+                }, 2000);
+                
             } catch (error) { 
-                alert("Gagal koneksi ke server."); 
-            } finally { 
+                console.error(error);
+                window.showToast("❌ Gagal mengirim pesanan. Pastikan koneksi internet stabil.", true); 
                 document.getElementById('loader').style.display = 'none'; 
             }
         });
