@@ -14,8 +14,6 @@
             --border-hover: #475569;
             
             --primary: #3B82F6; 
-            --primary-hover: #2563EB;
-            
             --text-main: #F8FAFC; 
             --text-dim: #94A3B8;
             
@@ -26,152 +24,76 @@
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        
-        body { 
-            background: var(--bg-dark); 
-            color: var(--text-main); 
-            display: flex; 
-            min-height: 100vh; 
-            overflow-x: hidden; 
-        }
+        body { background: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        /* === TOAST NOTIFICATION === */
-        #toastContainer { 
-            position: fixed; bottom: 24px; right: 24px; z-index: 10000; 
-            display: flex; flex-direction: column; gap: 10px; 
-        }
-        
-        .toast { 
-            background: #0F172A; border-left: 4px solid var(--primary); 
-            padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
-            font-weight: 500; border: 1px solid var(--border); 
-            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-        }
-        
+        /* Toast */
+        #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: #0F172A; border-left: 4px solid var(--primary); padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-weight: 500; border: 1px solid var(--border); animation: slideIn 0.3s ease forwards; }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* === LOGIN SCREEN === */
-        #loginOverlay { 
-            position: fixed; inset: 0; background: var(--bg-dark); 
-            z-index: 9999; display: flex; align-items: center; justify-content: center; 
-        }
-        
-        .login-box { 
-            background: var(--bg-panel); padding: 40px; border-radius: 16px; 
-            border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        
+        /* Login Screen */
+        #loginOverlay { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
         .login-box h2 { margin-bottom: 25px; font-weight: 700; color: #FFF; font-family: 'Outfit', sans-serif; font-size:2rem;}
-        
-        .login-box input { 
-            width: 100%; padding: 14px; background: var(--bg-dark); 
-            border: 1px solid var(--border); color: white; border-radius: 8px; 
-            margin-bottom: 20px; outline: none; transition: 0.2s;
-        }
+        .login-box input { width: 100%; padding: 14px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 20px; outline: none; transition: 0.2s; }
         .login-box input:focus { border-color: var(--primary); }
-        
-        .login-box button { 
-            width: 100%; padding: 14px; background: var(--primary); 
-            color: white; border: none; font-weight: 600; border-radius: 8px; 
-            cursor: pointer; transition: 0.2s; font-size: 1.05rem;
-        }
-        .login-box button:hover { background: var(--primary-hover); transform: translateY(-2px);}
+        .login-box button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 1.05rem; }
+        .login-box button:hover { opacity: 0.9; transform: translateY(-2px);}
 
-        /* === SIDEBAR MENU === */
-        .sidebar { 
-            width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); 
-            display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; 
-        }
-        
-        .brand { 
-            padding: 30px 24px; font-size: 1.6rem; font-family: 'Outfit', sans-serif;
-            font-weight: 800; border-bottom: 1px solid var(--border); color: #FFF; 
-        }
+        /* Sidebar */
+        .sidebar { width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; }
+        .brand { padding: 30px 24px; font-size: 1.6rem; font-family: 'Outfit', sans-serif; font-weight: 800; border-bottom: 1px solid var(--border); color: #FFF; }
         .brand span { color: var(--primary); }
-        
-        .nav-menu { 
-            padding: 24px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y:auto;
-        }
-        
-        .nav-btn { 
-            background: transparent; color: var(--text-dim); border: none; 
-            padding: 14px 20px; text-align: left; font-size: 0.95rem; font-weight: 500; 
-            border-radius: 10px; cursor: pointer; transition: 0.2s; 
-        }
+        .nav-menu { padding: 24px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y:auto; }
+        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 14px 20px; text-align: left; font-size: 0.95rem; font-weight: 500; border-radius: 10px; cursor: pointer; transition: 0.2s; }
         .nav-btn:hover { background: var(--border); color: white; }
         .nav-btn.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 600; }
-        
         .logout-btn { padding: 24px 12px; border-top: 1px solid var(--border); }
-        .logout-btn button { 
-            width: 100%; padding: 14px; background: rgba(239, 68, 68, 0.1); 
-            color: var(--c-red); border: none; border-radius: 10px; font-weight: 600; 
-            cursor: pointer; transition: 0.2s;
-        }
+        .logout-btn button { width: 100%; padding: 14px; background: rgba(239, 68, 68, 0.1); color: var(--c-red); border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .logout-btn button:hover { background: var(--c-red); color: #FFF; }
 
-        /* === MAIN CONTENT AREA === */
+        /* Main Content */
         .main-content { flex: 1; margin-left: 280px; padding: 40px; }
-        
         .section { display: none; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-        
         .header-title { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 700; margin-bottom: 24px; color: #FFF; }
 
-        /* FILTER TABS */
+        /* Filter */
         .filter-bar { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        
-        .filter-btn { 
-            padding: 10px 20px; background: var(--bg-panel); border: 1px solid var(--border); 
-            color: var(--text-dim); font-size: 0.9rem; font-weight: 500; border-radius: 8px; 
-            cursor: pointer; transition: 0.2s; 
-        }
+        .filter-btn { padding: 10px 20px; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-dim); font-size: 0.9rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .filter-btn:hover { border-color: var(--border-hover); color: white; }
         .filter-btn.active { background: var(--text-main); color: var(--bg-dark); border-color: var(--text-main); font-weight: 600; }
 
-        /* === GRID LIST BOOKING === */
+        /* Grid Booking */
         .list-container { display: flex; flex-direction: column; gap: 20px; }
+        .list-item { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; border-left: 6px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        .list-item { 
-            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px; 
-            padding: 24px; display: flex; flex-direction: column; gap: 20px; 
-            border-left: 6px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        /* Pewarnaan Status State */
         .list-item.st-unpaid { border-left-color: var(--c-red); }
         .list-item.st-paid { border-left-color: var(--c-green); }
         .list-item.st-running { border-left-color: var(--c-blue); background: rgba(14, 165, 233, 0.05); }
         .list-item.st-paused { border-left-color: var(--c-yellow); }
-        .list-item.st-finished { opacity: 0.7; filter: grayscale(50%); }
+        .list-item.st-finished { opacity: 0.8; filter: grayscale(30%); }
         
         .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        
         .item-info h3 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; color: #FFF; margin-bottom: 6px; }
         .item-info p { font-size: 0.9rem; color: var(--text-dim); display: flex; gap: 16px; align-items: center;}
         
+        /* Box Waktu Detail */
+        .time-detail-box {
+            margin-top: 12px; padding: 12px 16px; background: rgba(0,0,0,0.25); 
+            border-radius: 8px; border: 1px dashed var(--border); font-size: 0.85rem; 
+            color: var(--text-dim); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;
+        }
+        .time-detail-box div strong { color: #E2E8F0; font-weight: 600; }
+
         .badge { padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); }
+        .timer-display-admin { font-size: 2.5rem; font-weight: 700; color: #FFF; letter-spacing: 1px; font-variant-numeric: tabular-nums; text-align: right; line-height: 1; margin-top: 5px; }
         
-        .timer-display-admin { 
-            font-size: 2.5rem; font-weight: 700; color: #FFF; 
-            letter-spacing: 1px; font-variant-numeric: tabular-nums; 
-            text-align: right; line-height: 1; margin-top: 5px;
-        }
-        
-        /* ACTION BUTTONS */
-        .item-actions { 
-            display: flex; flex-wrap: wrap; gap: 10px; padding-top: 20px; 
-            border-top: 1px solid var(--border); 
-        }
-        
-        .btn-action { 
-            padding: 10px 16px; font-size: 0.85rem; font-weight: 600; border: none; 
-            border-radius: 8px; cursor: pointer; color: #FFF; 
-            display: flex; align-items: center; gap: 6px; transition: 0.2s;
-        }
+        /* Action Buttons */
+        .item-actions { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .btn-action { padding: 10px 16px; font-size: 0.85rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; color: #FFF; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
         .btn-action:hover { filter: brightness(1.15); transform: translateY(-2px); }
-        
         .b-green { background: var(--c-green); color: #000; } 
         .b-red { background: var(--c-red); } 
         .b-blue { background: var(--c-blue); color: #000; } 
@@ -179,60 +101,30 @@
         .b-dark { background: #334155; } 
         .b-outline { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
         .b-outline:hover { color: white; border-color: #64748B; background: rgba(255,255,255,0.05);}
-        .b-wa { background: #25D366; color: #000; } /* Warna Hijau Khas WhatsApp */
+        .b-wa { background: #25D366; color: #000; } 
 
-        /* === FORM CRUD INPUTS === */
-        .crud-box { 
-            background: var(--bg-panel); padding: 30px; border-radius: 16px; 
-            border: 1px solid var(--border); margin-bottom: 30px; 
-        }
-        
-        .crud-box label { 
-            font-size: 0.9rem; color: var(--text-dim); font-weight: 500; 
-            margin-bottom: 8px; display: block; 
-        }
-        
-        .crud-box input, .crud-box select, .crud-box textarea { 
-            width: 100%; padding: 14px 16px; background: var(--bg-dark); 
-            border: 1px solid var(--border); color: white; border-radius: 10px; 
-            margin-bottom: 15px; outline: none; font-size: 0.95rem; transition: 0.2s;
-        }
+        /* Form CRUD Inputs */
+        .crud-box { background: var(--bg-panel); padding: 30px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 30px; }
+        .crud-box label { font-size: 0.9rem; color: var(--text-dim); font-weight: 500; margin-bottom: 8px; display: block; }
+        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 14px 16px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; outline: none; font-size: 0.95rem; transition: 0.2s; }
         .crud-box input:focus, .crud-box textarea:focus { border-color: var(--primary); }
         
-        table { 
-            width: 100%; border-collapse: collapse; background: var(--bg-panel); 
-            border-radius: 16px; overflow: hidden; border: 1px solid var(--border); 
-        }
+        table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
         th, td { padding: 18px 24px; border-bottom: 1px solid var(--border); text-align: left; }
         th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
         tr:hover td { background: rgba(255,255,255,0.02); }
 
-        /* === MODALS === */
-        .modal { 
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;
-        }
-        
-        .modal-content { 
-            background: var(--bg-panel); width: 100%; max-width: 480px; 
-            border-radius: 20px; border: 1px solid var(--border); overflow: hidden; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5); animation: modalScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        /* Modals */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: var(--bg-panel); width: 100%; max-width: 480px; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); animation: modalScale 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes modalScale { from{transform:scale(0.95); opacity:0;} to{transform:scale(1); opacity:1;} }
-        
         .modal-header { padding: 24px 30px; border-bottom: 1px solid var(--border); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.3rem; color: #FFF;}
         .modal-body { padding: 30px; }
         .modal-footer { padding: 20px 30px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2); }
-        
-        .modal-body input, .modal-body select, .modal-body textarea { 
-            width: 100%; padding: 14px; background: var(--bg-dark); 
-            border: 1px solid var(--border); color: white; border-radius: 10px; 
-            margin-bottom: 15px; outline: none; font-size: 1rem;
-        }
+        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 14px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 10px; margin-bottom: 15px; outline: none; font-size: 1rem; }
 
         @media (max-width: 900px) { 
             .sidebar { transform: translateX(-100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000;} 
-            .sidebar.active { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 20px; } 
         }
     </style>
@@ -538,6 +430,13 @@
             return Date.now() + serverOffset; 
         }
 
+        // Fungsi Format Tanggal Standar Indonesia
+        function formatDateTime(val) {
+            if(!val) return "-";
+            let d = new Date(val);
+            return d.toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'}) + ' ' + d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+        }
+
         let bookingsData = {};
         let currentFilter = 'all';
         let currentTvConfig = { font: "'Orbitron', sans-serif", color: "cyan", size: "18vw" };
@@ -582,7 +481,7 @@
             showToast('Semua Konfigurasi TV Diperbarui secara Real-Time!'); 
         };
 
-        // === FITUR MANAJEMEN PAKET HARGA (ANTI KOSONG) ===
+        // === FITUR MANAJEMEN PAKET HARGA ===
         onValue(ref(db, 'packages'), (snap) => {
             const data = snap.val() || {};
             let html = '';
@@ -640,13 +539,8 @@
         function formatDateTimeLocal(timestamp) {
             if(!timestamp || timestamp === 0) return "";
             let d = new Date(timestamp);
-            let tzoffset = d.getTimezoneOffset() * 60000; // offset in milliseconds
+            let tzoffset = d.getTimezoneOffset() * 60000; 
             return new Date(d.getTime() - tzoffset).toISOString().slice(0, 16);
-        }
-
-        function formatDisplayDate(timestamp) {
-            if(!timestamp || timestamp === 0) return "Tanpa Batas Waktu";
-            return new Date(timestamp).toLocaleString('id-ID', {day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit'});
         }
 
         onValue(ref(db, 'promos'), (snap) => {
@@ -657,7 +551,6 @@
             for(let key in data) {
                 let d = data[key];
                 
-                // Kalkulasi Kondisi
                 let isExpired = d.expiry_date > 0 && now > d.expiry_date;
                 let isOut = d.usage_limit > 0 && d.usage_used >= d.usage_limit;
                 
@@ -675,7 +568,7 @@
                         <span style="font-size:0.9rem; color:var(--primary); font-weight:600;">${d.discount_info}</span>
                     </td>
                     <td style="font-size:0.9rem; line-height:1.6;">${codeText}<br><span style="color:var(--text-dim)">${limitText}</span></td>
-                    <td style="font-size:0.85rem; color:var(--text-dim)">${formatDisplayDate(d.expiry_date)}</td>
+                    <td style="font-size:0.85rem; color:var(--text-dim)">${formatDateTime(d.expiry_date) || "Tanpa Batas Waktu"}</td>
                     <td>${statusText}</td>
                     <td>
                         <button class="btn-action b-outline" style="padding:4px 8px; color:#fff;" data-action="edit_promo" data-id="${key}" data-title="${d.title}" data-disc="${d.discount_info}" data-desc="${d.description}" data-act="${d.is_active}" data-code="${d.voucher_code||''}" data-limit="${d.usage_limit||0}" data-exp="${d.expiry_date||0}">Edit</button>
@@ -689,8 +582,6 @@
 
         document.getElementById('btnSavePromo').onclick = async () => {
             let id = document.getElementById('promoId').value;
-            
-            // Proses Konversi Waktu Expiry
             let expiryInput = document.getElementById('promoExpiry').value;
             let expiryTimestamp = expiryInput ? new Date(expiryInput).getTime() : 0;
 
@@ -704,7 +595,6 @@
                 is_active: document.getElementById('promoStatus').value === 'true'
             };
             
-            // Set usage 0 hanya saat buat baru
             if(!id) {
                 data.usage_used = 0; 
             }
@@ -787,7 +677,15 @@
                     sText = 'Waktu Habis'; 
                 }
 
-                // Tampilkan Log Voucher jika dipakai
+                // Kalkulasi Jam Detail (Order, Mulai, Berakhir)
+                let waktuMulaiStr = b.waktu_mulai ? formatDateTime(b.waktu_mulai) : '-';
+                let waktuSelesaiStr = '-';
+                if((b.status_countdown === 'running' || b.status_countdown === 'finished') && b.waktu_selesai) {
+                    waktuSelesaiStr = formatDateTime(b.waktu_selesai);
+                } else if (b.status_countdown === 'paused') {
+                    waktuSelesaiStr = '(Permainan sedang di-jeda)';
+                }
+
                 let voucherLog = "";
                 if(b.voucher_dipakai && b.voucher_dipakai !== "Tidak Ada") {
                     voucherLog = `
@@ -796,6 +694,16 @@
                         </div>
                     `;
                 }
+
+                // Blok Tampilan Khusus Waktu & Tanggal
+                let timeDetailHtml = `
+                    <div class="time-detail-box">
+                        <div><strong>⏱️ Durasi:</strong> ${b.durasi_jam} Jam</div>
+                        <div><strong>📅 Order:</strong> ${formatDateTime(b.tanggal_booking)}</div>
+                        <div><strong>▶️ Mulai:</strong> ${waktuMulaiStr}</div>
+                        <div><strong>⏹️ Berakhir:</strong> ${waktuSelesaiStr}</div>
+                    </div>
+                `;
 
                 let html = `
                 <div class="list-item ${cClass}">
@@ -808,6 +716,7 @@
                                 <span style="color: var(--primary); font-weight:600;">[ ${sText} ]</span>
                             </p>
                             ${voucherLog}
+                            ${timeDetailHtml}
                         </div>
                         <div class="timer-display-admin" data-id="${id}" style="font-family: ${currentTvConfig.font || 'inherit'}">${formatTime(rem)}</div>
                     </div>
@@ -849,7 +758,6 @@
         }
 
         // === EVENT DELEGATION GLOBAL (ACTION BUTTONS) ===
-        // Memastikan semua tombol klik berfungsi sempurna tanpa error modul
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.btn-action');
             if(!btn) return;
@@ -858,7 +766,7 @@
             const action = btn.getAttribute('data-action');
             if(!id || !action) return;
 
-            // Aksi Promo (Load Data to Form)
+            // Aksi Promo & Paket
             if(action === 'edit_promo') {
                 document.getElementById('promoId').value = id; 
                 document.getElementById('promoTitle').value = btn.getAttribute('data-title');
@@ -867,10 +775,8 @@
                 document.getElementById('promoStatus').value = btn.getAttribute('data-act');
                 document.getElementById('promoCode').value = btn.getAttribute('data-code');
                 document.getElementById('promoLimit').value = btn.getAttribute('data-limit');
-                
                 let expTs = parseInt(btn.getAttribute('data-exp'));
                 document.getElementById('promoExpiry').value = formatDateTimeLocal(expTs);
-                
                 window.scrollTo(0,0); 
                 return;
             }
@@ -881,8 +787,6 @@
                 } 
                 return; 
             }
-
-            // Aksi Paket (Load Data to Form)
             if(action === 'edit_pkg') {
                 document.getElementById('pkgId').value = id; 
                 document.getElementById('pkgName').value = btn.getAttribute('data-name');
@@ -928,6 +832,12 @@
                 
                 up['status_countdown'] = 'running'; 
                 up['waktu_selesai'] = now + rem; 
+                
+                // CATAT WAKTU MULAI JIKA BELUM ADA (Pertama kali main)
+                if(!b.waktu_mulai) {
+                    up['waktu_mulai'] = now;
+                }
+
                 showToast('Sistem Mulai Bermain!');
             }
             
@@ -941,6 +851,7 @@
                 up['status_countdown'] = 'idle'; 
                 up['sisa_waktu'] = b.durasi_jam * 3600000; 
                 up['waktu_selesai'] = 0; 
+                up['waktu_mulai'] = null; // Menghapus waktu mulai agar dicatat ulang saat di Play
                 showToast('Sisa Waktu Dikembalikan ke Awal'); 
             }
             
@@ -965,11 +876,9 @@
                 return;
             }
 
-            // FITUR BARU: KIRIM WHATSAPP OTOMATIS
             if(action === 'send_wa') {
                 let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
                 let text = `Halo Kak *${b.nama}* 👋\n\nPesanan Rental PS3 Anda telah kami konfirmasi dan siap digunakan.\n\nBerikut adalah link unik layar TV Anda untuk memantau sisa waktu permainan secara Real-Time:\n🔗 ${url}\n\nSelamat bermain! 🎮`;
-                
                 window.open(`https://api.whatsapp.com/send?phone=${b.nohp}&text=${encodeURIComponent(text)}`);
                 showToast('Membuka aplikasi WhatsApp...');
                 return;
