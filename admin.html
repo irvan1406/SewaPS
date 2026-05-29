@@ -7,423 +7,84 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0F172A; 
-            --bg-panel: #1E293B; 
-            --border: #334155; 
-            --primary: #3B82F6; 
-            --text-main: #F8FAFC;
-            --text-dim: #94A3B8;
-            
-            --c-red: #EF4444;
-            --c-green: #10B981;
-            --c-blue: #0EA5E9;
-            --c-yellow: #F59E0B;
+            --bg-dark: #0F172A; --bg-panel: #1E293B; --border: #334155; 
+            --primary: #3B82F6; --text-main: #F8FAFC; --text-dim: #94A3B8;
+            --c-red: #EF4444; --c-green: #10B981; --c-blue: #0EA5E9; --c-yellow: #F59E0B;
         }
-        
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Inter', sans-serif; 
-        }
-        
-        body { 
-            background: var(--bg-dark); 
-            color: var(--text-main); 
-            display: flex; 
-            min-height: 100vh; 
-            overflow-x: hidden; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
 
         /* Toast */
-        #toastContainer { 
-            position: fixed; 
-            bottom: 24px; 
-            right: 24px; 
-            z-index: 10000; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-        }
-        
-        .toast { 
-            background: #0F172A; 
-            border-left: 4px solid var(--primary); 
-            padding: 16px 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
-            font-weight: 500; 
-            border: 1px solid var(--border); 
-            animation: slideIn 0.3s ease forwards; 
-        }
-        
-        @keyframes slideIn { 
-            from { transform: translateX(100%); } 
-            to { transform: translateX(0); } 
-        }
+        #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: #0F172A; border-left: 4px solid var(--primary); padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-weight: 500; border: 1px solid var(--border); animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
         /* Login Screen */
-        #loginOverlay { 
-            position: fixed; 
-            inset: 0; 
-            background: var(--bg-dark); 
-            z-index: 9999; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        
-        .login-box { 
-            background: var(--bg-panel); 
-            padding: 40px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border); 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center; 
-        }
-        
-        .login-box h2 { 
-            margin-bottom: 25px; 
-            font-weight: 700; 
-            color: #FFF; 
-        }
-        
-        .login-box input { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--bg-dark); 
-            border: 1px solid var(--border); 
-            color: white; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            outline: none; 
-        }
-        
-        .login-box button { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            font-weight: 600; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
-        
-        .login-box button:hover { 
-            opacity: 0.9; 
-        }
+        #loginOverlay { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center; }
+        .login-box h2 { margin-bottom: 25px; font-weight: 700; color: #FFF; }
+        .login-box input { width: 100%; padding: 14px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 20px; outline: none; }
+        .login-box button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .login-box button:hover { opacity: 0.9; }
 
-        /* Sidebar Layout */
-        .sidebar { 
-            width: 260px; 
-            background: var(--bg-panel); 
-            border-right: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; 
-            position: fixed; 
-            height: 100vh; 
-            left: 0; 
-            top: 0; 
-        }
-        
-        .brand { 
-            padding: 24px; 
-            font-size: 1.4rem; 
-            font-weight: 800; 
-            border-bottom: 1px solid var(--border); 
-            color: #FFF; 
-        }
-        
-        .brand span { 
-            color: var(--primary); 
-        }
-        
-        .nav-menu { 
-            padding: 20px 12px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 4px; 
-            flex: 1; 
-        }
-        
-        .nav-btn { 
-            background: transparent; 
-            color: var(--text-dim); 
-            border: none; 
-            padding: 12px 16px; 
-            text-align: left; 
-            font-size: 0.95rem; 
-            font-weight: 500; 
-            border-radius: 8px; 
-            cursor: pointer; 
-        }
-        
-        .nav-btn:hover { 
-            background: var(--border); 
-            color: white; 
-        }
-        
-        .nav-btn.active { 
-            background: rgba(59, 130, 246, 0.15); 
-            color: var(--primary); 
-            font-weight: 600; 
-        }
-        
-        .logout-btn { 
-            padding: 20px; 
-            border-top: 1px solid var(--border); 
-        }
-        
-        .logout-btn button { 
-            width: 100%; 
-            padding: 12px; 
-            background: rgba(239, 68, 68, 0.1); 
-            color: var(--c-red); 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 600; 
-            cursor: pointer; 
-        }
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; }
+        .brand { padding: 24px; font-size: 1.4rem; font-weight: 800; border-bottom: 1px solid var(--border); color: #FFF; }
+        .brand span { color: var(--primary); }
+        .nav-menu { padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 12px 16px; text-align: left; font-size: 0.95rem; font-weight: 500; border-radius: 8px; cursor: pointer; }
+        .nav-btn:hover { background: var(--border); color: white; }
+        .nav-btn.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 600; }
+        .logout-btn { padding: 20px; border-top: 1px solid var(--border); }
+        .logout-btn button { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--c-red); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        /* Main Area */
-        .main-content { 
-            flex: 1; 
-            margin-left: 260px; 
-            padding: 40px; 
-        }
-        
-        .section { 
-            display: none; 
-        }
-        
-        .section.active { 
-            display: block; 
-        }
-        
-        .header-title { 
-            font-size: 1.8rem; 
-            font-weight: 700; 
-            margin-bottom: 24px; 
-            color: #FFF; 
-        }
+        /* Main Content */
+        .main-content { flex: 1; margin-left: 260px; padding: 40px; }
+        .section { display: none; } .section.active { display: block; }
+        .header-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 24px; color: #FFF; }
 
-        /* Filters */
-        .filter-bar { 
-            display: flex; 
-            gap: 8px; 
-            margin-bottom: 24px; 
-        }
-        
-        .filter-btn { 
-            padding: 8px 16px; 
-            background: var(--bg-panel); 
-            border: 1px solid var(--border); 
-            color: var(--text-dim); 
-            font-size: 0.9rem; 
-            font-weight: 500; 
-            border-radius: 6px; 
-            cursor: pointer; 
-        }
-        
-        .filter-btn.active { 
-            background: var(--text-main); 
-            color: var(--bg-dark); 
-            border-color: var(--text-main); 
-            font-weight: 600; 
-        }
+        /* Filter */
+        .filter-bar { display: flex; gap: 8px; margin-bottom: 24px; }
+        .filter-btn { padding: 8px 16px; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-dim); font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; }
+        .filter-btn.active { background: var(--text-main); color: var(--bg-dark); border-color: var(--text-main); font-weight: 600; }
 
-        /* List Layout untuk Booking (LEBIH RAPI DARI CARD) */
-        .list-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px; 
-        }
-        
-        .list-item { 
-            background: var(--bg-panel); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px; 
-            border-left: 4px solid var(--border); 
-        }
-        
+        /* Grid Booking */
+        .list-container { display: flex; flex-direction: column; gap: 16px; }
+        .list-item { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; border-left: 4px solid var(--border); }
         .list-item.st-unpaid { border-left-color: var(--c-red); }
         .list-item.st-paid { border-left-color: var(--c-green); }
         .list-item.st-running { border-left-color: var(--c-blue); background: rgba(14, 165, 233, 0.05); }
         .list-item.st-paused { border-left-color: var(--c-yellow); }
         .list-item.st-finished { opacity: 0.6; }
         
-        .item-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-start; 
-        }
+        .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .item-info h3 { font-size: 1.2rem; color: #FFF; margin-bottom: 4px; }
+        .item-info p { font-size: 0.85rem; color: var(--text-dim); display: flex; gap: 12px; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); }
+        .timer-display-admin { font-size: 2.2rem; font-weight: 700; color: #FFF; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
         
-        .item-info h3 { 
-            font-size: 1.2rem; 
-            color: #FFF; 
-            margin-bottom: 4px; 
-        }
-        
-        .item-info p { 
-            font-size: 0.85rem; 
-            color: var(--text-dim); 
-            display: flex; 
-            gap: 12px; 
-        }
-        
-        .badge { 
-            padding: 4px 10px; 
-            border-radius: 6px; 
-            font-size: 0.8rem; 
-            font-weight: 600; 
-            background: rgba(255,255,255,0.1); 
-        }
-        
-        .timer-display-admin { 
-            font-size: 2.2rem; 
-            font-weight: 700; 
-            color: #FFF; 
-            letter-spacing: 1px; 
-            font-variant-numeric: tabular-nums; 
-        }
-        
-        .item-actions { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 8px; 
-            padding-top: 16px; 
-            border-top: 1px solid var(--border); 
-        }
-        
-        .btn-action { 
-            padding: 8px 14px; 
-            font-size: 0.85rem; 
-            font-weight: 600; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            color: #FFF; 
-        }
-        
+        .item-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 16px; border-top: 1px solid var(--border); }
+        .btn-action { padding: 8px 14px; font-size: 0.85rem; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; color: #FFF; }
         .btn-action:hover { filter: brightness(1.1); }
-        .b-green { background: var(--c-green); color: #000; }
-        .b-red { background: var(--c-red); }
-        .b-blue { background: var(--c-blue); color: #000; }
-        .b-yellow { background: var(--c-yellow); color: #000; }
-        .b-dark { background: #334155; }
-        .b-outline { background: transparent; border: 1px solid var(--border); }
+        .b-green { background: var(--c-green); color: #000; } .b-red { background: var(--c-red); } .b-blue { background: var(--c-blue); color: #000; } .b-yellow { background: var(--c-yellow); color: #000; } .b-dark { background: #334155; } .b-outline { background: transparent; border: 1px solid var(--border); }
 
-        /* Form Inputs */
-        .crud-box { 
-            background: var(--bg-panel); 
-            padding: 24px; 
-            border-radius: 12px; 
-            border: 1px solid var(--border); 
-            margin-bottom: 24px; 
-        }
+        /* Form CRUD */
+        .crud-box { background: var(--bg-panel); padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; }
+        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 12px; outline: none; }
         
-        .crud-box input, .crud-box select, .crud-box textarea { 
-            width: 100%; 
-            padding: 12px; 
-            background: var(--bg-dark); 
-            border: 1px solid var(--border); 
-            color: white; 
-            border-radius: 8px; 
-            margin-bottom: 12px; 
-            outline: none; 
-        }
-        
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            background: var(--bg-panel); 
-            border-radius: 12px; 
-            overflow: hidden; 
-            border: 1px solid var(--border); 
-        }
-        
-        th, td { 
-            padding: 16px; 
-            border-bottom: 1px solid var(--border); 
-            text-align: left; 
-        }
-        
-        th { 
-            background: rgba(0,0,0,0.2); 
-            color: var(--text-dim); 
-            font-size: 0.85rem; 
-            font-weight: 600; 
-        }
+        table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        th, td { padding: 16px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-size: 0.85rem; font-weight: 600; }
 
         /* Modal */
-        .modal { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(0,0,0,0.7); 
-            backdrop-filter: blur(4px); 
-            z-index: 1000; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        
-        .modal-content { 
-            background: var(--bg-panel); 
-            width: 100%; 
-            max-width: 400px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border); 
-            overflow: hidden; 
-        }
-        
-        .modal-header { 
-            padding: 20px; 
-            border-bottom: 1px solid var(--border); 
-            font-weight: 700; 
-            font-size: 1.1rem; 
-        }
-        
-        .modal-body { 
-            padding: 20px; 
-        }
-        
-        .modal-footer { 
-            padding: 16px 20px; 
-            border-top: 1px solid var(--border); 
-            display: flex; 
-            justify-content: flex-end; 
-            gap: 8px; 
-            background: var(--bg-dark); 
-        }
-        
-        .modal-body input, .modal-body select, .modal-body textarea { 
-            width: 100%; 
-            padding: 12px; 
-            background: var(--bg-dark); 
-            border: 1px solid var(--border); 
-            color: white; 
-            border-radius: 8px; 
-            margin-bottom: 12px; 
-            outline: none; 
-        }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: var(--bg-panel); width: 100%; max-width: 400px; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.1rem; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: var(--bg-dark); }
+        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 12px; outline: none; }
 
-        @media (max-width: 900px) {
-            .sidebar { 
-                transform: translateX(-100%); 
-                transition: 0.3s; 
-            }
-            .main-content { 
-                margin-left: 0; 
-                padding: 20px; 
-            }
-        }
+        @media (max-width: 900px) { .sidebar { transform: translateX(-100%); } .main-content { margin-left: 0; padding: 20px; } }
     </style>
 </head>
 <body>
@@ -442,36 +103,20 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div'); 
             toast.className = 'toast';
-            if(type === 'error') {
-                toast.style.borderLeftColor = 'var(--c-red)';
-            }
+            if(type === 'error') toast.style.borderLeftColor = 'var(--c-red)';
             toast.innerHTML = `<div>${msg}</div>`; 
             container.appendChild(toast);
-            
-            setTimeout(() => { 
-                toast.style.opacity = '0'; 
-                setTimeout(() => toast.remove(), 300); 
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
-        
         function prosesLogin() {
             if(document.getElementById('adminPass').value === 'admin123') {
                 localStorage.setItem('adm_log', 'true'); 
                 document.getElementById('loginOverlay').style.display = 'none'; 
                 showToast('Berhasil masuk');
-            } else { 
-                showToast('Password salah!', 'error'); 
-            }
+            } else { showToast('Password salah!', 'error'); }
         }
-        
-        function prosesLogout() { 
-            localStorage.removeItem('adm_log'); 
-            location.reload(); 
-        }
-        
-        if(localStorage.getItem('adm_log') === 'true') {
-            document.getElementById('loginOverlay').style.display = 'none';
-        }
+        function prosesLogout() { localStorage.removeItem('adm_log'); location.reload(); }
+        if(localStorage.getItem('adm_log') === 'true') document.getElementById('loginOverlay').style.display = 'none';
     </script>
 
     <div class="sidebar">
@@ -503,17 +148,83 @@
             <div class="list-container" id="historyGrid"></div>
         </div>
 
+        <div id="packages" class="section">
+            <h1 class="header-title">Manajemen Paket Harga</h1>
+            <div class="crud-box">
+                <input type="hidden" id="pkgId">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <input type="text" id="pkgName" placeholder="Nama Paket (cth: Reguler)" required>
+                    <input type="number" id="pkgDuration" placeholder="Durasi (Jam)" step="0.5" required>
+                    <input type="number" id="pkgPrice" placeholder="Harga (Rp)" required>
+                    <select id="pkgStatus">
+                        <option value="true">Status: Aktif</option>
+                        <option value="false">Status: Nonaktif</option>
+                    </select>
+                </div>
+                <textarea id="pkgDesc" placeholder="Keterangan singkat paket" rows="2"></textarea>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                    <button class="btn-action b-blue" id="btnSavePackage">Simpan Paket</button>
+                    <button class="btn-action b-outline" id="btnResetPackage">Batal</button>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th>Nama Paket</th><th>Durasi</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="tablePackages"></tbody>
+            </table>
+        </div>
+
+        <div id="promos" class="section">
+            <h1 class="header-title">Manajemen Promo</h1>
+            <div class="crud-box">
+                <input type="hidden" id="promoId">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <input type="text" id="promoTitle" placeholder="Judul Promo" required>
+                    <input type="text" id="promoDiscount" placeholder="Sorotan (Diskon 10Rb)">
+                </div>
+                <textarea id="promoDesc" placeholder="Syarat & Ketentuan Promo" rows="2"></textarea>
+                <select id="promoStatus" style="width:100%;">
+                    <option value="true">Status: Aktif</option>
+                    <option value="false">Status: Nonaktif</option>
+                </select>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                    <button class="btn-action b-blue" id="btnSavePromo">Simpan Promo</button>
+                    <button class="btn-action b-outline" id="btnResetPromo">Batal</button>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th>Judul Promo</th><th>Sorotan</th><th>Status</th><th>Aksi</th></tr></thead>
+                <tbody id="tablePromos"></tbody>
+            </table>
+        </div>
+
         <div id="settings" class="section">
-            <h1 class="header-title">Gaya Font Layar TV</h1>
-            <div class="crud-box" style="max-width: 500px;">
-                <label style="color:var(--text-dim); display:block; margin-bottom:10px;">Pilih Jenis Font Tampilan Angka TV</label>
+            <h1 class="header-title">Konfigurasi Layar TV</h1>
+            <div class="crud-box" style="max-width: 600px;">
+                <label style="color:var(--text-dim); display:block; margin-bottom:5px;">Gaya Angka (Font)</label>
                 <select id="tvFontSelect">
                     <option value="'Orbitron', sans-serif">Orbitron (Modern Sci-Fi)</option>
                     <option value="'JetBrains Mono', monospace">JetBrains Mono (Hacker)</option>
                     <option value="'Share Tech Mono', monospace">Share Tech Mono (Digital Jam)</option>
                     <option value="'Teko', sans-serif">Teko (Tegas & Rapat)</option>
                 </select>
-                <button class="btn-action b-blue" id="btnSaveFont" style="width:100%; padding:12px;">Terapkan ke Layar TV</button>
+
+                <label style="color:var(--text-dim); display:block; margin:15px 0 5px;">Warna Tema TV</label>
+                <select id="tvColorSelect">
+                    <option value="cyan">Neon Cyan (Biru Muda)</option>
+                    <option value="purple">Cyber Purple (Ungu)</option>
+                    <option value="green">Matrix Green (Hijau)</option>
+                    <option value="red">Crimson Red (Merah)</option>
+                    <option value="white">Pure White (Putih)</option>
+                </select>
+
+                <label style="color:var(--text-dim); display:block; margin:15px 0 5px;">Ukuran Angka TV</label>
+                <select id="tvSizeSelect">
+                    <option value="13vw">Normal (Standard)</option>
+                    <option value="18vw">Besar (Terlihat Jauh)</option>
+                    <option value="24vw">Raksasa (Penuhi Layar)</option>
+                </select>
+
+                <button class="btn-action b-blue" id="btnSaveTvConfig" style="width:100%; padding:14px; margin-top:20px; font-size:1rem;">Simpan Perubahan ke TV</button>
             </div>
         </div>
     </div>
@@ -556,7 +267,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDV5S1jEFxw_tGWHBVqGe_erZSsOKRK2gU",
@@ -567,62 +278,145 @@
             messagingSenderId: "209728877379",
             appId: "1:209728877379:web:3fcd356cc427c5172af5f6"
         };
-        
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Sinkronisasi Server Time
         let serverOffset = 0;
-        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { 
-            serverOffset = snap.val() || 0; 
-        });
-        
-        function getTrueTime() { 
-            return Date.now() + serverOffset; 
-        }
+        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
+        function getTrueTime() { return Date.now() + serverOffset; }
 
         let bookingsData = {};
         let currentFilter = 'all';
-        let currentFont = "'Orbitron', sans-serif";
+        let currentTvConfig = { font: "'Orbitron', sans-serif", color: "cyan", size: "18vw" };
 
-        // Logika Navigasi Tab
+        // Navigasi
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                
-                e.target.classList.add('active'); 
-                document.getElementById(e.target.dataset.target).classList.add('active');
+                e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active');
             });
         });
-        
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active'); 
-                currentFilter = e.target.dataset.filter; 
-                renderList();
+                e.target.classList.add('active'); currentFilter = e.target.dataset.filter; renderList();
             });
         });
 
-        // Setting Font
-        onValue(ref(db, 'settings/tv_font'), (snap) => { 
+        // ==========================================
+        // FITUR BARU: PENGATURAN TV LENGKAP
+        // ==========================================
+        onValue(ref(db, 'settings/tv_config'), (snap) => { 
             if(snap.val()) { 
-                currentFont = snap.val(); 
-                document.getElementById('tvFontSelect').value = currentFont; 
+                currentTvConfig = snap.val(); 
+                document.getElementById('tvFontSelect').value = currentTvConfig.font || "'Orbitron', sans-serif"; 
+                document.getElementById('tvColorSelect').value = currentTvConfig.color || "cyan"; 
+                document.getElementById('tvSizeSelect').value = currentTvConfig.size || "18vw"; 
             } 
         });
-        
-        document.getElementById('btnSaveFont').onclick = () => { 
-            set(ref(db, 'settings/tv_font'), document.getElementById('tvFontSelect').value); 
-            showToast('Font TV Diperbarui'); 
+
+        document.getElementById('btnSaveTvConfig').onclick = () => { 
+            const newConfig = {
+                font: document.getElementById('tvFontSelect').value,
+                color: document.getElementById('tvColorSelect').value,
+                size: document.getElementById('tvSizeSelect').value
+            };
+            set(ref(db, 'settings/tv_config'), newConfig); 
+            showToast('Semua Konfigurasi TV Diperbarui!'); 
         };
 
-        // Data Rendering Real-time
-        onValue(ref(db, 'bookings'), (snap) => { 
-            bookingsData = snap.val() || {}; 
-            renderList(); 
+        // ==========================================
+        // MANAJEMEN PAKET (FIX BUG KOSONG)
+        // ==========================================
+        onValue(ref(db, 'packages'), (snap) => {
+            const data = snap.val() || {};
+            let html = '';
+            for(let key in data) {
+                let d = data[key];
+                html += `<tr>
+                    <td><strong>${d.name}</strong></td>
+                    <td>${d.duration_hours} Jam</td>
+                    <td>Rp${parseInt(d.price).toLocaleString()}</td>
+                    <td>${d.is_active ? '✅ Aktif' : '❌ Nonaktif'}</td>
+                    <td>
+                        <button class="btn-action b-outline" style="padding:4px 8px; color:#fff;" data-action="edit_pkg" data-id="${key}" data-name="${d.name}" data-dur="${d.duration_hours}" data-price="${d.price}" data-desc="${d.description}" data-act="${d.is_active}">Edit</button>
+                        <button class="btn-action b-red" style="padding:4px 8px;" data-action="delete_pkg" data-id="${key}">X</button>
+                    </td>
+                </tr>`;
+            }
+            if(html === '') html = '<tr><td colspan="5" style="text-align:center;">Belum ada paket yang tersimpan</td></tr>';
+            document.getElementById('tablePackages').innerHTML = html;
         });
+
+        document.getElementById('btnSavePackage').onclick = async () => {
+            let id = document.getElementById('pkgId').value;
+            let data = {
+                name: document.getElementById('pkgName').value,
+                duration_hours: parseFloat(document.getElementById('pkgDuration').value),
+                price: parseFloat(document.getElementById('pkgPrice').value),
+                description: document.getElementById('pkgDesc').value,
+                is_active: document.getElementById('pkgStatus').value === 'true'
+            };
+            if(!data.name || !data.duration_hours || !data.price) return showToast("Data paket belum lengkap!", "error");
+            
+            if(id) { await update(ref(db, `packages/${id}`), data); showToast("Paket Diubah"); } 
+            else { await push(ref(db, 'packages'), data); showToast("Paket Ditambah"); }
+            document.getElementById('btnResetPackage').click();
+        };
+
+        document.getElementById('btnResetPackage').onclick = () => {
+            document.getElementById('pkgId').value = ''; document.getElementById('pkgName').value = '';
+            document.getElementById('pkgDuration').value = ''; document.getElementById('pkgPrice').value = '';
+            document.getElementById('pkgDesc').value = '';
+        };
+
+        // ==========================================
+        // MANAJEMEN PROMO (FIX BUG KOSONG)
+        // ==========================================
+        onValue(ref(db, 'promos'), (snap) => {
+            const data = snap.val() || {};
+            let html = '';
+            for(let key in data) {
+                let d = data[key];
+                html += `<tr>
+                    <td><strong>${d.title}</strong></td>
+                    <td>${d.discount_info}</td>
+                    <td>${d.is_active ? '✅ Aktif' : '❌ Nonaktif'}</td>
+                    <td>
+                        <button class="btn-action b-outline" style="padding:4px 8px; color:#fff;" data-action="edit_promo" data-id="${key}" data-title="${d.title}" data-disc="${d.discount_info}" data-desc="${d.description}" data-act="${d.is_active}">Edit</button>
+                        <button class="btn-action b-red" style="padding:4px 8px;" data-action="delete_promo" data-id="${key}">X</button>
+                    </td>
+                </tr>`;
+            }
+            if(html === '') html = '<tr><td colspan="4" style="text-align:center;">Belum ada promo yang tersimpan</td></tr>';
+            document.getElementById('tablePromos').innerHTML = html;
+        });
+
+        document.getElementById('btnSavePromo').onclick = async () => {
+            let id = document.getElementById('promoId').value;
+            let data = {
+                title: document.getElementById('promoTitle').value,
+                discount_info: document.getElementById('promoDiscount').value,
+                description: document.getElementById('promoDesc').value,
+                is_active: document.getElementById('promoStatus').value === 'true'
+            };
+            if(!data.title) return showToast("Judul promo wajib ada!", "error");
+            
+            if(id) { await update(ref(db, `promos/${id}`), data); showToast("Promo Diubah"); } 
+            else { await push(ref(db, 'promos'), data); showToast("Promo Ditambah"); }
+            document.getElementById('btnResetPromo').click();
+        };
+
+        document.getElementById('btnResetPromo').onclick = () => {
+            document.getElementById('promoId').value = ''; document.getElementById('promoTitle').value = '';
+            document.getElementById('promoDiscount').value = ''; document.getElementById('promoDesc').value = '';
+        };
+
+        // ==========================================
+        // MONITOR RENTAL
+        // ==========================================
+        onValue(ref(db, 'bookings'), (snap) => { bookingsData = snap.val() || {}; renderList(); });
 
         function formatTime(ms) {
             if(ms <= 0) return "00:00:00";
@@ -630,7 +424,6 @@
             return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
         }
 
-        // Timer Interval
         setInterval(() => {
             document.querySelectorAll('.timer-display-admin').forEach(el => {
                 let b = bookingsData[el.dataset.id];
@@ -643,36 +436,18 @@
         }, 1000);
 
         function renderList() {
-            const grid = document.getElementById('bookingGrid'); 
-            const history = document.getElementById('historyGrid');
-            
-            grid.innerHTML = ''; 
-            history.innerHTML = '';
-            
+            const grid = document.getElementById('bookingGrid'); const history = document.getElementById('historyGrid');
+            grid.innerHTML = ''; history.innerHTML = '';
             let sortedIds = Object.keys(bookingsData).sort((a,b) => parseInt(b.split('-')[1] || 0) - parseInt(a.split('-')[1] || 0));
 
             sortedIds.forEach(id => {
-                let b = bookingsData[id]; 
-                let rem = (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu;
-                let cClass = 'st-unpaid'; 
-                let sText = 'Belum Lunas';
+                let b = bookingsData[id]; let rem = (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu;
+                let cClass = 'st-unpaid'; let sText = 'Belum Lunas';
                 
-                if(b.status_pembayaran === 'Sudah Bayar') { 
-                    cClass = 'st-paid'; 
-                    sText = b.status_konfirmasi === 'Sudah' ? 'Siap Main' : 'Lunas (Menunggu)'; 
-                }
-                if(b.status_countdown === 'running') { 
-                    cClass = 'st-running'; 
-                    sText = 'Sedang Main'; 
-                }
-                if(b.status_countdown === 'paused') { 
-                    cClass = 'st-paused'; 
-                    sText = 'Di-jeda'; 
-                }
-                if(b.status_countdown === 'finished' || (rem <= 0 && b.status_countdown === 'running')) { 
-                    cClass = 'st-finished'; 
-                    sText = 'Waktu Habis'; 
-                }
+                if(b.status_pembayaran === 'Sudah Bayar') { cClass = 'st-paid'; sText = b.status_konfirmasi === 'Sudah' ? 'Siap Main' : 'Lunas (Menunggu)'; }
+                if(b.status_countdown === 'running') { cClass = 'st-running'; sText = 'Sedang Main'; }
+                if(b.status_countdown === 'paused') { cClass = 'st-paused'; sText = 'Di-jeda'; }
+                if(b.status_countdown === 'finished' || (rem <= 0 && b.status_countdown === 'running')) { cClass = 'st-finished'; sText = 'Waktu Habis'; }
 
                 let html = `
                 <div class="list-item ${cClass}">
@@ -681,7 +456,7 @@
                             <h3>${b.nama} <span class="badge">${b.paket_nama}</span></h3>
                             <p><span>ID: ${id}</span> <span>${b.metode_pembayaran}</span> <span style="color: var(--primary)">[ ${sText} ]</span></p>
                         </div>
-                        <div class="timer-display-admin" data-id="${id}" style="font-family: ${currentFont}">${formatTime(rem)}</div>
+                        <div class="timer-display-admin" data-id="${id}" style="font-family: ${currentTvConfig.font || 'inherit'}">${formatTime(rem)}</div>
                     </div>
                     <div class="item-actions">
                         ${b.is_history ? `
@@ -707,14 +482,12 @@
                                (currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') ||
                                (currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') ||
                                (currentFilter === 'running' && b.status_countdown === 'running');
-                    if(show) {
-                        grid.innerHTML += html;
-                    }
+                    if(show) grid.innerHTML += html;
                 }
             });
         }
 
-        // EVENT DELEGATION: SOLUSI TOMBOL ADMIN BISA DIKLIK
+        // EVENT DELEGATION
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.btn-action');
             if(!btn) return;
@@ -723,113 +496,76 @@
             const action = btn.getAttribute('data-action');
             if(!id || !action) return;
 
-            let b = bookingsData[id]; 
-            let up = {}; 
-            let now = getTrueTime();
+            // Aksi CRUD Paket
+            if(action === 'edit_pkg') {
+                document.getElementById('pkgId').value = id; document.getElementById('pkgName').value = btn.getAttribute('data-name');
+                document.getElementById('pkgDuration').value = btn.getAttribute('data-dur'); document.getElementById('pkgPrice').value = btn.getAttribute('data-price');
+                document.getElementById('pkgDesc').value = btn.getAttribute('data-desc'); document.getElementById('pkgStatus').value = btn.getAttribute('data-act');
+                window.scrollTo(0,0); return;
+            }
+            if(action === 'delete_pkg') { if(confirm('Hapus paket ini?')) { await remove(ref(db, `packages/${id}`)); showToast('Terhapus'); } return; }
 
-            if(action === 'bayar') { 
-                up['status_pembayaran'] = 'Sudah Bayar'; 
-                showToast('Status Lunas'); 
+            // Aksi CRUD Promo
+            if(action === 'edit_promo') {
+                document.getElementById('promoId').value = id; document.getElementById('promoTitle').value = btn.getAttribute('data-title');
+                document.getElementById('promoDiscount').value = btn.getAttribute('data-disc'); document.getElementById('promoDesc').value = btn.getAttribute('data-desc'); 
+                document.getElementById('promoStatus').value = btn.getAttribute('data-act');
+                window.scrollTo(0,0); return;
             }
-            if(action === 'konfirmasi') { 
-                up['status_konfirmasi'] = 'Sudah'; 
-                showToast('Terkonfirmasi'); 
-            }
+            if(action === 'delete_promo') { if(confirm('Hapus promo ini?')) { await remove(ref(db, `promos/${id}`)); showToast('Terhapus'); } return; }
+
+            // Aksi Booking
+            let b = bookingsData[id]; 
+            if(!b) return;
+            let up = {}; let now = getTrueTime();
+
+            if(action === 'bayar') { up['status_pembayaran'] = 'Sudah Bayar'; showToast('Status Lunas'); }
+            if(action === 'konfirmasi') { up['status_konfirmasi'] = 'Sudah'; showToast('Terkonfirmasi'); }
             if(action === 'start') {
-                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') {
-                    return showToast('Belum lunas/dikonfirmasi!', 'error');
-                }
+                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return showToast('Belum lunas/dikonfirmasi!', 'error');
                 let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
-                if(rem <= 0) {
-                    return showToast('Waktu 0, tambah manual.', 'error');
-                }
-                up['status_countdown'] = 'running'; 
-                up['waktu_selesai'] = now + rem; 
-                showToast('Mulai Bermain!');
+                if(rem <= 0) return showToast('Waktu 0, tambah manual.', 'error');
+                up['status_countdown'] = 'running'; up['waktu_selesai'] = now + rem; showToast('Mulai Bermain!');
             }
-            if(action === 'pause') { 
-                up['status_countdown'] = 'paused'; 
-                up['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); 
-                showToast('Di-jeda'); 
-            }
-            if(action === 'reset') { 
-                up['status_countdown'] = 'idle'; 
-                up['sisa_waktu'] = b.durasi_jam * 3600000; 
-                up['waktu_selesai'] = 0; 
-                showToast('Direset'); 
-            }
-            if(action === 'finish') { 
-                up['is_history'] = true; 
-                up['status_countdown'] = 'finished'; 
-                showToast('Diarsipkan'); 
-            }
-            if(action === 'delete') { 
-                if(confirm(`Yakin hapus data ini?`)) { 
-                    await remove(ref(db, `bookings/${id}`)); 
-                    showToast('Terhapus'); 
-                    return; 
-                } 
-            }
+            if(action === 'pause') { up['status_countdown'] = 'paused'; up['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); showToast('Di-jeda'); }
+            if(action === 'reset') { up['status_countdown'] = 'idle'; up['sisa_waktu'] = b.durasi_jam * 3600000; up['waktu_selesai'] = 0; showToast('Direset'); }
+            if(action === 'finish') { up['is_history'] = true; up['status_countdown'] = 'finished'; showToast('Diarsipkan'); }
+            if(action === 'delete') { if(confirm(`Yakin hapus data ini?`)) { await remove(ref(db, `bookings/${id}`)); showToast('Terhapus'); return; } }
             if(action === 'copylink') {
                 let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
-                navigator.clipboard.writeText(url); 
-                showToast('Link TV Tercopy'); 
-                return;
+                navigator.clipboard.writeText(url); showToast('Link TV Tercopy'); return;
             }
             if(action === 'waktu') {
-                document.getElementById('mWaktuId').value = id; 
-                document.getElementById('mJam').value = 0; 
-                document.getElementById('mMenit').value = 0;
-                document.getElementById('modalWaktu').style.display = 'flex'; 
-                return;
+                document.getElementById('mWaktuId').value = id; document.getElementById('mJam').value = 0; document.getElementById('mMenit').value = 0;
+                document.getElementById('modalWaktu').style.display = 'flex'; return;
             }
             if(action === 'pesan') {
-                document.getElementById('mPesanId').value = id; 
-                document.getElementById('mPesanTeks').value = b.catatan_admin || "";
-                document.getElementById('modalPesan').style.display = 'flex'; 
-                return;
+                document.getElementById('mPesanId').value = id; document.getElementById('mPesanTeks').value = b.catatan_admin || "";
+                document.getElementById('modalPesan').style.display = 'flex'; return;
             }
 
-            if(Object.keys(up).length > 0) {
-                await update(ref(db, `bookings/${id}`), up);
-            }
+            if(Object.keys(up).length > 0) await update(ref(db, `bookings/${id}`), up);
         });
 
-        // Proses Penyimpanan Modal Waktu Edit
+        // Simpan Waktu
         document.getElementById('btnSaveWaktu').onclick = async () => {
-            let id = document.getElementById('mWaktuId').value; 
-            let b = bookingsData[id];
-            
+            let id = document.getElementById('mWaktuId').value; let b = bookingsData[id];
             let ms = ((parseInt(document.getElementById('mJam').value)||0)*3600 + (parseInt(document.getElementById('mMenit').value)||0)*60) * 1000;
-            let now = getTrueTime(); 
-            let cur = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
+            let now = getTrueTime(); let cur = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
             let mode = document.getElementById('mWaktuMode').value;
             
             let nSisa = mode === 'set' ? ms : (mode === 'add' ? cur + ms : Math.max(0, cur - ms));
             let up = {};
+            if(b.status_countdown === 'running') { up['waktu_selesai'] = now + nSisa; up['sisa_waktu'] = nSisa; } 
+            else { up['sisa_waktu'] = nSisa; if(b.status_countdown === 'finished') up['status_countdown'] = 'paused'; }
             
-            if(b.status_countdown === 'running') { 
-                up['waktu_selesai'] = now + nSisa; 
-                up['sisa_waktu'] = nSisa; 
-            } else { 
-                up['sisa_waktu'] = nSisa; 
-                if(b.status_countdown === 'finished') {
-                    up['status_countdown'] = 'paused'; 
-                }
-            }
-            
-            await update(ref(db, `bookings/${id}`), up); 
-            document.getElementById('modalWaktu').style.display = 'none'; 
-            showToast("Waktu Disesuaikan");
+            await update(ref(db, `bookings/${id}`), up); document.getElementById('modalWaktu').style.display = 'none'; showToast("Waktu Disesuaikan");
         };
 
-        // Proses Penyimpanan Modal Pesan TV
+        // Simpan Pesan
         document.getElementById('btnSavePesan').onclick = async () => {
-            await update(ref(db, `bookings/${document.getElementById('mPesanId').value}`), { 
-                catatan_admin: document.getElementById('mPesanTeks').value 
-            });
-            document.getElementById('modalPesan').style.display = 'none'; 
-            showToast("Pesan Naik ke TV");
+            await update(ref(db, `bookings/${document.getElementById('mPesanId').value}`), { catatan_admin: document.getElementById('mPesanTeks').value });
+            document.getElementById('modalPesan').style.display = 'none'; showToast("Pesan Naik ke TV");
         };
 
     </script>
