@@ -4,89 +4,237 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PS3 Admin Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Teko:wght@500;600&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* === VARIABEL WARNA ADMIN === */
         :root {
-            --bg-dark: #0F172A; --bg-panel: #1E293B; --border: #334155; 
-            --primary: #3B82F6; --text-main: #F8FAFC; --text-dim: #94A3B8;
-            --c-red: #EF4444; --c-green: #10B981; --c-blue: #0EA5E9; --c-yellow: #F59E0B;
+            --bg-dark: #0F172A; 
+            --bg-panel: #1E293B; 
+            --border: #334155; 
+            --border-hover: #475569;
+            
+            --primary: #3B82F6; 
+            --primary-hover: #2563EB;
+            
+            --text-main: #F8FAFC; 
+            --text-dim: #94A3B8;
+            
+            --c-red: #EF4444; 
+            --c-green: #10B981; 
+            --c-blue: #0EA5E9; 
+            --c-yellow: #F59E0B;
         }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+        
+        body { 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            display: flex; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
 
-        /* Toast */
-        #toastContainer { position: fixed; bottom: 24px; right: 24px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: #0F172A; border-left: 4px solid var(--primary); padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-weight: 500; border: 1px solid var(--border); animation: slideIn 0.3s ease forwards; }
+        /* === TOAST NOTIFICATION === */
+        #toastContainer { 
+            position: fixed; bottom: 24px; right: 24px; z-index: 10000; 
+            display: flex; flex-direction: column; gap: 10px; 
+        }
+        
+        .toast { 
+            background: #0F172A; border-left: 4px solid var(--primary); 
+            padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+            font-weight: 500; border: 1px solid var(--border); 
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+        
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        /* Login Screen */
-        #loginOverlay { position: fixed; inset: 0; background: var(--bg-dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center; }
-        .login-box h2 { margin-bottom: 25px; font-weight: 700; color: #FFF; }
-        .login-box input { width: 100%; padding: 14px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 20px; outline: none; }
-        .login-box button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .login-box button:hover { opacity: 0.9; }
+        /* === LOGIN SCREEN === */
+        #loginOverlay { 
+            position: fixed; inset: 0; background: var(--bg-dark); 
+            z-index: 9999; display: flex; align-items: center; justify-content: center; 
+        }
+        
+        .login-box { 
+            background: var(--bg-panel); padding: 40px; border-radius: 16px; 
+            border: 1px solid var(--border); width: 100%; max-width: 400px; text-align: center; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .login-box h2 { margin-bottom: 25px; font-weight: 700; color: #FFF; font-family: 'Outfit', sans-serif; font-size:2rem;}
+        
+        .login-box input { 
+            width: 100%; padding: 14px; background: var(--bg-dark); 
+            border: 1px solid var(--border); color: white; border-radius: 8px; 
+            margin-bottom: 20px; outline: none; transition: 0.2s;
+        }
+        .login-box input:focus { border-color: var(--primary); }
+        
+        .login-box button { 
+            width: 100%; padding: 14px; background: var(--primary); 
+            color: white; border: none; font-weight: 600; border-radius: 8px; 
+            cursor: pointer; transition: 0.2s; font-size: 1.05rem;
+        }
+        .login-box button:hover { background: var(--primary-hover); transform: translateY(-2px);}
 
-        /* Sidebar */
-        .sidebar { width: 260px; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; }
-        .brand { padding: 24px; font-size: 1.4rem; font-weight: 800; border-bottom: 1px solid var(--border); color: #FFF; }
+        /* === SIDEBAR MENU === */
+        .sidebar { 
+            width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); 
+            display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; 
+        }
+        
+        .brand { 
+            padding: 30px 24px; font-size: 1.6rem; font-family: 'Outfit', sans-serif;
+            font-weight: 800; border-bottom: 1px solid var(--border); color: #FFF; 
+        }
         .brand span { color: var(--primary); }
-        .nav-menu { padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y:auto;}
-        .nav-btn { background: transparent; color: var(--text-dim); border: none; padding: 12px 16px; text-align: left; font-size: 0.95rem; font-weight: 500; border-radius: 8px; cursor: pointer; }
+        
+        .nav-menu { 
+            padding: 24px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y:auto;
+        }
+        
+        .nav-btn { 
+            background: transparent; color: var(--text-dim); border: none; 
+            padding: 14px 20px; text-align: left; font-size: 0.95rem; font-weight: 500; 
+            border-radius: 10px; cursor: pointer; transition: 0.2s; 
+        }
         .nav-btn:hover { background: var(--border); color: white; }
         .nav-btn.active { background: rgba(59, 130, 246, 0.15); color: var(--primary); font-weight: 600; }
-        .logout-btn { padding: 20px; border-top: 1px solid var(--border); }
-        .logout-btn button { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--c-red); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        
+        .logout-btn { padding: 24px 12px; border-top: 1px solid var(--border); }
+        .logout-btn button { 
+            width: 100%; padding: 14px; background: rgba(239, 68, 68, 0.1); 
+            color: var(--c-red); border: none; border-radius: 10px; font-weight: 600; 
+            cursor: pointer; transition: 0.2s;
+        }
+        .logout-btn button:hover { background: var(--c-red); color: #FFF; }
 
-        /* Main Content */
-        .main-content { flex: 1; margin-left: 260px; padding: 40px; }
-        .section { display: none; } .section.active { display: block; }
-        .header-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 24px; color: #FFF; }
+        /* === MAIN CONTENT AREA === */
+        .main-content { flex: 1; margin-left: 280px; padding: 40px; }
+        
+        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+        
+        .header-title { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 700; margin-bottom: 24px; color: #FFF; }
 
-        /* Filter */
-        .filter-bar { display: flex; gap: 8px; margin-bottom: 24px; }
-        .filter-btn { padding: 8px 16px; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text-dim); font-size: 0.9rem; font-weight: 500; border-radius: 6px; cursor: pointer; }
+        /* FILTER TABS */
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        
+        .filter-btn { 
+            padding: 10px 20px; background: var(--bg-panel); border: 1px solid var(--border); 
+            color: var(--text-dim); font-size: 0.9rem; font-weight: 500; border-radius: 8px; 
+            cursor: pointer; transition: 0.2s; 
+        }
+        .filter-btn:hover { border-color: var(--border-hover); color: white; }
         .filter-btn.active { background: var(--text-main); color: var(--bg-dark); border-color: var(--text-main); font-weight: 600; }
 
-        /* Grid Booking */
-        .list-container { display: flex; flex-direction: column; gap: 16px; }
-        .list-item { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; border-left: 4px solid var(--border); }
+        /* === GRID LIST BOOKING === */
+        .list-container { display: flex; flex-direction: column; gap: 20px; }
+        
+        .list-item { 
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px; 
+            padding: 24px; display: flex; flex-direction: column; gap: 20px; 
+            border-left: 6px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Pewarnaan Status State */
         .list-item.st-unpaid { border-left-color: var(--c-red); }
         .list-item.st-paid { border-left-color: var(--c-green); }
         .list-item.st-running { border-left-color: var(--c-blue); background: rgba(14, 165, 233, 0.05); }
         .list-item.st-paused { border-left-color: var(--c-yellow); }
-        .list-item.st-finished { opacity: 0.6; }
+        .list-item.st-finished { opacity: 0.7; filter: grayscale(50%); }
         
         .item-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .item-info h3 { font-size: 1.2rem; color: #FFF; margin-bottom: 4px; }
-        .item-info p { font-size: 0.85rem; color: var(--text-dim); display: flex; gap: 12px; }
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); }
-        .timer-display-admin { font-size: 2.2rem; font-weight: 700; color: #FFF; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
         
-        .item-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 16px; border-top: 1px solid var(--border); }
-        .btn-action { padding: 8px 14px; font-size: 0.85rem; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; color: #FFF; display:flex; align-items:center; gap:5px;}
-        .btn-action:hover { filter: brightness(1.1); }
-        .b-green { background: var(--c-green); color: #000; } .b-red { background: var(--c-red); } .b-blue { background: var(--c-blue); color: #000; } .b-yellow { background: var(--c-yellow); color: #000; } .b-dark { background: #334155; } .b-outline { background: transparent; border: 1px solid var(--border); }
-        .b-wa { background: #25D366; color: #000; } /* Warna Hijau WA */
-
-        /* Form CRUD */
-        .crud-box { background: var(--bg-panel); padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; }
-        .crud-box label { font-size: 0.85rem; color: var(--text-dim); font-weight: 500; margin-bottom: 6px; display: block; }
-        .crud-box input, .crud-box select, .crud-box textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 12px; outline: none; }
+        .item-info h3 { font-family: 'Outfit', sans-serif; font-size: 1.3rem; color: #FFF; margin-bottom: 6px; }
+        .item-info p { font-size: 0.9rem; color: var(--text-dim); display: flex; gap: 16px; align-items: center;}
         
-        table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-        th, td { padding: 16px; border-bottom: 1px solid var(--border); text-align: left; }
-        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-size: 0.85rem; font-weight: 600; }
+        .badge { padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.1); }
+        
+        .timer-display-admin { 
+            font-size: 2.5rem; font-weight: 700; color: #FFF; 
+            letter-spacing: 1px; font-variant-numeric: tabular-nums; 
+            text-align: right; line-height: 1; margin-top: 5px;
+        }
+        
+        /* ACTION BUTTONS */
+        .item-actions { 
+            display: flex; flex-wrap: wrap; gap: 10px; padding-top: 20px; 
+            border-top: 1px solid var(--border); 
+        }
+        
+        .btn-action { 
+            padding: 10px 16px; font-size: 0.85rem; font-weight: 600; border: none; 
+            border-radius: 8px; cursor: pointer; color: #FFF; 
+            display: flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .btn-action:hover { filter: brightness(1.15); transform: translateY(-2px); }
+        
+        .b-green { background: var(--c-green); color: #000; } 
+        .b-red { background: var(--c-red); } 
+        .b-blue { background: var(--c-blue); color: #000; } 
+        .b-yellow { background: var(--c-yellow); color: #000; } 
+        .b-dark { background: #334155; } 
+        .b-outline { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+        .b-outline:hover { color: white; border-color: #64748B; background: rgba(255,255,255,0.05);}
+        .b-wa { background: #25D366; color: #000; } /* Warna Hijau Khas WhatsApp */
 
-        /* Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--bg-panel); width: 100%; max-width: 400px; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
-        .modal-header { padding: 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.1rem; }
-        .modal-body { padding: 20px; }
-        .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: var(--bg-dark); }
-        .modal-body input, .modal-body select, .modal-body textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 12px; outline: none; }
+        /* === FORM CRUD INPUTS === */
+        .crud-box { 
+            background: var(--bg-panel); padding: 30px; border-radius: 16px; 
+            border: 1px solid var(--border); margin-bottom: 30px; 
+        }
+        
+        .crud-box label { 
+            font-size: 0.9rem; color: var(--text-dim); font-weight: 500; 
+            margin-bottom: 8px; display: block; 
+        }
+        
+        .crud-box input, .crud-box select, .crud-box textarea { 
+            width: 100%; padding: 14px 16px; background: var(--bg-dark); 
+            border: 1px solid var(--border); color: white; border-radius: 10px; 
+            margin-bottom: 15px; outline: none; font-size: 0.95rem; transition: 0.2s;
+        }
+        .crud-box input:focus, .crud-box textarea:focus { border-color: var(--primary); }
+        
+        table { 
+            width: 100%; border-collapse: collapse; background: var(--bg-panel); 
+            border-radius: 16px; overflow: hidden; border: 1px solid var(--border); 
+        }
+        th, td { padding: 18px 24px; border-bottom: 1px solid var(--border); text-align: left; }
+        th { background: rgba(0,0,0,0.2); color: var(--text-dim); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+        tr:hover td { background: rgba(255,255,255,0.02); }
 
-        @media (max-width: 900px) { .sidebar { transform: translateX(-100%); } .main-content { margin-left: 0; padding: 20px; } }
+        /* === MODALS === */
+        .modal { 
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center; padding: 20px;
+        }
+        
+        .modal-content { 
+            background: var(--bg-panel); width: 100%; max-width: 480px; 
+            border-radius: 20px; border: 1px solid var(--border); overflow: hidden; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); animation: modalScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalScale { from{transform:scale(0.95); opacity:0;} to{transform:scale(1); opacity:1;} }
+        
+        .modal-header { padding: 24px 30px; border-bottom: 1px solid var(--border); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.3rem; color: #FFF;}
+        .modal-body { padding: 30px; }
+        .modal-footer { padding: 20px 30px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: rgba(0,0,0,0.2); }
+        
+        .modal-body input, .modal-body select, .modal-body textarea { 
+            width: 100%; padding: 14px; background: var(--bg-dark); 
+            border: 1px solid var(--border); color: white; border-radius: 10px; 
+            margin-bottom: 15px; outline: none; font-size: 1rem;
+        }
+
+        @media (max-width: 900px) { 
+            .sidebar { transform: translateX(-100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000;} 
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; } 
+        }
     </style>
 </head>
 <body>
@@ -94,27 +242,47 @@
     <div id="toastContainer"></div>
     <div id="loginOverlay">
         <div class="login-box">
-            <h2>Admin Login</h2>
+            <h2>Admin Area</h2>
             <input type="password" id="adminPass" placeholder="Masukkan Password (admin123)">
-            <button onclick="prosesLogin()">Masuk</button>
+            <button onclick="prosesLogin()">Masuk Dashboard</button>
         </div>
     </div>
 
     <script>
         function showToast(msg, type = 'success') {
             const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div'); toast.className = 'toast';
-            if(type === 'error') toast.style.borderLeftColor = 'var(--c-red)';
-            toast.innerHTML = `<div>${msg}</div>`; container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+            const toast = document.createElement('div'); 
+            toast.className = 'toast';
+            if(type === 'error') {
+                toast.style.borderLeftColor = 'var(--c-red)';
+            }
+            toast.innerHTML = `<div>${msg}</div>`; 
+            container.appendChild(toast);
+            
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                setTimeout(() => toast.remove(), 300); 
+            }, 3000);
         }
+        
         function prosesLogin() {
             if(document.getElementById('adminPass').value === 'admin123') {
-                localStorage.setItem('adm_log', 'true'); document.getElementById('loginOverlay').style.display = 'none'; showToast('Berhasil masuk');
-            } else { showToast('Password salah!', 'error'); }
+                localStorage.setItem('adm_log', 'true'); 
+                document.getElementById('loginOverlay').style.display = 'none'; 
+                showToast('Berhasil masuk log sistem.');
+            } else { 
+                showToast('Password salah!', 'error'); 
+            }
         }
-        function prosesLogout() { localStorage.removeItem('adm_log'); location.reload(); }
-        if(localStorage.getItem('adm_log') === 'true') document.getElementById('loginOverlay').style.display = 'none';
+        
+        function prosesLogout() { 
+            localStorage.removeItem('adm_log'); 
+            location.reload(); 
+        }
+        
+        if(localStorage.getItem('adm_log') === 'true') {
+            document.getElementById('loginOverlay').style.display = 'none';
+        }
     </script>
 
     <div class="sidebar">
@@ -130,13 +298,14 @@
     </div>
 
     <div class="main-content">
+        
         <div id="dashboard" class="section active">
             <h1 class="header-title">Monitor Penyewaan</h1>
             <div class="filter-bar">
-                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn active" data-filter="all">Semua Data</button>
                 <button class="filter-btn" data-filter="unpaid">Belum Lunas</button>
                 <button class="filter-btn" data-filter="paid">Lunas (Wait)</button>
-                <button class="filter-btn" data-filter="running">Berjalan</button>
+                <button class="filter-btn" data-filter="running">Sedang Bermain</button>
             </div>
             <div class="list-container" id="bookingGrid"></div>
         </div>
@@ -150,50 +319,77 @@
             <h1 class="header-title">Manajemen Paket Harga</h1>
             <div class="crud-box">
                 <input type="hidden" id="pkgId">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <div><label>Nama Paket</label><input type="text" id="pkgName" placeholder="Cth: Reguler" required></div>
-                    <div><label>Durasi (Jam)</label><input type="number" id="pkgDuration" placeholder="Cth: 2" step="0.5" required></div>
-                    <div><label>Harga (Rp)</label><input type="number" id="pkgPrice" placeholder="Cth: 15000" required></div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
                     <div>
-                        <label>Status</label>
+                        <label>Nama Paket</label>
+                        <input type="text" id="pkgName" placeholder="Cth: Reguler Siang" required>
+                    </div>
+                    <div>
+                        <label>Durasi Waktu (Jam)</label>
+                        <input type="number" id="pkgDuration" placeholder="Cth: 2" step="0.5" required>
+                    </div>
+                    <div>
+                        <label>Harga Normal (Rp)</label>
+                        <input type="number" id="pkgPrice" placeholder="Cth: 15000" required>
+                    </div>
+                    <div>
+                        <label>Status Sistem</label>
                         <select id="pkgStatus">
                             <option value="true">Status: Aktif</option>
                             <option value="false">Status: Nonaktif</option>
                         </select>
                     </div>
                 </div>
-                <label>Fasilitas / Keterangan</label>
-                <textarea id="pkgDesc" placeholder="Keterangan singkat paket" rows="2"></textarea>
-                <div style="display:flex; gap:8px; margin-top:10px;">
-                    <button class="btn-action b-blue" id="btnSavePackage">Simpan Paket</button>
-                    <button class="btn-action b-outline" id="btnResetPackage">Batal</button>
+                <label style="margin-top:5px;">Fasilitas / Keterangan</label>
+                <textarea id="pkgDesc" placeholder="Tuliskan keterangan singkat paket" rows="2"></textarea>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="btn-action b-blue" id="btnSavePackage" style="padding:14px 24px; font-size:1rem;">Simpan Paket</button>
+                    <button class="btn-action b-outline" id="btnResetPackage" style="padding:14px 24px; font-size:1rem;">Batal</button>
                 </div>
             </div>
             <table>
-                <thead><tr><th>Nama Paket</th><th>Durasi</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Nama Paket</th>
+                        <th>Durasi</th>
+                        <th>Harga</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
                 <tbody id="tablePackages"></tbody>
             </table>
         </div>
 
         <div id="promos" class="section">
-            <h1 class="header-title">Manajemen Promo & Voucher</h1>
+            <h1 class="header-title">Manajemen Promo & Voucher Cerdas</h1>
             <div class="crud-box">
                 <input type="hidden" id="promoId">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    <div><label>Judul Tampilan</label><input type="text" id="promoTitle" placeholder="Cth: Diskon Akhir Pekan" required></div>
-                    <div><label>Teks Sorotan (Nilai Diskon)</label><input type="text" id="promoDiscount" placeholder="Cth: Potongan Rp10.000"></div>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                    <div>
+                        <label>Judul Tampilan Publik</label>
+                        <input type="text" id="promoTitle" placeholder="Cth: Diskon Pelajar" required>
+                    </div>
+                    <div>
+                        <label>Teks Sorotan (Info Diskon)</label>
+                        <input type="text" id="promoDiscount" placeholder="Cth: Potongan Rp10.000">
+                    </div>
                 </div>
                 
-                <div style="background:var(--bg-dark); padding:15px; border-radius:8px; border:1px dashed var(--border); margin:15px 0;">
-                    <div style="font-weight:600; margin-bottom:10px; color:#FFF; font-size:0.95rem;">Pengaturan Otomatis Voucher (Kosongkan jika Promo Publik Biasa)</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                <div style="background:var(--bg-dark); padding:20px; border-radius:12px; border:1px dashed var(--primary); margin:20px 0;">
+                    <div style="font-weight:700; margin-bottom:15px; color:var(--primary); font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+                        🤖 Pengaturan Voucher Otomatis
+                        <span style="font-size:0.8rem; font-weight:400; color:var(--text-dim); border-left:1px solid var(--border); padding-left:8px;">(Kosongkan jika ini Promo Publik/Umum)</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
                         <div>
                             <label>Kode Voucher Rahasia</label>
                             <input type="text" id="promoCode" placeholder="Cth: WEEKEND10K" style="text-transform:uppercase;">
                         </div>
                         <div>
                             <label>Batas Kuota Pemakai</label>
-                            <input type="number" id="promoLimit" placeholder="0 = Unlimited" value="0">
+                            <input type="number" id="promoLimit" placeholder="Isi 0 = Unlimited" value="0">
                         </div>
                         <div>
                             <label>Batas Waktu Kedaluwarsa</label>
@@ -202,21 +398,30 @@
                     </div>
                 </div>
 
-                <label>Syarat & Ketentuan (Deskripsi)</label>
+                <label>Syarat & Ketentuan Tambahan (Deskripsi)</label>
                 <textarea id="promoDesc" placeholder="Syarat & Ketentuan Promo" rows="2"></textarea>
                 
-                <label>Status Sistem</label>
-                <select id="promoStatus" style="width:100%;">
-                    <option value="true">Status: Aktif</option>
-                    <option value="false">Status: Nonaktif</option>
+                <label>Status Sistem Induk</label>
+                <select id="promoStatus">
+                    <option value="true">Status Induk: Aktif</option>
+                    <option value="false">Status Induk: Nonaktif (Mati Total)</option>
                 </select>
-                <div style="display:flex; gap:8px; margin-top:10px;">
-                    <button class="btn-action b-blue" id="btnSavePromo">Simpan Promo/Voucher</button>
-                    <button class="btn-action b-outline" id="btnResetPromo">Batal</button>
+                
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn-action b-blue" id="btnSavePromo" style="padding:14px 24px; font-size:1rem;">Simpan Promo / Voucher</button>
+                    <button class="btn-action b-outline" id="btnResetPromo" style="padding:14px 24px; font-size:1rem;">Batal</button>
                 </div>
             </div>
             <table>
-                <thead><tr><th>Data Promo</th><th>Kode / Kuota</th><th>Kedaluwarsa</th><th>Status</th><th>Aksi</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Data Promo</th>
+                        <th>Kode & Kuota</th>
+                        <th>Kedaluwarsa</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
                 <tbody id="tablePromos"></tbody>
             </table>
         </div>
@@ -224,6 +429,7 @@
         <div id="settings" class="section">
             <h1 class="header-title">Konfigurasi Tampilan Layar TV</h1>
             <div class="crud-box" style="max-width: 600px;">
+                
                 <label>Gaya Teks Angka (Font Family)</label>
                 <select id="tvFontSelect">
                     <option value="'Orbitron', sans-serif">Orbitron (Modern Sci-Fi)</option>
@@ -233,7 +439,7 @@
                     <option value="'Outfit', sans-serif">Outfit (Clean & Smooth)</option>
                 </select>
 
-                <label style="margin-top:15px;">Warna Tema Ambience & Glow TV</label>
+                <label style="margin-top:20px;">Warna Tema Ambience & Glow TV</label>
                 <select id="tvColorSelect">
                     <option value="cyan">Neon Cyan (Biru Muda Bercahaya)</option>
                     <option value="purple">Cyber Purple (Ungu Gelap)</option>
@@ -248,51 +454,61 @@
                     <option value="vaporwave">⭐ VAPORWAVE (Gradient Cyan-Pink)</option>
                 </select>
 
-                <label style="margin-top:15px;">Ukuran Angka TV</label>
+                <label style="margin-top:20px;">Ukuran Proporsi Angka TV</label>
                 <select id="tvSizeSelect">
-                    <option value="15vw">Kecil (Small)</option>
-                    <option value="18vw">Normal (Standard)</option>
+                    <option value="15vw">Kecil (Small Area)</option>
+                    <option value="18vw">Normal (Standard Fit)</option>
                     <option value="23vw">Besar (Terlihat Jauh)</option>
                     <option value="28vw">Raksasa (Penuhi Layar)</option>
                 </select>
 
-                <button class="btn-action b-blue" id="btnSaveTvConfig" style="width:100%; padding:14px; margin-top:20px; font-size:1rem;">Simpan & Terapkan ke TV Secara Real-Time</button>
+                <button class="btn-action b-blue" id="btnSaveTvConfig" style="width:100%; padding:16px; margin-top:30px; font-size:1.1rem; justify-content:center;">Simpan & Terapkan ke TV Secara Real-Time</button>
             </div>
         </div>
     </div>
 
     <div id="modalWaktu" class="modal">
         <div class="modal-content">
-            <div class="modal-header">Atur Waktu Manual</div>
+            <div class="modal-header">Atur Waktu Manual Cerdas</div>
             <div class="modal-body">
                 <input type="hidden" id="mWaktuId">
+                <label>Pilih Mode Perubahan Waktu</label>
                 <select id="mWaktuMode">
-                    <option value="add">Tambah (+) Menit Ke Sisa Waktu</option>
-                    <option value="sub">Kurangi (-) Menit Dari Sisa Waktu</option>
-                    <option value="set">Timpa Sisa Waktu (Reset Paksa)</option>
+                    <option value="add">Tambah (+) Waktu Ke Sisa Saat Ini</option>
+                    <option value="sub">Kurangi (-) Waktu Dari Sisa Saat Ini</option>
+                    <option value="set">Timpa Sisa Waktu Secara Paksa (Reset)</option>
                 </select>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <input type="number" id="mJam" placeholder="Jam" value="0">
-                    <input type="number" id="mMenit" placeholder="Menit" value="0">
+                
+                <label style="margin-top:15px;">Tentukan Jumlah</label>
+                <div style="display:flex; gap:15px; margin-top:5px;">
+                    <div style="flex:1;">
+                        <input type="number" id="mJam" placeholder="0" value="0" onclick="this.select()" style="font-size:1.5rem; text-align:center; font-family:'JetBrains Mono', monospace;">
+                        <div style="text-align:center; font-size:0.8rem; color:var(--text-dim); margin-top:-10px;">JAM</div>
+                    </div>
+                    <div style="flex:1;">
+                        <input type="number" id="mMenit" placeholder="0" value="0" onclick="this.select()" style="font-size:1.5rem; text-align:center; font-family:'JetBrains Mono', monospace;">
+                        <div style="text-align:center; font-size:0.8rem; color:var(--text-dim); margin-top:-10px;">MENIT</div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-action b-outline" onclick="document.getElementById('modalWaktu').style.display='none'">Batal</button>
-                <button class="btn-action b-blue" id="btnSaveWaktu">Simpan</button>
+                <button class="btn-action b-blue" id="btnSaveWaktu" style="padding:10px 20px;">Terapkan ke TV</button>
             </div>
         </div>
     </div>
 
     <div id="modalPesan" class="modal">
         <div class="modal-content">
-            <div class="modal-header">Kirim Pesan ke Layar TV</div>
+            <div class="modal-header">Kirim Pesan Pop-Up ke Layar TV</div>
             <div class="modal-body">
                 <input type="hidden" id="mPesanId">
-                <textarea id="mPesanTeks" rows="4" placeholder="Tuliskan peringatan atau pesan untuk penyewa..."></textarea>
+                <label>Isi Pesan / Peringatan</label>
+                <textarea id="mPesanTeks" rows="4" placeholder="Tuliskan peringatan atau sapaan untuk penyewa..."></textarea>
             </div>
             <div class="modal-footer">
                 <button class="btn-action b-outline" onclick="document.getElementById('modalPesan').style.display='none'">Batal</button>
-                <button class="btn-action b-blue" id="btnSavePesan">Tampilkan di TV</button>
+                <button class="btn-action b-blue" id="btnSavePesan" style="padding:10px 20px;">Tampilkan di TV</button>
             </div>
         </div>
     </div>
@@ -314,31 +530,39 @@
         const db = getDatabase(app);
 
         let serverOffset = 0;
-        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
-        function getTrueTime() { return Date.now() + serverOffset; }
+        onValue(ref(db, '.info/serverTimeOffset'), (snap) => { 
+            serverOffset = snap.val() || 0; 
+        });
+        
+        function getTrueTime() { 
+            return Date.now() + serverOffset; 
+        }
 
         let bookingsData = {};
         let currentFilter = 'all';
         let currentTvConfig = { font: "'Orbitron', sans-serif", color: "cyan", size: "18vw" };
 
-        // Navigasi
+        // === FUNGSI NAVIGASI ===
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                e.target.classList.add('active'); document.getElementById(e.target.dataset.target).classList.add('active');
+                
+                e.target.classList.add('active'); 
+                document.getElementById(e.target.dataset.target).classList.add('active');
             });
         });
+        
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active'); currentFilter = e.target.dataset.filter; renderList();
+                e.target.classList.add('active'); 
+                currentFilter = e.target.dataset.filter; 
+                renderList();
             });
         });
 
-        // ==========================================
-        // FITUR BARU: PENGATURAN TV LENGKAP
-        // ==========================================
+        // === FITUR PENGATURAN TV (LIVE) ===
         onValue(ref(db, 'settings/tv_config'), (snap) => { 
             if(snap.val()) { 
                 currentTvConfig = snap.val(); 
@@ -358,25 +582,25 @@
             showToast('Semua Konfigurasi TV Diperbarui secara Real-Time!'); 
         };
 
-        // ==========================================
-        // MANAJEMEN PAKET
-        // ==========================================
+        // === FITUR MANAJEMEN PAKET HARGA (ANTI KOSONG) ===
         onValue(ref(db, 'packages'), (snap) => {
-            const data = snap.val() || {}; let html = '';
+            const data = snap.val() || {};
+            let html = '';
             for(let key in data) {
                 let d = data[key];
-                html += `<tr>
+                html += `
+                <tr>
                     <td><strong>${d.name}</strong></td>
                     <td>${d.duration_hours} Jam</td>
-                    <td>Rp${parseInt(d.price).toLocaleString()}</td>
+                    <td style="color:var(--primary); font-weight:600;">Rp${parseInt(d.price).toLocaleString('id-ID')}</td>
                     <td>${d.is_active ? '<span style="color:var(--c-green)">✅ Aktif</span>' : '<span style="color:var(--c-red)">❌ Nonaktif</span>'}</td>
                     <td>
-                        <button class="btn-action b-outline" style="padding:4px 8px; color:#fff;" data-action="edit_pkg" data-id="${key}" data-name="${d.name}" data-dur="${d.duration_hours}" data-price="${d.price}" data-desc="${d.description}" data-act="${d.is_active}">Edit</button>
-                        <button class="btn-action b-red" style="padding:4px 8px;" data-action="delete_pkg" data-id="${key}">X</button>
+                        <button class="btn-action b-outline" style="padding:6px 12px; color:#fff;" data-action="edit_pkg" data-id="${key}" data-name="${d.name}" data-dur="${d.duration_hours}" data-price="${d.price}" data-desc="${d.description}" data-act="${d.is_active}">Edit</button>
+                        <button class="btn-action b-red" style="padding:6px 12px;" data-action="delete_pkg" data-id="${key}">X</button>
                     </td>
                 </tr>`;
             }
-            if(html === '') html = '<tr><td colspan="5" style="text-align:center; color:var(--text-dim);">Belum ada paket yang tersimpan</td></tr>';
+            if(html === '') html = '<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-dim);">Belum ada paket yang tersimpan di sistem</td></tr>';
             document.getElementById('tablePackages').innerHTML = html;
         });
 
@@ -389,26 +613,34 @@
                 description: document.getElementById('pkgDesc').value,
                 is_active: document.getElementById('pkgStatus').value === 'true'
             };
-            if(!data.name || !data.duration_hours || !data.price) return showToast("Data paket belum lengkap!", "error");
             
-            if(id) { await update(ref(db, `packages/${id}`), data); showToast("Paket Diubah"); } 
-            else { await push(ref(db, 'packages'), data); showToast("Paket Ditambah"); }
+            if(!data.name || !data.duration_hours || !data.price) {
+                return showToast("Data paket belum lengkap!", "error");
+            }
+            
+            if(id) { 
+                await update(ref(db, `packages/${id}`), data); 
+                showToast("Data Paket Berhasil Diubah"); 
+            } else { 
+                await push(ref(db, 'packages'), data); 
+                showToast("Paket Baru Ditambahkan"); 
+            }
             document.getElementById('btnResetPackage').click();
         };
 
         document.getElementById('btnResetPackage').onclick = () => {
-            document.getElementById('pkgId').value = ''; document.getElementById('pkgName').value = '';
-            document.getElementById('pkgDuration').value = ''; document.getElementById('pkgPrice').value = '';
+            document.getElementById('pkgId').value = ''; 
+            document.getElementById('pkgName').value = '';
+            document.getElementById('pkgDuration').value = ''; 
+            document.getElementById('pkgPrice').value = '';
             document.getElementById('pkgDesc').value = '';
         };
 
-        // ==========================================
-        // MANAJEMEN PROMO & VOUCHER
-        // ==========================================
+        // === FITUR MANAJEMEN PROMO & VOUCHER CERDAS ===
         function formatDateTimeLocal(timestamp) {
             if(!timestamp || timestamp === 0) return "";
             let d = new Date(timestamp);
-            let tzoffset = d.getTimezoneOffset() * 60000; 
+            let tzoffset = d.getTimezoneOffset() * 60000; // offset in milliseconds
             return new Date(d.getTime() - tzoffset).toISOString().slice(0, 16);
         }
 
@@ -418,38 +650,47 @@
         }
 
         onValue(ref(db, 'promos'), (snap) => {
-            const data = snap.val() || {}; let html = '';
+            const data = snap.val() || {};
+            let html = '';
             let now = getTrueTime();
 
             for(let key in data) {
                 let d = data[key];
+                
+                // Kalkulasi Kondisi
                 let isExpired = d.expiry_date > 0 && now > d.expiry_date;
                 let isOut = d.usage_limit > 0 && d.usage_used >= d.usage_limit;
                 
-                let limitText = d.usage_limit > 0 ? `Sisa: ${Math.max(0, d.usage_limit - (d.usage_used || 0))} / ${d.usage_limit}` : 'Tanpa Batas Kuota';
-                let codeText = (d.voucher_code && d.voucher_code !== "") ? `<strong style="color:var(--c-blue)">${d.voucher_code}</strong>` : `<em>Publik</em>`;
+                let limitText = d.usage_limit > 0 ? `Sisa: <strong style="color:#FFF">${Math.max(0, d.usage_limit - (d.usage_used || 0))}</strong> / ${d.usage_limit}` : 'Tanpa Batas Kuota';
+                let codeText = (d.voucher_code && d.voucher_code !== "") ? `<strong style="color:var(--primary); font-family:'JetBrains Mono'; letter-spacing:1px;">${d.voucher_code}</strong>` : `<em style="color:var(--text-dim)">Promo Publik Umum</em>`;
                 
-                let statusText = d.is_active ? '<span style="color:var(--c-green)">✅ Aktif</span>' : '<span style="color:var(--c-red)">❌ Mati</span>';
-                if(isExpired) statusText += '<br><span style="color:var(--c-red); font-size:0.8rem;">(Kedaluwarsa)</span>';
-                if(isOut) statusText += '<br><span style="color:var(--c-red); font-size:0.8rem;">(Kuota Habis)</span>';
+                let statusText = d.is_active ? '<span style="color:var(--c-green)">✅ Aktif Sistem</span>' : '<span style="color:var(--c-red)">❌ Mati Total</span>';
+                if(isExpired) statusText += '<br><span style="color:var(--c-red); font-size:0.8rem; font-weight:600;">⚠️ Waktu Habis</span>';
+                if(isOut) statusText += '<br><span style="color:var(--c-red); font-size:0.8rem; font-weight:600;">⚠️ Kuota Habis</span>';
 
-                html += `<tr>
-                    <td><strong>${d.title}</strong><br><span style="font-size:0.85rem; color:var(--primary)">${d.discount_info}</span></td>
-                    <td style="font-size:0.9rem">${codeText}<br><span style="color:var(--text-dim)">${limitText}</span></td>
+                html += `
+                <tr>
+                    <td>
+                        <strong style="font-size:1.1rem; color:#FFF;">${d.title}</strong><br>
+                        <span style="font-size:0.9rem; color:var(--primary); font-weight:600;">${d.discount_info}</span>
+                    </td>
+                    <td style="font-size:0.9rem; line-height:1.6;">${codeText}<br><span style="color:var(--text-dim)">${limitText}</span></td>
                     <td style="font-size:0.85rem; color:var(--text-dim)">${formatDisplayDate(d.expiry_date)}</td>
                     <td>${statusText}</td>
                     <td>
                         <button class="btn-action b-outline" style="padding:4px 8px; color:#fff;" data-action="edit_promo" data-id="${key}" data-title="${d.title}" data-disc="${d.discount_info}" data-desc="${d.description}" data-act="${d.is_active}" data-code="${d.voucher_code||''}" data-limit="${d.usage_limit||0}" data-exp="${d.expiry_date||0}">Edit</button>
-                        <button class="btn-action b-red" style="padding:4px 8px;" data-action="delete_promo" data-id="${key}">X</button>
+                        <button class="btn-action b-red" style="padding:4px 8px; margin-top:5px;" data-action="delete_promo" data-id="${key}">X</button>
                     </td>
                 </tr>`;
             }
-            if(html === '') html = '<tr><td colspan="5" style="text-align:center; color:var(--text-dim);">Belum ada promo yang tersimpan</td></tr>';
+            if(html === '') html = '<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-dim);">Belum ada data promo / voucher</td></tr>';
             document.getElementById('tablePromos').innerHTML = html;
         });
 
         document.getElementById('btnSavePromo').onclick = async () => {
             let id = document.getElementById('promoId').value;
+            
+            // Proses Konversi Waktu Expiry
             let expiryInput = document.getElementById('promoExpiry').value;
             let expiryTimestamp = expiryInput ? new Date(expiryInput).getTime() : 0;
 
@@ -462,26 +703,46 @@
                 expiry_date: expiryTimestamp,
                 is_active: document.getElementById('promoStatus').value === 'true'
             };
-            if(!id) data.usage_used = 0; // Jika baru buat, useage reset 0. Jika edit biarkan.
-
-            if(!data.title) return showToast("Judul promo wajib ada!", "error");
             
-            if(id) { await update(ref(db, `promos/${id}`), data); showToast("Promo/Voucher Diubah"); } 
-            else { await push(ref(db, 'promos'), data); showToast("Promo/Voucher Dibuat"); }
+            // Set usage 0 hanya saat buat baru
+            if(!id) {
+                data.usage_used = 0; 
+            }
+
+            if(!data.title) return showToast("Judul promo wajib diisi!", "error");
+            
+            if(id) { 
+                await update(ref(db, `promos/${id}`), data); 
+                showToast("Data Voucher/Promo Diubah"); 
+            } else { 
+                await push(ref(db, 'promos'), data); 
+                showToast("Voucher/Promo Dibuat"); 
+            }
+            
             document.getElementById('btnResetPromo').click();
         };
 
         document.getElementById('btnResetPromo').onclick = () => {
-            document.getElementById('promoId').value = ''; document.getElementById('promoTitle').value = '';
-            document.getElementById('promoDiscount').value = ''; document.getElementById('promoDesc').value = '';
-            document.getElementById('promoCode').value = ''; document.getElementById('promoLimit').value = '0';
+            document.getElementById('promoId').value = ''; 
+            document.getElementById('promoTitle').value = '';
+            document.getElementById('promoDiscount').value = ''; 
+            document.getElementById('promoDesc').value = '';
+            document.getElementById('promoCode').value = ''; 
+            document.getElementById('promoLimit').value = '0';
             document.getElementById('promoExpiry').value = '';
         };
 
-        // ==========================================
-        // MONITOR RENTAL
-        // ==========================================
-        onValue(ref(db, 'bookings'), (snap) => { bookingsData = snap.val() || {}; renderList(); });
+        // === FITUR MONITOR RENTAL REAL-TIME ===
+        onValue(ref(db, 'bookings'), (snap) => { 
+            bookingsData = snap.val() || {}; 
+            renderList(); 
+        });
+
+        function formatTime(ms) {
+            if(ms <= 0) return "00:00:00";
+            let s = Math.floor(ms / 1000);
+            return `${Math.floor(s/3600).toString().padStart(2,'0')}:${Math.floor((s%3600)/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+        }
 
         setInterval(() => {
             document.querySelectorAll('.timer-display-admin').forEach(el => {
@@ -495,23 +756,45 @@
         }, 1000);
 
         function renderList() {
-            const grid = document.getElementById('bookingGrid'); const history = document.getElementById('historyGrid');
-            grid.innerHTML = ''; history.innerHTML = '';
+            const grid = document.getElementById('bookingGrid'); 
+            const history = document.getElementById('historyGrid');
+            
+            grid.innerHTML = ''; 
+            history.innerHTML = '';
+            
             let sortedIds = Object.keys(bookingsData).sort((a,b) => parseInt(b.split('-')[1] || 0) - parseInt(a.split('-')[1] || 0));
 
             sortedIds.forEach(id => {
-                let b = bookingsData[id]; let rem = (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu;
-                let cClass = 'st-unpaid'; let sText = 'Belum Lunas';
+                let b = bookingsData[id]; 
+                let rem = (b.status_countdown === 'running') ? b.waktu_selesai - getTrueTime() : b.sisa_waktu;
+                let cClass = 'st-unpaid'; 
+                let sText = 'Belum Lunas';
                 
-                if(b.status_pembayaran === 'Sudah Bayar') { cClass = 'st-paid'; sText = b.status_konfirmasi === 'Sudah' ? 'Siap Main' : 'Lunas (Menunggu)'; }
-                if(b.status_countdown === 'running') { cClass = 'st-running'; sText = 'Sedang Main'; }
-                if(b.status_countdown === 'paused') { cClass = 'st-paused'; sText = 'Di-jeda'; }
-                if(b.status_countdown === 'finished' || (rem <= 0 && b.status_countdown === 'running')) { cClass = 'st-finished'; sText = 'Waktu Habis'; }
+                if(b.status_pembayaran === 'Sudah Bayar') { 
+                    cClass = 'st-paid'; 
+                    sText = b.status_konfirmasi === 'Sudah' ? 'Siap Main' : 'Lunas (Menunggu)'; 
+                }
+                if(b.status_countdown === 'running') { 
+                    cClass = 'st-running'; 
+                    sText = 'Sedang Main'; 
+                }
+                if(b.status_countdown === 'paused') { 
+                    cClass = 'st-paused'; 
+                    sText = 'Di-jeda'; 
+                }
+                if(b.status_countdown === 'finished' || (rem <= 0 && b.status_countdown === 'running')) { 
+                    cClass = 'st-finished'; 
+                    sText = 'Waktu Habis'; 
+                }
 
-                // Jika user pakai voucher, tampilkan log-nya.
+                // Tampilkan Log Voucher jika dipakai
                 let voucherLog = "";
                 if(b.voucher_dipakai && b.voucher_dipakai !== "Tidak Ada") {
-                    voucherLog = `<span style="display:inline-block; padding:2px 8px; background:rgba(6, 182, 212, 0.2); color:var(--primary); border-radius:4px; font-size:0.8rem; margin-top:4px;">Diskon Aktif: ${b.voucher_dipakai}</span>`;
+                    voucherLog = `
+                        <div style="display:inline-block; padding:4px 10px; background:rgba(157, 0, 255, 0.15); border: 1px solid rgba(157, 0, 255, 0.3); color:#E0B0FF; border-radius:6px; font-size:0.85rem; font-weight:600; margin-top:8px;">
+                            🎟️ Voucher: ${b.voucher_dipakai}
+                        </div>
+                    `;
                 }
 
                 let html = `
@@ -519,25 +802,34 @@
                     <div class="item-header">
                         <div class="item-info">
                             <h3>${b.nama} <span class="badge">${b.paket_nama}</span></h3>
-                            <p><span>ID: ${id}</span> <span>${b.metode_pembayaran}</span> <span style="color: var(--primary)">[ ${sText} ]</span></p>
+                            <p>
+                                <span>ID: ${id}</span> 
+                                <span>💵 ${b.metode_pembayaran}</span> 
+                                <span style="color: var(--primary); font-weight:600;">[ ${sText} ]</span>
+                            </p>
                             ${voucherLog}
                         </div>
                         <div class="timer-display-admin" data-id="${id}" style="font-family: ${currentTvConfig.font || 'inherit'}">${formatTime(rem)}</div>
                     </div>
+                    
                     <div class="item-actions">
                         ${b.is_history ? `
-                            <button class="btn-action b-red" data-action="delete" data-id="${id}">Hapus Riwayat</button>
+                            <button class="btn-action b-red" style="width:100%; justify-content:center;" data-action="delete" data-id="${id}">🗑 Hapus Riwayat Permanen</button>
                         ` : `
-                            ${b.status_pembayaran === 'Belum Bayar' ? `<button class="btn-action b-green" data-action="bayar" data-id="${id}">Terima Pembayaran</button>` : (b.status_konfirmasi === 'Belum' ? `<button class="btn-action b-blue" data-action="konfirmasi" data-id="${id}">Konfirmasi Unit</button>` : '')}
+                            ${b.status_pembayaran === 'Belum Bayar' ? `<button class="btn-action b-green" style="flex:1; justify-content:center;" data-action="bayar" data-id="${id}">✅ Terima Pembayaran</button>` : (b.status_konfirmasi === 'Belum' ? `<button class="btn-action b-blue" style="flex:1; justify-content:center;" data-action="konfirmasi" data-id="${id}">👍 Konfirmasi Unit Siap</button>` : '')}
                             ${b.status_konfirmasi === 'Sudah' && b.status_countdown !== 'running' ? `<button class="btn-action b-green" data-action="start" data-id="${id}">▶ PLAY</button>` : ''}
                             ${b.status_countdown === 'running' ? `<button class="btn-action b-yellow" data-action="pause" data-id="${id}">⏸ PAUSE</button>` : ''}
-                            <button class="btn-action b-dark" data-action="waktu" data-id="${id}">⏱ Waktu</button>
+                            
+                            <button class="btn-action b-dark" data-action="waktu" data-id="${id}">⏱ Atur Waktu</button>
                             <button class="btn-action b-dark" data-action="pesan" data-id="${id}">💬 Pesan TV</button>
-                            <button class="btn-action b-outline" data-action="copylink" data-id="${id}">🔗 Salin Link</button>
-                            <button class="btn-action b-wa" data-action="send_wa" data-id="${id}">💬 Kirim WA</button>
+                            
+                            <button class="btn-action b-outline" data-action="copylink" data-id="${id}">🔗 Salin Link TV</button>
+                            <button class="btn-action b-wa" data-action="send_wa" data-id="${id}">🟢 Kirim WA</button>
+                            
                             <button class="btn-action b-outline" data-action="reset" data-id="${id}">↺ Reset</button>
                             <button class="btn-action b-red" data-action="delete" data-id="${id}">Hapus Data</button>
-                            <button class="btn-action b-outline" style="width:100%; border-color:#334155" data-action="finish" data-id="${id}">🏁 Pindah ke Riwayat Selesai</button>
+                            
+                            <button class="btn-action b-outline" style="width:100%; justify-content:center; border-color:var(--border-hover);" data-action="finish" data-id="${id}">🏁 Pindah ke Riwayat Selesai</button>
                         `}
                     </div>
                 </div>`;
@@ -549,12 +841,15 @@
                                (currentFilter === 'unpaid' && b.status_pembayaran === 'Belum Bayar') ||
                                (currentFilter === 'paid' && b.status_pembayaran === 'Sudah Bayar' && b.status_countdown !== 'running') ||
                                (currentFilter === 'running' && b.status_countdown === 'running');
-                    if(show) grid.innerHTML += html;
+                    if(show) {
+                        grid.innerHTML += html;
+                    }
                 }
             });
         }
 
-        // EVENT DELEGATION GLOBAL (ACTION BUTTONS)
+        // === EVENT DELEGATION GLOBAL (ACTION BUTTONS) ===
+        // Memastikan semua tombol klik berfungsi sempurna tanpa error modul
         document.addEventListener('click', async (e) => {
             const btn = e.target.closest('.btn-action');
             if(!btn) return;
@@ -572,83 +867,169 @@
                 document.getElementById('promoStatus').value = btn.getAttribute('data-act');
                 document.getElementById('promoCode').value = btn.getAttribute('data-code');
                 document.getElementById('promoLimit').value = btn.getAttribute('data-limit');
-                document.getElementById('promoExpiry').value = formatDateTimeLocal(parseInt(btn.getAttribute('data-exp')));
-                window.scrollTo(0,0); return;
+                
+                let expTs = parseInt(btn.getAttribute('data-exp'));
+                document.getElementById('promoExpiry').value = formatDateTimeLocal(expTs);
+                
+                window.scrollTo(0,0); 
+                return;
             }
-            if(action === 'delete_promo') { if(confirm('Hapus promo ini secara permanen?')) { await remove(ref(db, `promos/${id}`)); showToast('Promo Terhapus'); } return; }
+            if(action === 'delete_promo') { 
+                if(confirm('Yakin ingin menghapus promo/voucher ini secara permanen?')) { 
+                    await remove(ref(db, `promos/${id}`)); 
+                    showToast('Voucher Terhapus', 'success'); 
+                } 
+                return; 
+            }
 
-            // Aksi Paket
+            // Aksi Paket (Load Data to Form)
             if(action === 'edit_pkg') {
-                document.getElementById('pkgId').value = id; document.getElementById('pkgName').value = btn.getAttribute('data-name');
-                document.getElementById('pkgDuration').value = btn.getAttribute('data-dur'); document.getElementById('pkgPrice').value = btn.getAttribute('data-price');
-                document.getElementById('pkgDesc').value = btn.getAttribute('data-desc'); document.getElementById('pkgStatus').value = btn.getAttribute('data-act');
-                window.scrollTo(0,0); return;
+                document.getElementById('pkgId').value = id; 
+                document.getElementById('pkgName').value = btn.getAttribute('data-name');
+                document.getElementById('pkgDuration').value = btn.getAttribute('data-dur'); 
+                document.getElementById('pkgPrice').value = btn.getAttribute('data-price');
+                document.getElementById('pkgDesc').value = btn.getAttribute('data-desc'); 
+                document.getElementById('pkgStatus').value = btn.getAttribute('data-act');
+                window.scrollTo(0,0); 
+                return;
             }
-            if(action === 'delete_pkg') { if(confirm('Hapus paket ini?')) { await remove(ref(db, `packages/${id}`)); showToast('Terhapus'); } return; }
+            if(action === 'delete_pkg') { 
+                if(confirm('Yakin ingin menghapus paket ini?')) { 
+                    await remove(ref(db, `packages/${id}`)); 
+                    showToast('Paket Terhapus', 'success'); 
+                } 
+                return; 
+            }
 
             // Aksi Booking Control
             let b = bookingsData[id]; 
             if(!b) return;
-            let up = {}; let now = getTrueTime();
+            let up = {}; 
+            let now = getTrueTime();
 
-            if(action === 'bayar') { up['status_pembayaran'] = 'Sudah Bayar'; showToast('Status Lunas'); }
-            if(action === 'konfirmasi') { up['status_konfirmasi'] = 'Sudah'; showToast('Terkonfirmasi'); }
-            if(action === 'start') {
-                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') return showToast('Belum lunas atau belum dikonfirmasi!', 'error');
-                let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
-                if(rem <= 0) return showToast('Waktu 0, silakan tambah waktu manual.', 'error');
-                up['status_countdown'] = 'running'; up['waktu_selesai'] = now + rem; showToast('Sistem Mulai Bermain!');
+            if(action === 'bayar') { 
+                up['status_pembayaran'] = 'Sudah Bayar'; 
+                showToast('Status Ditandai Lunas'); 
             }
-            if(action === 'pause') { up['status_countdown'] = 'paused'; up['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); showToast('Di-jeda'); }
-            if(action === 'reset') { up['status_countdown'] = 'idle'; up['sisa_waktu'] = b.durasi_jam * 3600000; up['waktu_selesai'] = 0; showToast('Waktu Direset'); }
-            if(action === 'finish') { up['is_history'] = true; up['status_countdown'] = 'finished'; showToast('Selesai dan diarsipkan'); }
-            if(action === 'delete') { if(confirm(`Yakin memusnahkan data ini?`)) { await remove(ref(db, `bookings/${id}`)); showToast('Terhapus permanen'); return; } }
+            
+            if(action === 'konfirmasi') { 
+                up['status_konfirmasi'] = 'Sudah'; 
+                showToast('Pesanan Terkonfirmasi'); 
+            }
+            
+            if(action === 'start') {
+                if(b.status_pembayaran !== 'Sudah Bayar' || b.status_konfirmasi !== 'Sudah') {
+                    return showToast('Belum lunas atau belum dikonfirmasi!', 'error');
+                }
+                let rem = (b.status_countdown === 'idle' || b.status_countdown === 'paused') ? b.sisa_waktu : 0;
+                if(rem <= 0) {
+                    return showToast('Sisa waktu 0, silakan tambah waktu manual.', 'error');
+                }
+                
+                up['status_countdown'] = 'running'; 
+                up['waktu_selesai'] = now + rem; 
+                showToast('Sistem Mulai Bermain!');
+            }
+            
+            if(action === 'pause') { 
+                up['status_countdown'] = 'paused'; 
+                up['sisa_waktu'] = Math.max(0, b.waktu_selesai - now); 
+                showToast('Permainan Di-jeda'); 
+            }
+            
+            if(action === 'reset') { 
+                up['status_countdown'] = 'idle'; 
+                up['sisa_waktu'] = b.durasi_jam * 3600000; 
+                up['waktu_selesai'] = 0; 
+                showToast('Sisa Waktu Dikembalikan ke Awal'); 
+            }
+            
+            if(action === 'finish') { 
+                up['is_history'] = true; 
+                up['status_countdown'] = 'finished'; 
+                showToast('Telah Selesai dan Diarsipkan'); 
+            }
+            
+            if(action === 'delete') { 
+                if(confirm(`Yakin memusnahkan data ini secara permanen?`)) { 
+                    await remove(ref(db, `bookings/${id}`)); 
+                    showToast('Terhapus permanen'); 
+                    return; 
+                } 
+            }
             
             if(action === 'copylink') {
                 let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
-                navigator.clipboard.writeText(url); showToast('Link TV Berhasil Tersalin!'); return;
+                navigator.clipboard.writeText(url); 
+                showToast('Link TV Berhasil Tersalin!'); 
+                return;
             }
 
-            // FITUR BARU: KIRIM WA OTOMATIS
+            // FITUR BARU: KIRIM WHATSAPP OTOMATIS
             if(action === 'send_wa') {
                 let url = window.location.origin + window.location.pathname.replace('admin.html', 'countdown.html') + '?id=' + id;
-                let text = `Halo Kak *${b.nama}* 👋\n\nPesanan Rental PS3 Anda telah kami konfirmasi dan siap digunakan.\nBerikut adalah link unik layar TV Anda untuk memantau sisa waktu permainan secara Real-Time:\n\n🔗 ${url}\n\nSelamat bermain! 🎮`;
+                let text = `Halo Kak *${b.nama}* 👋\n\nPesanan Rental PS3 Anda telah kami konfirmasi dan siap digunakan.\n\nBerikut adalah link unik layar TV Anda untuk memantau sisa waktu permainan secara Real-Time:\n🔗 ${url}\n\nSelamat bermain! 🎮`;
+                
                 window.open(`https://api.whatsapp.com/send?phone=${b.nohp}&text=${encodeURIComponent(text)}`);
-                showToast('Membuka WhatsApp...');
+                showToast('Membuka aplikasi WhatsApp...');
                 return;
             }
 
             if(action === 'waktu') {
-                document.getElementById('mWaktuId').value = id; document.getElementById('mJam').value = 0; document.getElementById('mMenit').value = 0;
-                document.getElementById('modalWaktu').style.display = 'flex'; return;
+                document.getElementById('mWaktuId').value = id; 
+                document.getElementById('mJam').value = 0; 
+                document.getElementById('mMenit').value = 0;
+                document.getElementById('modalWaktu').style.display = 'flex'; 
+                return;
             }
+            
             if(action === 'pesan') {
-                document.getElementById('mPesanId').value = id; document.getElementById('mPesanTeks').value = b.catatan_admin || "";
-                document.getElementById('modalPesan').style.display = 'flex'; return;
+                document.getElementById('mPesanId').value = id; 
+                document.getElementById('mPesanTeks').value = b.catatan_admin || "";
+                document.getElementById('modalPesan').style.display = 'flex'; 
+                return;
             }
 
-            if(Object.keys(up).length > 0) await update(ref(db, `bookings/${id}`), up);
+            if(Object.keys(up).length > 0) {
+                await update(ref(db, `bookings/${id}`), up);
+            }
         });
 
-        // Simpan Waktu
+        // Proses Simpan Waktu dari Modal
         document.getElementById('btnSaveWaktu').onclick = async () => {
-            let id = document.getElementById('mWaktuId').value; let b = bookingsData[id];
+            let id = document.getElementById('mWaktuId').value; 
+            let b = bookingsData[id];
+            
             let ms = ((parseInt(document.getElementById('mJam').value)||0)*3600 + (parseInt(document.getElementById('mMenit').value)||0)*60) * 1000;
-            let now = getTrueTime(); let cur = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
+            let now = getTrueTime(); 
+            let cur = (b.status_countdown === 'running') ? (b.waktu_selesai - now) : b.sisa_waktu;
             let mode = document.getElementById('mWaktuMode').value;
             
             let nSisa = mode === 'set' ? ms : (mode === 'add' ? cur + ms : Math.max(0, cur - ms));
             let up = {};
-            if(b.status_countdown === 'running') { up['waktu_selesai'] = now + nSisa; up['sisa_waktu'] = nSisa; } 
-            else { up['sisa_waktu'] = nSisa; if(b.status_countdown === 'finished') up['status_countdown'] = 'paused'; }
             
-            await update(ref(db, `bookings/${id}`), up); document.getElementById('modalWaktu').style.display = 'none'; showToast("Waktu Selesai Disesuaikan");
+            if(b.status_countdown === 'running') { 
+                up['waktu_selesai'] = now + nSisa; 
+                up['sisa_waktu'] = nSisa; 
+            } else { 
+                up['sisa_waktu'] = nSisa; 
+                if(b.status_countdown === 'finished') {
+                    up['status_countdown'] = 'paused'; 
+                }
+            }
+            
+            await update(ref(db, `bookings/${id}`), up); 
+            document.getElementById('modalWaktu').style.display = 'none'; 
+            showToast("Sisa Waktu Berhasil Disesuaikan");
         };
 
-        // Simpan Pesan TV
+        // Proses Simpan Pesan TV
         document.getElementById('btnSavePesan').onclick = async () => {
-            await update(ref(db, `bookings/${document.getElementById('mPesanId').value}`), { catatan_admin: document.getElementById('mPesanTeks').value });
-            document.getElementById('modalPesan').style.display = 'none'; showToast("Pesan Naik ke TV");
+            await update(ref(db, `bookings/${document.getElementById('mPesanId').value}`), { 
+                catatan_admin: document.getElementById('mPesanTeks').value 
+            });
+            document.getElementById('modalPesan').style.display = 'none'; 
+            showToast("Pesan Berhasil Ditampilkan di TV");
         };
 
     </script>
