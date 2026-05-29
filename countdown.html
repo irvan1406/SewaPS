@@ -7,9 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@700&family=Share+Tech+Mono&family=Teko:wght@500;600&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body { 
-            background-color: #000000; /* Hitam Pekat untuk TV LED/OLED */
+            background-color: #000000; 
             color: #FFFFFF; 
             height: 100vh; 
             display: flex; 
@@ -18,40 +17,37 @@
             justify-content: center; 
             overflow: hidden; 
             font-family: 'Outfit', sans-serif;
+            transition: background-image 0.5s ease;
         }
 
         .container { text-align: center; width: 100%; max-width: 1400px; padding: 40px; }
         
         .header-info { margin-bottom: 5vh; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .header-info h2 { 
-            color: #06B6D4; text-transform: uppercase; letter-spacing: 6px; font-weight: 900;
-            font-size: 2.8rem; text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+            text-transform: uppercase; letter-spacing: 6px; font-weight: 900;
+            font-size: 2.8rem; transition: color 0.5s, text-shadow 0.5s;
         }
         .header-info p { 
             font-size: 1.5rem; color: #94A3B8; font-family: 'JetBrains Mono', monospace; 
             background: rgba(255,255,255,0.05); padding: 8px 24px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Timer Utama - Tampil Super Besar */
+        /* Timer Utama - Dinamis CSS Class Update */
         .tv-timer { 
-            font-family: 'Orbitron', sans-serif; /* Default, akan ditimpa JS */
-            font-size: 18vw; /* Raksasa menyesuaikan layar */
+            font-family: 'Orbitron', sans-serif; 
             font-weight: 700; line-height: 1; color: #FFFFFF; 
-            text-shadow: 0 0 40px rgba(0,0,0,0.5), 0 0 80px rgba(6, 182, 212, 0.4); 
-            transition: color 0.3s, text-shadow 0.3s, font-family 0.5s; 
+            transition: color 0.3s, text-shadow 0.3s, font-family 0.5s, font-size 0.5s; 
             font-variant-numeric: tabular-nums;
         }
         
-        /* Status Warn / Danger */
-        .tv-timer.warning { color: #F59E0B; text-shadow: 0 0 50px rgba(245, 158, 11, 0.5); animation: pulse-warn 1.5s infinite alternate; }
-        .tv-timer.danger { color: #EF4444; text-shadow: 0 0 60px rgba(239, 68, 68, 0.6); animation: shake 0.3s infinite; }
+        .tv-timer.warning { animation: pulse-warn 1.5s infinite alternate; }
+        .tv-timer.danger { animation: shake 0.3s infinite; }
         
         .status-text { 
             font-size: 2.5rem; margin-top: 3vh; letter-spacing: 12px; text-transform: uppercase; 
-            font-weight: 800; color: #06B6D4; text-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+            font-weight: 800; transition: color 0.5s, text-shadow 0.5s;
         }
 
-        /* Pesan Admin / Toast Raksasa */
         .admin-note { 
             margin-top: 6vh; background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3);
             border-left: 10px solid #EF4444; padding: 25px 40px; text-align: left; display: none; 
@@ -61,7 +57,6 @@
         .admin-note h4 { color: #EF4444; margin-bottom: 10px; font-weight: 900; letter-spacing: 2px; font-size: 1.4rem; }
         .admin-note p { font-size: 1.6rem; line-height: 1.5; color: #FFFFFF; }
 
-        /* Tombol Pemicu Audio (Browser Rule) */
         #audioOverlay { 
             position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; 
             align-items: center; justify-content: center; flex-direction: column;
@@ -69,7 +64,7 @@
         .btn-tv-start { 
             padding: 25px 60px; font-size: 1.8rem; background: #06B6D4; color: #000; 
             border: none; border-radius: 20px; font-weight: 900; cursor: pointer; 
-            text-transform: uppercase; letter-spacing: 4px; box-shadow: 0 0 40px rgba(6, 182, 212, 0.5); 
+            text-transform: uppercase; letter-spacing: 4px; 
         }
 
         @keyframes pulse-warn { from { transform: scale(1); } to { transform: scale(1.02); } }
@@ -116,21 +111,56 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Server Time
         let serverOffset = 0;
         onValue(ref(db, '.info/serverTimeOffset'), (snap) => { serverOffset = snap.val() || 0; });
         function getTrueTime() { return Date.now() + serverOffset; }
 
-        // Live Font Setup from Admin
-        onValue(ref(db, 'settings/tv_font'), (snapshot) => {
-            const font = snapshot.val();
-            if(font) document.getElementById('timerDisplay').style.fontFamily = font;
+        // Variabel Desain Global Dinamis
+        let tvColorHex = "#06B6D4"; // Default Cyan
+        let tvColorRgba = "rgba(6, 182, 212, 0.4)";
+
+        // FUNGSI TRANSLASI WARNA TEMA
+        function applyTvTheme(config) {
+            // Update Font
+            if(config.font) document.getElementById('timerDisplay').style.fontFamily = config.font;
+            
+            // Update Size
+            if(config.size) document.getElementById('timerDisplay').style.fontSize = config.size;
+
+            // Update Color Logic
+            if(config.color) {
+                if(config.color === 'cyan') { tvColorHex = "#06B6D4"; tvColorRgba = "rgba(6, 182, 212, 0.4)"; }
+                else if(config.color === 'purple') { tvColorHex = "#A855F7"; tvColorRgba = "rgba(168, 85, 247, 0.4)"; }
+                else if(config.color === 'green') { tvColorHex = "#10B981"; tvColorRgba = "rgba(16, 185, 129, 0.4)"; }
+                else if(config.color === 'red') { tvColorHex = "#EF4444"; tvColorRgba = "rgba(239, 68, 68, 0.4)"; }
+                else if(config.color === 'white') { tvColorHex = "#FFFFFF"; tvColorRgba = "rgba(255, 255, 255, 0.3)"; }
+                
+                // Terapkan ke Header & Status Text Base (Kecuali sedang Danger/Warning)
+                document.getElementById('userName').style.color = tvColorHex;
+                document.getElementById('userName').style.textShadow = `0 0 20px ${tvColorRgba}`;
+                
+                // Ubah Glow Background Ambient
+                document.body.style.backgroundImage = `
+                    radial-gradient(circle at 50% 50%, ${tvColorRgba.replace('0.4', '0.05')} 0%, transparent 70%),
+                    radial-gradient(circle at 50% 100%, ${tvColorRgba.replace('0.4', '0.03')} 0%, transparent 60%)
+                `;
+            }
+        }
+
+        // Live Config Read
+        onValue(ref(db, 'settings/tv_config'), (snapshot) => {
+            const config = snapshot.val();
+            if(config) {
+                applyTvTheme(config);
+            } else {
+                // Konfigurasi Default jika kosong
+                applyTvTheme({ font: "'Orbitron', sans-serif", color: "cyan", size: "18vw" });
+            }
         });
 
         const urlParams = new URLSearchParams(window.location.search);
         const bookingId = urlParams.get('id');
 
-        // Audio System
         window.audioCtx = null;
         window.initAudio = function() {
             document.getElementById('audioOverlay').style.display = 'none';
@@ -142,7 +172,6 @@
             if(!window.audioCtx) return;
             const osc = window.audioCtx.createOscillator(); const gain = window.audioCtx.createGain();
             osc.connect(gain); gain.connect(window.audioCtx.destination);
-            
             if(type === 'warning') {
                 osc.type = 'square'; osc.frequency.setValueAtTime(800, window.audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.05, window.audioCtx.currentTime); osc.start();
@@ -168,7 +197,6 @@
                 if(!bookingData) {
                     document.getElementById('statusDisplay').innerText = "DATA TIDAK DITEMUKAN"; document.getElementById('statusDisplay').style.color = "#EF4444"; return;
                 }
-                
                 document.getElementById('userName').innerText = bookingData.nama;
                 document.getElementById('packageName').innerText = bookingData.paket_nama;
                 
@@ -179,7 +207,6 @@
                 let remCheck = (bookingData.status_countdown === 'running') ? bookingData.waktu_selesai - getTrueTime() : bookingData.sisa_waktu;
                 if(remCheck > 600000) warningPlayed = false;
                 if(remCheck > 0) { alarmTriggered = false; clearInterval(alarmInterval); }
-                
                 updateUI();
             });
         }
@@ -190,28 +217,54 @@
             let remTime = (bookingData.status_countdown === 'running') ? bookingData.waktu_selesai - getTrueTime() : bookingData.sisa_waktu;
             
             if (bookingData.status_countdown === 'idle') {
-                statusEl.innerText = "SIAP DIMULAI"; statusEl.style.color = "#06B6D4"; 
+                statusEl.innerText = "SIAP DIMULAI"; 
+                statusEl.style.color = tvColorHex; 
+                statusEl.style.textShadow = `0 0 20px ${tvColorRgba}`;
+                
                 timerEl.className = "tv-timer"; 
+                timerEl.style.color = "#FFFFFF";
+                timerEl.style.textShadow = `0 0 40px rgba(0,0,0,0.5), 0 0 80px ${tvColorRgba}`;
+                
             } else if (bookingData.status_countdown === 'paused') {
-                statusEl.innerText = "PERMAINAN DIJEDA"; statusEl.style.color = "#F59E0B"; 
-                timerEl.className = "tv-timer"; timerEl.style.color = "#F59E0B";
+                statusEl.innerText = "PERMAINAN DIJEDA"; 
+                statusEl.style.color = "#F59E0B"; 
+                statusEl.style.textShadow = "0 0 20px rgba(245, 158, 11, 0.4)";
+                
+                timerEl.className = "tv-timer"; 
+                timerEl.style.color = "#F59E0B";
+                timerEl.style.textShadow = "0 0 50px rgba(245, 158, 11, 0.3)";
+                
             } else if (bookingData.status_countdown === 'running') {
-                statusEl.innerText = "SEDANG BERMAIN"; statusEl.style.color = "#10B981"; 
-                timerEl.className = "tv-timer"; timerEl.style.color = "#FFFFFF"; 
+                statusEl.innerText = "SEDANG BERMAIN"; 
+                statusEl.style.color = "#10B981"; 
+                statusEl.style.textShadow = "0 0 20px rgba(16, 185, 129, 0.4)";
+                
+                timerEl.className = "tv-timer"; 
+                timerEl.style.color = "#FFFFFF"; 
+                timerEl.style.textShadow = `0 0 40px rgba(0,0,0,0.5), 0 0 80px ${tvColorRgba}`;
                 
                 if(remTime <= 600000 && remTime > 0 && !warningPlayed) { playBeep('warning'); warningPlayed = true; }
                 if(remTime <= 600000 && remTime > 0) {
-                    statusEl.innerText = "SISA WAKTU < 10 MENIT!"; statusEl.style.color = "#F59E0B"; 
+                    statusEl.innerText = "SISA WAKTU < 10 MENIT!"; 
+                    statusEl.style.color = "#F59E0B"; 
+                    statusEl.style.textShadow = "0 0 30px rgba(245, 158, 11, 0.5)";
                     timerEl.className = "tv-timer warning";
                 }
             } else if (bookingData.status_countdown === 'finished') {
-                statusEl.innerText = "WAKTU TELAH HABIS!"; statusEl.style.color = "#EF4444"; 
-                timerEl.className = "tv-timer danger"; remTime = 0;
+                statusEl.innerText = "WAKTU TELAH HABIS!"; 
+                statusEl.style.color = "#EF4444"; 
+                statusEl.style.textShadow = "0 0 30px rgba(239, 68, 68, 0.5)";
+                timerEl.className = "tv-timer danger"; 
+                timerEl.style.color = "#EF4444";
+                remTime = 0;
             }
 
             if(remTime <= 0 && bookingData.status_countdown === 'running') {
-                statusEl.innerText = "WAKTU HABIS! HUBUNGI ADMIN"; statusEl.style.color = "#EF4444"; 
-                timerEl.className = "tv-timer danger"; remTime = 0;
+                statusEl.innerText = "WAKTU HABIS! HUBUNGI ADMIN"; 
+                statusEl.style.color = "#EF4444"; 
+                timerEl.className = "tv-timer danger"; 
+                timerEl.style.color = "#EF4444";
+                remTime = 0;
                 if(!alarmTriggered) { alarmTriggered = true; alarmInterval = setInterval(() => playBeep('alarm'), 1500); }
             }
 
